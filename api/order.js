@@ -11,13 +11,13 @@ module.exports = async (req, res) => {
   const text = [
     "🛒 طلب جديد - عالم المكسرات",
     ...items.map(i => `- ${s(i.name, 60)}: ${s(i.qty, 20)} = ${s(i.sum, 20)} د.ل`),
-    `المجموع: ${s(b.total, 20)} د.ل (بدون التوصيل)`,
-    `الاسم: ${s(b.name, 80)}`,
-    `الهاتف: ${s(b.phone, 30)}`,
-    `المدينة: ${s(b.city, 60)}`,
-    `العنوان: ${s(b.address, 200)}`,
-    "الدفع: عند الاستلام"
-  ].join("\n");
+   n || !chat) return res.status(500).json({ ok: fal
+   le.exports = async (req, re
+   le.exports = async (req, res)
+   le.exports = async (req, res)
+   le.exports = async (req, res) => 
+   le.exports = async (req, res) => {
+  if (req  ].join("\n");
   try {
     const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: "POST",
