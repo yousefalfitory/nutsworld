@@ -72,6 +72,8 @@ body{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
 #cg button{font:inherit;font-weight:700;padding:16px 10px;border-radius:16px;border:1px solid #b9e0c6;background:#e4f5ea;color:#1b7a45;display:flex;flex-direction:column;align-items:center;gap:6px}
 #ts{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nh) + 90px + env(safe-area-inset-bottom,0px));background:#1d2b22;color:#fff;padding:10px 18px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:10}
 #ts.on{opacity:1}
+main.w{min-height:calc(100vh - 330px)}
+footer{margin-top:30px}
 </style>
 </head>
 <body>
@@ -131,8 +133,8 @@ try{fav=JSON.parse(localStorage.getItem("nw_fav")||"[]")}catch(_){}
 const sv=()=>{try{localStorage.setItem("nw_fav",JSON.stringify(fav))}catch(_){}};
 const N=()=>document.querySelectorAll("#nv button").forEach(b=>b.classList.toggle("on",b.dataset.n==view));
 const T=m=>{const t=$("#ts");t.textContent=m;t.classList.add("on");clearTimeout(tm);tm=setTimeout(()=>t.classList.remove("on"),1800)};
-const top=()=>scrollTo({top:0,behavior:"smooth"});
-function V(v){view=v;if(v=="home"){cat="الكل";q="";$("#q").value=""}C();R();N();top()}
+const goTop=()=>scrollTo({top:0,behavior:"smooth"});
+function V(v){view=v;if(v=="home"){cat="الكل";q="";$("#q").value=""}C();R();N();goTop()}
 const code=()=>{const v=($("#k")?.value||"").trim().toUpperCase();return CODES[v]?{c:v,p:CODES[v]}:null};
 const calc=()=>{const s=tot(),d=code(),ds=d?Math.round(s*d.p)/100:0,z=$("#z")?.value!=="o",fe=z?FEE:0;return{s,d,ds,z,fe,sub:s-ds,g:s-ds+fe}};
 const tot=()=>Object.entries(cart).reduce((s,[i,k])=>s+P[i][2]*k,0);
@@ -166,7 +168,7 @@ if(k=="cats"){$("#cg").innerHTML=["الكل",...Object.keys(E)].map(c=>`<button 
 else if(k=="cart"){if(Object.keys(cart).length)$("#go").click();else T("السلة فارغة")}
 else V(k);return}
 const k2=e.target.closest("[data-k]");
-if(k2){cat=k2.dataset.k;view="home";q="";$("#q").value="";$("#co").classList.remove("on");C();R();N();top();return}
+if(k2){cat=k2.dataset.k;view="home";q="";$("#q").value="";$("#co").classList.remove("on");C();R();N();goTop();return}
 const f=e.target.closest("[data-f]");
 if(f){const nm=P[f.dataset.f][1],ix=fav.indexOf(nm);if(ix<0)fav.push(nm);else fav.splice(ix,1);sv();R();return}
 if(e.target.id=="co"||e.target.id=="xc")$("#co").classList.remove("on")});
