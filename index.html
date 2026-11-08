@@ -49,6 +49,29 @@ input,textarea{width:100%;font:inherit;padding:11px 12px;border:1px solid var(--
 .sub{display:block;width:100%;margin-top:12px;font:inherit;font-weight:800;font-size:16px;border:0;border-radius:14px;padding:13px;background:#0a5c33;color:#fff;text-align:center;text-decoration:none}
 .m{color:var(--mut);font-size:13px}
 footer{text-align:center;color:var(--mut);font-size:12px;padding:22px 0}
+select{width:100%;font:inherit;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--in);color:var(--tx)}
+.wa{position:fixed;left:14px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:6;background:#25d366;color:#fff;font-weight:800;text-decoration:none;padding:11px 16px;border-radius:99px;box-shadow:0 4px 14px #0003;font-size:14px}
+#bar.on+.wa{bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+.bd{align-self:flex-start;background:#f2b457;color:#3a2a05;font-size:12px;font-weight:800;padding:2px 8px;border-radius:99px}
+.tt{margin-top:10px;display:grid;gap:6px;font-size:14px}.tt div{display:flex;justify-content:space-between}.tt .g{font-size:16px;font-weight:800;border-top:1px solid var(--line);padding-top:6px}
+.sc{display:flex;gap:10px;justify-content:center;margin-bottom:10px}.sc a{padding:8px 16px;border-radius:99px;border:1px solid #b9e0c6;background:#e4f5ea;color:#1b7a45;font-weight:700;text-decoration:none}
+.c{position:relative}
+:root{--nh:64px}
+body{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+#bar{inset:auto 0 calc(var(--nh) + env(safe-area-inset-bottom,0px)) 0;padding:10px 14px}
+.wa{width:54px;height:54px;padding:0;display:grid;place-items:center;border-radius:50%;bottom:calc(var(--nh) + 16px + env(safe-area-inset-bottom,0px))}
+#bar.on+.wa{bottom:calc(var(--nh) + 76px + env(safe-area-inset-bottom,0px))}
+.wa svg{width:30px;height:30px;fill:#fff}
+#nv{position:fixed;inset:auto 0 0 0;height:calc(var(--nh) + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);display:flex;background:var(--card);border-top:1px solid var(--line);z-index:7}
+#nv button{flex:1;background:none;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:inherit;font-size:11px;color:var(--mut);position:relative}
+#nv button.on{color:#0a5c33;font-weight:800}
+#nv svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#nb{position:absolute;top:6px;left:calc(50% + 4px);min-width:17px;height:17px;border-radius:99px;background:#e0443e;color:#fff;font-size:10px;font-style:normal;display:grid;place-items:center;padding:0 4px}
+.fv{position:absolute;top:8px;left:8px;background:none;border:0;font-size:24px;line-height:1;color:#e0443e;padding:0}
+#cg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+#cg button{font:inherit;font-weight:700;padding:16px 10px;border-radius:16px;border:1px solid #b9e0c6;background:#e4f5ea;color:#1b7a45;display:flex;flex-direction:column;align-items:center;gap:6px}
+#ts{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nh) + 90px + env(safe-area-inset-bottom,0px));background:#1d2b22;color:#fff;padding:10px 18px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:10}
+#ts.on{opacity:1}
 </style>
 </head>
 <body>
@@ -57,17 +80,29 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:22px 0}
 <input id="q" type="search" placeholder="ابحث عن صنف…">
 <div class="ch" id="ch"></div>
 <div id="g"></div>
-<footer>الأسعار بالدينار الليبي للكيلوغرام الواحد</footer>
+<footer><div class="sc"><a href="https://www.facebook.com/share/1KAyu7fVXD/" target="_blank" rel="noopener">فيسبوك</a><a href="https://www.instagram.com/nutsworld2024" target="_blank" rel="noopener">إنستغرام</a><a href="https://www.tiktok.com/@nutsworld2024" target="_blank" rel="noopener">تيك توك</a></div>الأسعار بالدينار الليبي للكيلوغرام الواحد · التوصيل داخل مصراتة 20 د.ل</footer>
 </main>
 <div id="bar"><div><b id="bn"></b><div id="bt"></div></div><button id="go">إتمام الطلب</button></div>
+<a class="wa" href="https://wa.me/218912909007?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86..." target="_blank" rel="noopener" aria-label="واتساب"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a>
+<nav id="nv">
+<button data-n="home" class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg><span>الرئيسية</span></button>
+<button data-n="cats"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>الأصناف</span></button>
+<button data-n="sale"><svg viewBox="0 0 24 24"><path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg><span>التخفيض</span></button>
+<button data-n="cart"><svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.5h11L21 7H6"/></svg><i id="nb" hidden>0</i><span>السلة</span></button>
+<button data-n="fav"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-11a4.5 4.5 0 018-2.8A4.5 4.5 0 0120 10c0 5.8-8 11-8 11z"/></svg><span>المفضلة</span></button>
+</nav>
+<div id="ts"></div>
+<div class="ov" id="co"><div class="sh"><h2><span>الأصناف</span><button id="xc" aria-label="إغلاق" style="background:none;border:0;font-size:22px;color:var(--tx)">✕</button></h2><div id="cg"></div></div></div>
 <div class="ov" id="ov"><div class="sh">
 <h2><span>سلتك</span><button id="x" aria-label="إغلاق">✕</button></h2>
 <div id="cl"></div>
 <form class="f" id="f">
 <label for="n">الاسم</label><input id="n" name="n" required>
 <label for="p">رقم الهاتف</label><input id="p" name="p" type="tel" required>
-<label for="c">المدينة</label><input id="c" name="c" required>
+<label for="z">منطقة التوصيل</label><select id="z" name="z"><option value="m">داخل مصراتة (20 د.ل)</option><option value="o">خارج مصراتة (يُحدَّد عند التأكيد)</option></select>
+<label for="c">المدينة أو الحي</label><input id="c" name="c" required>
 <label for="a">العنوان</label><input id="a" name="a" required>
+<div id="cd" hidden><label for="k">كود الخصم (إن وجد)</label><input id="k" name="k" autocomplete="off"></div>
 <label>طريقة الدفع</label>
 <div class="pay"><label><input type="radio" name="pay" checked>عند الاستلام</label><label style="opacity:.55"><input type="radio" name="pay" disabled>بطاقة (معاملات) قريباً</label></div>
 <button class="sub" type="submit">تأكيد الطلب</button>
@@ -90,28 +125,52 @@ const P=[
 ];
 const $=s=>document.querySelector(s),fmt=x=>String(+x.toFixed(2)),ql=k=>k<1?k*1000+" غ":fmt(k)+" كغ";
 let cat="الكل",q="",cart={};
+const FEE=20,SALE={},CODES={YF:10};
+let view="home",fav=[],tm;
+try{fav=JSON.parse(localStorage.getItem("nw_fav")||"[]")}catch(_){}
+const sv=()=>{try{localStorage.setItem("nw_fav",JSON.stringify(fav))}catch(_){}};
+const N=()=>document.querySelectorAll("#nv button").forEach(b=>b.classList.toggle("on",b.dataset.n==view));
+const T=m=>{const t=$("#ts");t.textContent=m;t.classList.add("on");clearTimeout(tm);tm=setTimeout(()=>t.classList.remove("on"),1800)};
+const top=()=>scrollTo({top:0,behavior:"smooth"});
+function V(v){view=v;if(v=="home"){cat="الكل";q="";$("#q").value=""}C();R();N();top()}
+const code=()=>{const v=($("#k")?.value||"").trim().toUpperCase();return CODES[v]?{c:v,p:CODES[v]}:null};
+const calc=()=>{const s=tot(),d=code(),ds=d?Math.round(s*d.p)/100:0,z=$("#z")?.value!=="o",fe=z?FEE:0;return{s,d,ds,z,fe,sub:s-ds,g:s-ds+fe}};
 const tot=()=>Object.entries(cart).reduce((s,[i,k])=>s+P[i][2]*k,0);
 const stp=i=>`<div class="st"><button data-i="${i}" data-d="-1">−</button><b>${ql(cart[i])}</b><button data-i="${i}" data-d="1">+</button></div>`;
-function C(){$("#ch").innerHTML=["الكل",...Object.keys(E)].map(c=>`<button data-c="${c}" class="${c==cat?"on":""}">${c}</button>`).join("")}
+function C(){$("#ch").innerHTML=["الكل",...Object.keys(E)].map(c=>`<button data-c="${c}" class="${view=="home"&&c==cat?"on":""}">${c}</button>`).join("")}
 function R(){
-$("#g").innerHTML=P.map((p,i)=>[p,i]).filter(([p])=>(cat=="الكل"||p[0]==cat)&&p[1].includes(q)).map(([p,i])=>`<div class="c"><div class="e">${E[p[0]]}</div><h3>${p[1]}</h3><div class="pr">${p[2]} <small>د.ل / كغ</small></div>${cart[i]?stp(i):`<button class="add" data-i="${i}" data-d="1">أضف للسلة</button>`}</div>`).join("")||'<p class="m">لا توجد نتائج</p>';
-const n=Object.keys(cart).length;$("#bar").classList.toggle("on",n>0);$("#bn").textContent=n+" أصناف";$("#bt").textContent=fmt(tot())+" د.ل"}
-function S(){const ks=Object.keys(cart);if(!ks.length)$("#ov").classList.remove("on");
-$("#cl").innerHTML=ks.map(i=>`<div class="r"><span>${P[i][1]}<br><small class="m">${fmt(P[i][2]*cart[i])} د.ل</small></span>${stp(i)}</div>`).join("")+`<p><b>المجموع: ${fmt(tot())} د.ل</b> <span class="m">· التوصيل يُحدَّد عند التأكيد</span></p>`}
+$("#g").innerHTML=P.map((p,i)=>[p,i]).filter(([p])=>(view=="sale"?SALE[p[1]]:view=="fav"?fav.includes(p[1]):(cat=="الكل"||p[0]==cat))&&p[1].includes(q)).map(([p,i])=>`<div class="c"><button class="fv" data-f="${i}" aria-label="المفضلة">${fav.includes(p[1])?"♥":"♡"}</button><div class="e">${E[p[0]]}</div><h3>${p[1]}</h3>${SALE[p[1]]?`<span class="bd">تخفيض</span>`:""}<div class="pr">${p[2]} ${SALE[p[1]]?`<s class="m">${SALE[p[1]]}</s> `:""}<small>د.ل / كغ</small></div>${cart[i]?stp(i):`<button class="add" data-i="${i}" data-d="1">أضف للسلة</button>`}</div>`).join("")||'<p class="m" style="grid-column:1/-1">'+(view=="sale"?"لا توجد تخفيضات حالياً، تابعنا قريباً":view=="fav"?"لم تضف أي صنف للمفضلة بعد، اضغط على القلب في أي صنف":"لا توجد نتائج")+'</p>';
+const n=Object.keys(cart).length;$("#bar").classList.toggle("on",n>0);$("#bn").textContent=n+" أصناف";$("#bt").textContent=fmt(tot())+" د.ل";$("#nb").hidden=!n;$("#nb").textContent=n}
+function S(){const ks=Object.keys(cart);if(!ks.length)$("#ov").classList.remove("on");const t=calc();
+$("#cl").innerHTML=ks.map(i=>`<div class="r"><span>${P[i][1]}<br><small class="m">${fmt(P[i][2]*cart[i])} د.ل</small></span>${stp(i)}</div>`).join("")+`<div class="tt"><div>المجموع <b>${fmt(t.s)} د.ل</b></div>${t.d?`<div>خصم ${t.d.c} <b>-${fmt(t.ds)} د.ل</b></div>`:""}<div>${t.z?"التوصيل (مصراتة)":"التوصيل"} <b>${t.z?fmt(t.fe)+" د.ل":"يُحدَّد عند التأكيد"}</b></div><div class="g">الإجمالي <b>${fmt(t.g)} د.ل${t.z?"":" + التوصيل"}</b></div></div>`}
 document.addEventListener("click",e=>{
 const b=e.target.closest("[data-d]");
 if(b){const i=b.dataset.i,d=+b.dataset.d,k=cart[i]||0,n=!k&&d>0?0.5:k+d*0.25;if(n>0)cart[i]=n;else delete cart[i];R();S();return}
-const c=e.target.closest("[data-c]");if(c){cat=c.dataset.c;C();R()}});
+const c=e.target.closest("[data-c]");if(c){cat=c.dataset.c;view="home";C();R();N()}});
 $("#q").oninput=e=>{q=e.target.value.trim();R()};
 $("#go").onclick=()=>{$("#ov").classList.add("on");$("#f").hidden=false;$("#cl").hidden=false;$("#dn").hidden=true;S()};
 $("#ov").onclick=e=>{if(e.target.id=="ov"||e.target.id=="x")$("#ov").classList.remove("on")};
 $("#f").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target),btn=e.target.querySelector(".sub");btn.disabled=true;btn.textContent="جاري الإرسال…";
-const body={name:f.get("n"),phone:f.get("p"),city:f.get("c"),address:f.get("a"),total:fmt(tot()),items:Object.entries(cart).map(([i,k])=>({name:P[i][1],qty:ql(k),sum:fmt(P[i][2]*k)}))};
+const t=calc(),items=Object.entries(cart).map(([i,k])=>({name:P[i][1],qty:ql(k),sum:fmt(P[i][2]*k)}));if(t.d)items.push({name:"خصم كود "+t.d.c,qty:"-",sum:"-"+fmt(t.ds)});
+const body={name:f.get("n"),phone:f.get("p"),city:(t.z?"مصراتة":"خارج مصراتة")+" - "+f.get("c"),address:f.get("a")+" | "+(t.z?"توصيل "+fmt(t.fe)+" د.ل، الإجمالي مع التوصيل "+fmt(t.g)+" د.ل":"التوصيل يُحدَّد عند التأكيد"),total:fmt(t.sub),items};
 try{const r=await fetch("/api/order",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});if(!r.ok)throw 0;
 $("#f").hidden=true;$("#cl").hidden=true;$("#dn").hidden=false;cart={};R();e.target.reset()}
 catch(_){alert("تعذر إرسال الطلب، حاول مرة ثانية.")}
 btn.disabled=false;btn.textContent="تأكيد الطلب"};
 $("#ok").onclick=()=>$("#ov").classList.remove("on");
+$("#z").onchange=S;$("#k").oninput=S;$("#cd").hidden=!Object.keys(CODES).length;
+document.addEventListener("click",e=>{
+const n=e.target.closest("[data-n]");
+if(n){const k=n.dataset.n;
+if(k=="cats"){$("#cg").innerHTML=["الكل",...Object.keys(E)].map(c=>`<button data-k="${c}"><span style="font-size:26px">${c=="الكل"?"🛒":E[c]}</span>${c}</button>`).join("");$("#co").classList.add("on")}
+else if(k=="cart"){if(Object.keys(cart).length)$("#go").click();else T("السلة فارغة")}
+else V(k);return}
+const k2=e.target.closest("[data-k]");
+if(k2){cat=k2.dataset.k;view="home";q="";$("#q").value="";$("#co").classList.remove("on");C();R();N();top();return}
+const f=e.target.closest("[data-f]");
+if(f){const nm=P[f.dataset.f][1],ix=fav.indexOf(nm);if(ix<0)fav.push(nm);else fav.splice(ix,1);sv();R();return}
+if(e.target.id=="co"||e.target.id=="xc")$("#co").classList.remove("on")});
+N();
 C();R();
 </script>
 </body>
