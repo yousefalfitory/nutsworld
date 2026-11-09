@@ -35,6 +35,11 @@ input,textarea{width:100%;font:inherit;padding:11px 12px;border:1px solid var(--
 #bar.on{display:flex}
 #bar button{font:inherit;font-weight:800;border:0;border-radius:12px;padding:10px 18px;background:#f2b457;color:#3a2a05}
 .ov{position:fixed;inset:0;background:#000a;display:none;z-index:9}
+#ov{inset:0 0 calc(var(--nh) + env(safe-area-inset-bottom,0px)) 0;background:var(--bg);z-index:6}
+#ov .sh{position:static;max-height:none;height:100%;overflow:auto;border-radius:0;max-width:560px;margin:auto;padding:calc(12px + env(safe-area-inset-top,0px)) 14px 24px}
+#ov .sh>h2{justify-content:flex-start;gap:10px;font-size:22px}
+#ov #x{order:-1;background:#e4f5ea;border:1px solid #b9e0c6;color:#1b7a45;border-radius:50%;width:38px;height:38px;font-size:20px;line-height:1;padding:0}
+[data-theme="dark"] #ov #x{background:#1f3a2b;color:#7fe0a8;border-color:#2f5a42}
 .ov.on{display:block}
 .sh{position:absolute;inset:auto 0 0 0;max-height:92%;overflow:auto;background:var(--bg);border-radius:24px 24px 0 0;padding:16px 16px calc(20px + env(safe-area-inset-bottom,0px))}
 .sh h2{margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
@@ -141,7 +146,9 @@ footer{margin-top:30px}
 .mi{display:flex;align-items:center;gap:12px;width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:16px;background:var(--card);font:inherit;font-size:15px;color:var(--tx);margin-top:10px;text-align:start}
 .mi .ic{flex:none;width:40px;height:40px;border-radius:12px;background:#e4f5ea;color:#1b7a45;display:grid;place-items:center}
 .mi .ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.mi .tx{flex:1;font-weight:700}.mi .go{color:var(--mut);font-size:20px;line-height:1}
+.mi .tx{flex:1;font-weight:700}.mi .go{color:#fff;opacity:.85;font-size:20px;line-height:1}
+.mi{background:#2f8a57;border-color:#2f8a57;color:#fff}.mi .tx small.m{color:#e4f5ea!important}
+.mi .sw{box-shadow:0 0 0 2px #ffffff55}
 [data-theme="dark"] .mi .ic{background:#1f3a2b;color:#7fe0a8}
 .sw{flex:none;width:48px;height:28px;border-radius:99px;background:#c9d3cc;position:relative;transition:background .2s;border:0;padding:0}
 .sw::after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0003;transition:inset-inline-start .2s}
@@ -252,11 +259,11 @@ const ZO=()=>{const s=$("#z"),v=s.value,en=lang=="en";s.innerHTML=`<option value
 function A(){const en=lang=="en",d=document.documentElement;d.lang=en?"en":"ar";d.dir=en?"ltr":"rtl";
 document.querySelectorAll("[data-t]").forEach(e=>{e.textContent=TR[e.dataset.t][en?1:0]});
 document.querySelectorAll("[data-ph]").forEach(e=>{e.placeholder=TR[e.dataset.ph][en?1:0]});
-$("#lg").textContent=en?"العربية":"English";$("#xa").textContent=en?"←":"→";$("#bk").innerHTML=BK();$("#bk2").innerHTML=BK();ZO();gpsUI();document.title=en?"Nuts World":"عالم المكسرات"}
+$("#lg").textContent=en?"العربية":"English";$("#xa").textContent=en?"←":"→";$("#x").textContent=en?"←":"→";$("#bk").innerHTML=BK();$("#bk2").innerHTML=BK();ZO();gpsUI();document.title=en?"Nuts World":"عالم المكسرات"}
 try{fav=JSON.parse(localStorage.getItem("nw_fav")||"[]")}catch(_){}
 const sv=()=>{try{localStorage.setItem("nw_fav",JSON.stringify(fav))}catch(_){}};
 const svp=()=>{try{sessionStorage.setItem("nw_pg",JSON.stringify({v:view,cat,ac:$("#ac").classList.contains("on")?pg:"",ov:$("#ov").classList.contains("on")&&$("#dn").hidden,sub:typeof sub=="string"?sub:""}))}catch(_){}};
-const N=()=>{document.querySelectorAll("#nv button").forEach(b=>b.classList.toggle("on",b.dataset.n==($("#ac").classList.contains("on")?pg:view)));svp()};
+const N=()=>{document.querySelectorAll("#nv button").forEach(b=>b.classList.toggle("on",b.dataset.n==($("#ov").classList.contains("on")?"cart":$("#ac").classList.contains("on")?pg:view)));svp()};
 const T=m=>{const t=$("#ts");t.textContent=m;t.classList.add("on");clearTimeout(tm);tm=setTimeout(()=>t.classList.remove("on"),1800)};
 const goTop=()=>scrollTo({top:0,behavior:"smooth"});
 function V(v){view=v;if(v=="home"){cat="الكل";q="";$("#q").value=""}C();R();N();goTop()}
@@ -281,8 +288,8 @@ const b=e.target.closest("[data-d]");
 if(b){const i=b.dataset.i,d=+b.dataset.d,k=cart[i]||0,n=!k&&d>0?0.5:k+d*0.25;if(n>0)cart[i]=n;else delete cart[i];R();S();return}
 const c=e.target.closest("[data-c]");if(c){cat=c.dataset.c;view="home";q="";$("#q").value="";C();R();N();goTop()}});
 $("#q").oninput=e=>{q=e.target.value.trim();R()};
-$("#go").onclick=()=>{$("#ov").classList.add("on");$("#f").hidden=false;$("#cl").hidden=false;$("#dn").hidden=true;S();svp()};
-$("#ov").onclick=e=>{if(e.target.id=="emb"){$("#ov").classList.remove("on");V("home");return}if(e.target.id=="ov"||e.target.id=="x"){if(edId!=null)edCancel();$("#ov").classList.remove("on");svp()}};
+$("#go").onclick=()=>{$("#ac").classList.remove("on");$("#ov").classList.add("on");$("#ov .sh").scrollTop=0;$("#f").hidden=false;$("#cl").hidden=false;$("#dn").hidden=true;S();N()};
+$("#ov").onclick=e=>{if(e.target.id=="emb"){$("#ov").classList.remove("on");V("home");return}if(e.target.id=="x"){if(edId!=null)edCancel();$("#ov").classList.remove("on");N()}};
 $("#f").onsubmit=async e=>{e.preventDefault();if(tot()<MIN)return;const f=new FormData(e.target),btn=e.target.querySelector(".sub");btn.disabled=true;btn.textContent=L("snd");
 const t=calc(),items=Object.entries(cart).map(([i,k])=>({name:P[i][1],qty:qla(k),sum:fmt(P[i][2]*k)}));if(t.d)items.push({name:"خصم كود "+t.d.c,qty:"-",sum:"-"+fmt(t.ds)});
 const body={name:f.get("n")+(edId==null&&f.get("pay")=="bank"?" 💳 تحويل مصرفي":""),phone:f.get("p"),city:t.ar?"مصراتة - "+t.ar[0]:t.gf?"مصراتة - حسب الموقع":"خارج مصراتة - "+f.get("c"),address:(gps?"📍 https://maps.google.com/?q="+gps.lat.toFixed(6)+","+gps.lon.toFixed(6)+" | ":"")+(t.known?"توصيل "+fmt(t.fe)+" د.ل"+(t.gf?" (~"+gps.d.toFixed(1)+" كم)":"")+"، الإجمالي "+fmt(t.g)+" د.ل":"التوصيل يُحدَّد عند التأكيد")+" | "+f.get("a"),total:fmt(t.sub),items};const isEd=edId!=null,payv=isEd?edPay:(["bank","wallet","pos"].includes(f.get("pay"))?f.get("pay"):"cod"),bank=payv=="bank"&&!isEd;body.pay={bank:"تحويل مصرفي (بانتظار الإيصال على واتساب)",wallet:"المحفظة",pos:"بطاقة مصرفية عند الاستلام",cod:"كاش عند الاستلام"}[payv];body.meta={cn:f.get("n"),sub:t.s,disc:t.ds,del:t.known?t.fe:null,tot:t.g,loc:gps?{lat:gps.lat,lon:gps.lon}:null,lang,pay:payv,n:f.get("n"),c:f.get("c"),a:f.get("a"),lines:Object.entries(cart).map(([i,k])=>[+i,k]),zone:t.ar?{t:"area",i:AREAS.indexOf(t.ar)}:t.gf?{t:"gps",lat:gps.lat,lon:gps.lon}:{t:"out"},code:t.d?t.d.c:"",...(isEd?{edit:edId}:{})};
@@ -290,11 +297,11 @@ try{const t0=await tok(),r=await fetch("/api/order",{method:"POST",headers:{"Con
 $("#f").hidden=true;$("#cl").hidden=true;$("#dn").hidden=false;$("#bi").hidden=!bank;if(bank){const m="السلام عليكم، هذا إيصال تحويل طلبي.\nالاسم: "+f.get("n")+"\nالهاتف: "+f.get("p")+"\nالمبلغ: "+fmt(t.g)+" د.ل"+(t.known?"":" (بدون التوصيل)");$("#bw").href="https://wa.me/218912909007?text="+encodeURIComponent(m)}if(isEd){cart=edBk||{};edEnd()}else cart={};R();e.target.reset();gps=null;gst="";$("#bk").hidden=true;zu();gpsUI()}
 catch(x){alert(WE(x));if(x&&(x.code=="locked"||x.code=="noorder")){edCancel();$("#ov").classList.remove("on")}}
 btn.disabled=false;btn.textContent=edId!=null?T2("حفظ التعديل","Save changes"):L("cf")};
-$("#ok").onclick=()=>{$("#ov").classList.remove("on");svp()};
+$("#ok").onclick=()=>{$("#ov").classList.remove("on");N()};
 $("#z").onchange=()=>{if($("#z").value!==""){gps=null;gst=""}zu();gpsUI();S()};$("#k").oninput=S;$("#cd").hidden=!Object.keys(CODES).length;
 document.addEventListener("click",e=>{
 const n=e.target.closest("[data-n]");
-if(n){const k=n.dataset.n;if(k!="acct"&&k!="wal"){$("#ac").classList.remove("on");N()}
+if(n){const k=n.dataset.n;if(k!="cart"){if(edId!=null)edCancel();$("#ov").classList.remove("on")}if(k!="acct"&&k!="wal"){$("#ac").classList.remove("on");N()}
 if(k=="cats")V("home")
 else if(k=="cart")$("#go").click()
 else if(k=="acct"||k=="wal")openAc(k);else V(k);return}
@@ -454,7 +461,7 @@ h=msg+(infoEd?F("save",I("الاسم","Name","fn","text",`value="${esc(p.full_na
 :`<div class="ibox">${row("الاسم","Name",p.full_name)}${row("رقم الهاتف","Phone",locPh(p.phone),1)}${row("الإيميل","Email",p.email,1)}${row("المدينة","City",p.city)}${row("العنوان","Address",p.address)}</div><button type="button" class="sub" data-a="infoed">✏️ ${T2("تعديل بياناتي الشخصية","Edit my details")}</button>`)}
 else if(v=="ords")h=msg+`<p class="m" style="margin:0 0 6px;font-size:13px">${T2("تقدر تعدّل طلبك خلال 10 دقائق من إرساله. لإلغاء طلب تواصل معنا على واتساب.","You can edit an order within 10 minutes of placing it. To cancel, contact us on WhatsApp.")}</p><div id="ol"></div>`;
 else{const p=prof||{},ini=String(p.full_name||"؟").trim().charAt(0),go=`<span class="go">${lang=="en"?"›":"‹"}</span>`;
-h=`<div class="phd"><div class="av">${esc(ini)}</div><b>${esc(p.full_name||"")}${String(p.email||"").toLowerCase()==OWNER?VB:""}</b><span dir="ltr">${esc(locPh(p.phone))}</span></div>`+msg+wvBox()
+h=`<div class="phd"><div class="av">${esc(ini)}</div><b>${esc(p.full_name||"")}</b><span dir="ltr">${esc(locPh(p.phone))}</span></div>`+msg+wvBox()
 +`<button type="button" class="mi" data-a="goinfo"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg></span><span class="tx">${T2("بياناتي الشخصية","My details")}</span>${go}</button>`
 +(pkOK()?`<div class="mi"><span class="ic">${FP}</span><span class="tx">${T2("الدخول بالبصمة","Fingerprint login")}<br><small class="m" style="font-weight:400">${hasPk()?T2("مفعّلة على هذا الجهاز","On for this device"):T2("غير مفعّلة","Off")}</small></span><button type="button" class="sw${hasPk()?" on":""}" role="switch" aria-checked="${hasPk()}" aria-label="${T2("الدخول بالبصمة","Fingerprint login")}" data-a="pktog"></button></div>`:"")
 +`<button type="button" class="mi" data-a="goords"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"/><path d="M4 6h16M9 10a3 3 0 006 0"/></svg></span><span class="tx">${T2("طلباتي","My orders")}</span>${go}</button>`
