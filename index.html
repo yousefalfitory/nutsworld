@@ -103,6 +103,24 @@ footer{margin-top:30px}
 [data-theme="dark"] .lk{color:#7fe0a8}
 #acb h3{margin:14px 0 4px;font-size:15px}
 #on{font-weight:800;color:var(--pc)}
+.pg{display:none;position:fixed;inset:0 0 calc(var(--nh) + env(safe-area-inset-bottom,0px)) 0;overflow:auto;background:var(--bg);z-index:6;padding:calc(12px + env(safe-area-inset-top,0px)) 14px 24px}
+.pg.on{display:block}
+.pgi{max-width:560px;margin:auto}
+.pgh{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.pgh h2{margin:0;font-size:22px}
+.pgh button{background:#e4f5ea;border:1px solid #b9e0c6;color:#1b7a45;border-radius:50%;width:38px;height:38px;font-size:20px;line-height:1;padding:0}
+[data-theme="dark"] .pgh button{background:#1f3a2b;color:#7fe0a8;border-color:#2f5a42}
+.pw{position:relative}
+.pw input{padding-inline-end:46px}
+.eye{position:absolute;inset-inline-end:6px;top:50%;transform:translateY(-50%);background:none;border:0;padding:8px;line-height:0;color:var(--mut)}
+.eye svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ct{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--tx);font:inherit}
+.ct .ce{font-size:44px;width:76px;height:76px;border-radius:50%;background:#f2b45733;display:grid;place-items:center}
+.ct b{display:block;max-width:100%;background:#0a5c33;color:#fff;border-radius:10px;padding:7px 12px;font-size:15px;line-height:1.3;text-align:center}.ct small{color:var(--mut)}
+.hd2{grid-column:1/-1;display:flex;align-items:center;gap:10px}
+.hd2 b{font-size:18px}
+.hd2 button{background:#e4f5ea;border:1px solid #b9e0c6;color:#1b7a45;border-radius:50%;width:38px;height:38px;font-size:20px;line-height:1;padding:0}
+[data-theme="dark"] .hd2 button{background:#1f3a2b;color:#7fe0a8;border-color:#2f5a42}
 </style>
 <script>try{if(localStorage.getItem("nw_theme")==="dark")document.documentElement.dataset.theme="dark"}catch(_){}</script>
 </head>
@@ -126,7 +144,7 @@ footer{margin-top:30px}
 <button data-n="acct"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span data-t="n6">حسابي</span></button>
 </nav>
 <div id="ts"></div>
-<div class="ov" id="ac"><div class="sh"><h2><span id="act"></span><button id="xa" aria-label="x" style="background:none;border:0;font-size:22px;color:var(--tx)">✕</button></h2><div id="acb"></div></div></div>
+<div class="pg" id="ac"><div class="pgi"><div class="pgh"><button id="xa" type="button" aria-label="Back"></button><h2 id="act"></h2></div><div id="acb"></div></div></div>
 <div class="ov" id="co"><div class="sh"><h2><span>الأصناف</span><button id="xc" aria-label="إغلاق" style="background:none;border:0;font-size:22px;color:var(--tx)">✕</button></h2><div id="cg"></div></div></div>
 <div class="ov" id="ov"><div class="sh">
 <h2><span data-t="ct">سلتك</span><button id="x" aria-label="إغلاق">✕</button></h2>
@@ -153,7 +171,7 @@ footer{margin-top:30px}
 </div>
 </div></div>
 <script>
-const E={"اللوز":"🌰","مكسرات فاخرة":"🥜","المشكّل":"🥜","سامينسا وبذور":"🌻","حمص وكاكاوية":"🫘","قهوة":"☕","زبيب وحلويات":"🍇"};
+const E={"اللوز":"🌰","مكسرات فاخرة":"🥜","المشكّل":"🥣","سامينسا وبذور":"🌻","حمص وكاكاوية":"🫘","قهوة":"☕","زبيب وحلويات":"🍇","مشروبات":"🥤"};
 const P=[
 ["اللوز","لوز طايب مالح",140],["اللوز","لوز طايب بلا ملح",140],["اللوز","لوز مدخن",140],["اللوز","لوز خزايني",110],["اللوز","لوز ني",135],["اللوز","لوز مزلّط",130],
 ["مكسرات فاخرة","كاجو كبير",185],["مكسرات فاخرة","كاجو مدخن",185],["مكسرات فاخرة","فستق أمريكي",205],["مكسرات فاخرة","فستق مدخن",205],["مكسرات فاخرة","مكاديميا",85],["مكسرات فاخرة","حبهان محمص",580],
@@ -173,7 +191,7 @@ const hav=(a,b,c,d)=>{const r=Math.PI/180,x=Math.sin((c-a)*r/2)**2+Math.cos(a*r)
 let view="home",fav=[],tm;
 let lang="ar";try{lang=localStorage.getItem("nw_lang")==="en"?"en":"ar"}catch(_){}
 const PEN=["Roasted Almonds (Salted)","Roasted Almonds (Unsalted)","Smoked Almonds","Khazayni Almonds","Raw Almonds","Blanched Almonds","Large Cashews","Smoked Cashews","American Pistachios","Smoked Pistachios","Macadamia","Roasted Cardamom","Mixed Nuts","Smoked Mixed Nuts","Seasoned Mixed Nuts","BBQ Mixed Nuts","Black Sunflower Seeds","White Sunflower Seeds (Lightly Salted)","White Sunflower Seeds (Unsalted)","Shelled Sunflower Seeds (Seasoned)","Yellow Sunflower Seeds","Pumpkin Seeds","Grilled Chickpeas","Roasted Chickpeas","Chickpeas with Sesame","Seasoned Chickpeas","Salted Chickpeas","Peanuts","Peanuts with Sauce","Peanuts with Sesame","Sugar-Coated Peanuts","Peanuts with Sesame & Honey","Toffee Peanuts","Balila","Brazilian Coffee","Brazilian Coffee (Crushed)","Brazilian Coffee with Cardamom","Black Raisins","Golden Raisins","Chips","Jelly Candy","Viva Biscuits","Crunchy Biscuits","Old Biscuits","Sharshour Chocolate"];
-const CEN=["Almonds","Premium Nuts","Mixed Nuts","Seeds","Chickpeas & Peanuts","Coffee","Raisins & Sweets"];
+const CEN=["Almonds","Premium Nuts","Mixed Nuts","Seeds","Chickpeas & Peanuts","Coffee","Raisins & Sweets","Drinks"];
 const TR={tag:["للتسالي والمكسرات الساخنة","For Snacks & Hot Roasted Nuts"],mn:["أقل قيمة للطلب هي 40 دينار ليبي","Minimum order value is 40 LYD"],zp:["اختر منطقتك","Choose your area"],srch:["ابحث عن صنف…","Search for an item…"],adrh:["عنوان المحل","Store address"],adr:["مصراتة، الدائري القوشي","Misrata, Al-Qushi Ring Road"],hrs:["من 11 صباحاً إلى 11 مساءً","11 AM to 11 PM"],map:["افتح الموقع على الخريطة","Open in Maps"],fb:["فيسبوك","Facebook"],ig:["إنستغرام","Instagram"],tt:["تيك توك","TikTok"],fnote:["الأسعار بالدينار الليبي للكيلوغرام الواحد · سعر التوصيل داخل مصراتة حسب المنطقة أو المسافة","Prices in Libyan dinar (LYD) per kilogram · Delivery fee inside Misrata depends on the area or distance"],go:["إتمام الطلب","Checkout"],n1:["الرئيسية","Home"],n2:["الأصناف","Categories"],n3:["التخفيض","Sale"],n4:["السلة","Cart"],n5:["المفضلة","Favorites"],ct:["سلتك","Your cart"],l_n:["الاسم","Name"],l_p:["رقم الهاتف","Phone number"],l_z:["أو اختر منطقتك","Or choose your area"],gp:["📍 حدد موقعي لحساب سعر التوصيل","📍 Use my location to calculate delivery"],gn:["نستخدم موقعك لحساب التوصيل فقط، ويُرسل مع طلبك.","We use your location only to calculate delivery, and it is sent with your order."],zm:["داخل مصراتة (20 د.ل)","Inside Misrata (20 LYD)"],zo:["خارج مصراتة (يُحدَّد عند التأكيد)","Outside Misrata (set on confirmation)"],l_c:["المدينة أو الحي","City or neighborhood"],l_a:["العنوان","Address"],l_k:["كود الخصم (إن وجد)","Discount code (if any)"],l_pay:["طريقة الدفع","Payment method"],cod:["عند الاستلام","Cash on delivery"],card:["بطاقة (معاملات) قريباً","Card (Moamalat), coming soon"],cf:["تأكيد الطلب","Place order"],d1:["وصل طلبك ✅","Your order was received ✅"],d2:["سنتواصل معك قريباً لتأكيد الطلب والتوصيل.","We will contact you soon to confirm your order and delivery."],d3:["رجوع للمتجر","Back to store"],snd:["جاري الإرسال…","Sending…"],err:["تعذر إرسال الطلب، حاول مرة ثانية.","Could not send the order, please try again."],empty:["السلة فارغة","Your cart is empty"],n6:["حسابي","Account"],bank:["تحويل مصرفي","Bank transfer"],bnote:["حوّل المبلغ ثم أرسل صورة الإيصال عبر واتساب ليتم تأكيد طلبك.","Transfer the amount, then send the receipt photo on WhatsApp to confirm your order."],bsend:["أرسل الإيصال عبر واتساب","Send receipt on WhatsApp"]};
 const L=k=>TR[k][lang=="en"?1:0],CU=()=>lang=="en"?"LYD":"د.ل";
 const cn=c=>lang!="en"?c:c=="الكل"?"All":CEN[Object.keys(E).indexOf(c)];
@@ -191,10 +209,10 @@ const ZO=()=>{const s=$("#z"),v=s.value,en=lang=="en";s.innerHTML=`<option value
 function A(){const en=lang=="en",d=document.documentElement;d.lang=en?"en":"ar";d.dir=en?"ltr":"rtl";
 document.querySelectorAll("[data-t]").forEach(e=>{e.textContent=TR[e.dataset.t][en?1:0]});
 document.querySelectorAll("[data-ph]").forEach(e=>{e.placeholder=TR[e.dataset.ph][en?1:0]});
-$("#lg").textContent=en?"العربية":"English";$("#bk").innerHTML=BK();$("#bk2").innerHTML=BK();ZO();gpsUI();document.title=en?"Nuts World":"عالم المكسرات"}
+$("#lg").textContent=en?"العربية":"English";$("#xa").textContent=en?"←":"→";$("#bk").innerHTML=BK();$("#bk2").innerHTML=BK();ZO();gpsUI();document.title=en?"Nuts World":"عالم المكسرات"}
 try{fav=JSON.parse(localStorage.getItem("nw_fav")||"[]")}catch(_){}
 const sv=()=>{try{localStorage.setItem("nw_fav",JSON.stringify(fav))}catch(_){}};
-const N=()=>document.querySelectorAll("#nv button").forEach(b=>b.classList.toggle("on",b.dataset.n==view));
+const N=()=>document.querySelectorAll("#nv button").forEach(b=>b.classList.toggle("on",b.dataset.n==($("#ac").classList.contains("on")?"acct":view)));
 const T=m=>{const t=$("#ts");t.textContent=m;t.classList.add("on");clearTimeout(tm);tm=setTimeout(()=>t.classList.remove("on"),1800)};
 const goTop=()=>scrollTo({top:0,behavior:"smooth"});
 function V(v){view=v;if(v=="home"){cat="الكل";q="";$("#q").value=""}C();R();N();goTop()}
@@ -202,10 +220,14 @@ const code=()=>{const v=($("#k")?.value||"").trim().toUpperCase();return CODES[v
 const calc=()=>{const s=tot(),d=code(),ds=d?Math.round(s*d.p)/100:0,v=$("#z")?.value||"",ar=v!==""&&v!=="o"?AREAS[+v]:null,gf=!ar&&v===""&&gps&&!gps.out?gps:null,out=v==="o"||(v===""&&!!gps&&!!gps.out),fe=ar?ar[2]:gf?gf.fee:0;return{s,d,ds,ar,gf,out,known:!!(ar||gf),fe,sub:s-ds,g:s-ds+fe}};
 const tot=()=>Object.entries(cart).reduce((s,[i,k])=>s+P[i][2]*k,0);
 const stp=i=>`<div class="st"><button data-i="${i}" data-d="-1">−</button><b>${ql(cart[i])}</b><button data-i="${i}" data-d="1">+</button></div>`;
-function C(){$("#ch").innerHTML=["الكل",...Object.keys(E)].map(c=>`<button data-c="${c}" class="${view=="home"&&c==cat?"on":""}">${cn(c)}</button>`).join("")}
+function C(){$("#ch").innerHTML=Object.keys(E).map(c=>`<button data-c="${c}" class="${view=="home"&&c==cat?"on":""}">${cn(c)}</button>`).join("")}
+const TL=()=>{const en=lang=="en";return Object.keys(E).map(c=>{const n=P.filter(p=>p[0]==c).length;return `<button type="button" class="ct" data-c="${c}"><span class="ce">${E[c]}</span><b>${cn(c)}</b><small>${n?n+" "+(en?"items":"صنف"):(en?"Soon":"قريباً")}</small></button>`}).join("")};
 function R(){
-const en=lang=="en",ql2=q.toLowerCase();
-$("#g").innerHTML=P.map((p,i)=>[p,i]).filter(([p,i])=>(view=="sale"?SALE[p[1]]:view=="fav"?fav.includes(p[1]):(cat=="الكل"||p[0]==cat))&&(p[1].includes(q)||PEN[i].toLowerCase().includes(ql2))).map(([p,i])=>`<div class="c"><button class="fv" data-f="${i}" aria-label="♥">${fav.includes(p[1])?"♥":"♡"}</button><div class="e">${E[p[0]]}</div><h3>${nmOf(i)}</h3>${SALE[p[1]]?`<span class="bd">${en?"Sale":"تخفيض"}</span>`:""}<div class="pr">${p[2]} ${SALE[p[1]]?`<s class="m">${SALE[p[1]]}</s> `:""}<small>${CU()} / ${en?"kg":"كغ"}</small></div>${cart[i]?stp(i):`<button class="add" data-i="${i}" data-d="1">${en?"Add to cart":"أضف للسلة"}</button>`}</div>`).join("")||`<p class="m" style="grid-column:1/-1">${view=="sale"?(en?"No sale items right now, stay tuned":"لا توجد تخفيضات حالياً، تابعنا قريباً"):view=="fav"?(en?"No favorites yet, tap the heart on any item":"لم تضف أي صنف للمفضلة بعد، اضغط على القلب في أي صنف"):(en?"No results":"لا توجد نتائج")}</p>`;
+const en=lang=="en",ql2=q.toLowerCase(),root=view=="home"&&cat=="الكل"&&!q;
+$("#ch").hidden=root;
+const hd=(view=="home"&&(cat!="الكل"||q))?`<div class="hd2"><button type="button" data-c="الكل" aria-label="back">${en?"←":"→"}</button><b>${cat=="الكل"?(en?"Search results":"نتائج البحث"):cn(cat)}</b></div>`:"";
+const list=P.map((p,i)=>[p,i]).filter(([p,i])=>(view=="sale"?SALE[p[1]]:view=="fav"?fav.includes(p[1]):(cat=="الكل"||p[0]==cat))&&(p[1].includes(q)||PEN[i].toLowerCase().includes(ql2))).map(([p,i])=>`<div class="c"><button class="fv" data-f="${i}" aria-label="♥">${fav.includes(p[1])?"♥":"♡"}</button><div class="e">${E[p[0]]}</div><h3>${nmOf(i)}</h3>${SALE[p[1]]?`<span class="bd">${en?"Sale":"تخفيض"}</span>`:""}<div class="pr">${p[2]} ${SALE[p[1]]?`<s class="m">${SALE[p[1]]}</s> `:""}<small>${CU()} / ${en?"kg":"كغ"}</small></div>${cart[i]?stp(i):`<button class="add" data-i="${i}" data-d="1">${en?"Add to cart":"أضف للسلة"}</button>`}</div>`).join("")||`<p class="m" style="grid-column:1/-1">${view=="sale"?(en?"No sale items right now, stay tuned":"لا توجد تخفيضات حالياً، تابعنا قريباً"):view=="fav"?(en?"No favorites yet, tap the heart on any item":"لم تضف أي صنف للمفضلة بعد، اضغط على القلب في أي صنف"):(view=="home"&&cat!="الكل"&&!q?(en?"Coming soon, items will be added here":"قريباً، سنضيف أصناف هذا القسم هنا"):(en?"No results":"لا توجد نتائج"))}</p>`;
+$("#g").innerHTML=root?TL():hd+list;
 const n=Object.keys(cart).length;$("#bar").classList.toggle("on",n>0);$("#bn").textContent=n+(en?" items":" أصناف");$("#bt").textContent=fmt(tot())+" "+CU();$("#nb").hidden=!n;$("#nb").textContent=n}
 function S(){const ks=Object.keys(cart),en=lang=="en";if(!ks.length)$("#ov").classList.remove("on");const t=calc(),c=CU();
 $("#f").querySelector('button[type="submit"]').disabled=t.s<MIN;
@@ -213,7 +235,7 @@ $("#cl").innerHTML=ks.map(i=>`<div class="r"><span>${nmOf(i)}<br><small class="m
 document.addEventListener("click",e=>{
 const b=e.target.closest("[data-d]");
 if(b){const i=b.dataset.i,d=+b.dataset.d,k=cart[i]||0,n=!k&&d>0?0.5:k+d*0.25;if(n>0)cart[i]=n;else delete cart[i];R();S();return}
-const c=e.target.closest("[data-c]");if(c){cat=c.dataset.c;view="home";C();R();N()}});
+const c=e.target.closest("[data-c]");if(c){cat=c.dataset.c;view="home";q="";$("#q").value="";C();R();N();goTop()}});
 $("#q").oninput=e=>{q=e.target.value.trim();R()};
 $("#go").onclick=()=>{$("#ov").classList.add("on");$("#f").hidden=false;$("#cl").hidden=false;$("#dn").hidden=true;S()};
 $("#ov").onclick=e=>{if(e.target.id=="ov"||e.target.id=="x")$("#ov").classList.remove("on")};
@@ -228,8 +250,8 @@ $("#ok").onclick=()=>$("#ov").classList.remove("on");
 $("#z").onchange=()=>{if($("#z").value!==""){gps=null;gst=""}zu();gpsUI();S()};$("#k").oninput=S;$("#cd").hidden=!Object.keys(CODES).length;
 document.addEventListener("click",e=>{
 const n=e.target.closest("[data-n]");
-if(n){const k=n.dataset.n;
-if(k=="cats"){view="home";q="";$("#q").value="";C();R();N();const c=$("#ch");c.scrollIntoView({behavior:"smooth",block:"start"});c.classList.add("hl");setTimeout(()=>c.classList.remove("hl"),1400)}
+if(n){const k=n.dataset.n;if(k!="acct"){$("#ac").classList.remove("on");N()}
+if(k=="cats")V("home")
 else if(k=="cart"){if(Object.keys(cart).length)$("#go").click();else T(L("empty"))}
 else if(k=="acct")openAc();else V(k);return}
 const k2=e.target.closest("[data-k]");
@@ -244,6 +266,7 @@ const ICO=d=>d?'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d=
 $("#th").innerHTML=ICO(document.documentElement.dataset.theme=="dark");
 $("#th").onclick=()=>{const d=document.documentElement.dataset.theme!="dark";document.documentElement.dataset.theme=d?"dark":"light";try{localStorage.setItem("nw_theme",d?"dark":"light")}catch(_){}$("#th").innerHTML=ICO(d)};
 const T2=(a,e)=>lang=="en"?e:a;
+const EYE0='<svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',EYE1='<svg viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M10.6 6.2A9.8 9.8 0 0 1 12 6c6 0 10 6 10 6a17 17 0 0 1-3.2 3.9M6.4 6.9C3.7 8.6 2 12 2 12s4 6 10 6c1.4 0 2.7-.3 3.9-.8"/><path d="M9.9 10a3 3 0 0 0 4.1 4.1"/></svg>';
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const normPh=p=>{let d=String(p||"").replace(/\D/g,"");if(d.startsWith("00"))d=d.slice(2);if(d.startsWith("0"))d="218"+d.slice(1);else if(/^9\d{8}$/.test(d))d="218"+d;return d};
 const SBU="https://fffremcwrsgovpgfyrwd.supabase.co",SBK="sb_publishable_-JgCE3ZQ_hrQ53GcI7Q6Jw_ilrBUXXb";
@@ -258,6 +281,7 @@ ses=null;prof=null;svs();return null}
 const EM={invalid:["بيانات الدخول غير صحيحة","Incorrect login details"],unconfirmed:["أكد إيميلك أولاً ثم حاول مرة ثانية","Please confirm your email first"],name:["اكتب اسمك","Enter your name"],phone:["رقم الهاتف غير صحيح","Invalid phone number"],email:["الإيميل غير صحيح","Invalid email"],weak:["كلمة المرور لازم تكون 8 خانات على الأقل","Password must be at least 8 characters"],exists:["الإيميل أو رقم الهاتف مسجل مسبقاً","Email or phone is already registered"],code:["الكود غير صحيح أو انتهت صلاحيته","Wrong or expired code"],err:["حصل خطأ، حاول مرة ثانية","Something went wrong, please try again"]};
 const errMsg=x=>{const e=EM[x&&x.message]||EM.err;return lang=="en"?e[1]:e[0]};
 const EMR=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const locPh=p=>{p=String(p||"");return p.startsWith("218")?"0"+p.slice(3):p};
 function prefill(){if(!prof)return;const set=(id,v)=>{const e=$(id);if(e&&!e.value&&v)e.value=v};const ph=String(prof.phone||"");set("#n",prof.full_name);set("#p",ph.startsWith("218")?"0"+ph.slice(3):ph);set("#a",prof.address);set("#c",prof.city)}
 async function loadProf(){const t=await tok();if(!t){prof=null;return}
 try{const r=await au("/rest/v1/profiles?select=full_name,phone,email,city,address,role&id=eq."+ses.uid,{},t);const a=await r.json();prof=(Array.isArray(a)&&a[0])||null}catch(_){prof=null}
@@ -283,20 +307,21 @@ e.innerHTML=Array.isArray(a)&&a.length?a.map(o=>`<div class="r"><span>#${esc(o.i
 function AC(){const b=$("#acb"),v=rec?"rec":ses?"prof":acv,msg=am?`<p class="${amok?"ok":"mw"}">${esc(am)}</p>`:"";
 const ttl={login:["تسجيل الدخول","Sign in"],reg:["حساب جديد","Create account"],ver:["تأكيد الإيميل","Verify email"],forgot:["استعادة كلمة المرور","Reset password"],rec:["كلمة مرور جديدة","New password"],prof:["حسابي","My account"]}[v]||["",""];
 $("#act").textContent=ttl[lang=="en"?1:0];
-const F=(k,body,btn)=>`<form class="f" data-f="${k}">${body}<button class="sub" type="submit">${btn}</button></form>`,I=(a,e,n,t,x)=>`<label>${T2(a,e)}</label><input name="${n}" type="${t||"text"}" ${x||""}>`,B=(k,a,e)=>`<button type="button" class="lk" data-a="${k}">${T2(a,e)}</button>`;
+const F=(k,body,btn)=>`<form class="f" data-f="${k}">${body}<button class="sub" type="submit">${btn}</button></form>`,I=(a,e,n,t,x)=>t=="password"?`<label>${T2(a,e)}</label><div class="pw"><input name="${n}" type="password" ${x||""}><button type="button" class="eye" data-eye aria-label="${T2("إظهار كلمة المرور","Show password")}">${EYE0}</button></div>`:`<label>${T2(a,e)}</label><input name="${n}" type="${t||"text"}" ${x||""}>`,B=(k,a,e)=>`<button type="button" class="lk" data-a="${k}">${T2(a,e)}</button>`;
 let h="";
 if(v=="login")h=msg+F("login",I("رقم الهاتف أو الإيميل","Phone or email","l","text",'autocomplete="username" required')+I("كلمة المرور","Password","pw","password",'autocomplete="current-password" required'),T2("دخول","Sign in"))+`<p style="text-align:center">${B("forgot","نسيت كلمة المرور؟","Forgot password?")} ${B("reg","حساب جديد","Create account")}</p><p class="m" style="text-align:center">${T2("الحساب اختياري، تقدر تطلب بدون تسجيل.","An account is optional, you can order without one.")}</p>`;
 else if(v=="reg")h=msg+F("reg",I("الاسم","Name","fn","text",'autocomplete="name" required')+I("رقم الهاتف","Phone number","ph","tel",'autocomplete="tel" required')+I("الإيميل","Email","em","email",'autocomplete="email" required')+I("كلمة المرور (8 خانات على الأقل)","Password (at least 8 characters)","pw","password",'autocomplete="new-password" required'),T2("إنشاء الحساب","Create account"))+`<p style="text-align:center">${B("login","عندي حساب","I have an account")}</p>`;
 else if(v=="ver")h=msg+`<p class="m">${T2("أرسلنا كود تأكيد إلى","We sent a confirmation code to")} <b dir="ltr">${esc(pend)}</b></p>`+F("ver",I("الكود","Code","cd","text",'inputmode="numeric" autocomplete="one-time-code" required'),T2("تأكيد","Confirm"))+`<p style="text-align:center">${B("login","رجوع","Back")}</p>`;
 else if(v=="forgot")h=msg+F("forgot",I("الإيميل","Email","em","email",'autocomplete="email" required'),T2("إرسال الرابط","Send link"))+`<p style="text-align:center">${B("login","رجوع","Back")}</p>`;
 else if(v=="rec")h=msg+F("rec",I("كلمة المرور الجديدة","New password","pw","password",'autocomplete="new-password" required'),T2("حفظ","Save"));
-else{const p=prof||{};h=`<p><b>${esc(p.full_name||"")}</b><br><span class="m" dir="ltr">${esc(p.phone||"")} · ${esc(p.email||"")}</span></p>`+msg+F("save",I("الاسم","Name","fn","text",`value="${esc(p.full_name||"")}"`)+I("المدينة","City","ct","text",`value="${esc(p.city||"")}"`)+I("العنوان","Address","ad","text",`value="${esc(p.address||"")}"`),T2("حفظ البيانات","Save details"))+`<div class="bk">💰 ${T2("المحفظة: قريباً","Wallet: coming soon")}</div><h3>${T2("طلباتي","My orders")}</h3><div id="ol"></div><p>${B("logout","تسجيل الخروج","Sign out")}</p>`}
+else{const p=prof||{};h=`<p><b>${esc(p.full_name||"")}</b><br><span class="m" dir="ltr">${esc(locPh(p.phone))} · ${esc(p.email||"")}</span></p>`+msg+F("save",I("الاسم","Name","fn","text",`value="${esc(p.full_name||"")}"`)+I("المدينة","City","ct","text",`value="${esc(p.city||"")}"`)+I("العنوان","Address","ad","text",`value="${esc(p.address||"")}"`),T2("حفظ البيانات","Save details"))+`<div class="bk">💰 ${T2("المحفظة: قريباً","Wallet: coming soon")}</div><h3>${T2("طلباتي","My orders")}</h3><div id="ol"></div><p>${B("logout","تسجيل الخروج","Sign out")}</p>`}
 b.innerHTML=h;if(v=="prof")loadOrd()}
-const openAc=()=>{$("#ac").classList.add("on");AC();if(ses&&!prof)loadProf().then(AC)};
+const openAc=()=>{$("#ac").classList.add("on");$("#ac").scrollTop=0;N();AC();if(ses&&!prof)loadProf().then(AC)};
 document.addEventListener("click",e=>{const a=e.target.closest("[data-a]");if(!a)return;e.preventDefault();const k=a.dataset.a;if(k=="logout"){doOut();return}acv=k;am="";AC()});
 document.addEventListener("submit",async e=>{const f=e.target.closest("[data-f]");if(!f)return;e.preventDefault();const fd=new FormData(f),k=f.dataset.f,bt=f.querySelector('button[type="submit"]');if(bt)bt.disabled=true;
 try{await acAct(k,fd)}catch(x){am=errMsg(x);amok=false}AC()});
-$("#ac").onclick=e=>{if(e.target.id=="ac"||e.target.id=="xa")$("#ac").classList.remove("on")};
+document.addEventListener("click",e=>{const b=e.target.closest("[data-eye]");if(!b)return;const i=b.parentElement.querySelector("input"),s=i.type==="password";i.type=s?"text":"password";b.innerHTML=s?EYE1:EYE0;b.setAttribute("aria-label",s?T2("إخفاء كلمة المرور","Hide password"):T2("إظهار كلمة المرور","Show password"))});
+$("#ac").onclick=e=>{if(e.target.closest&&e.target.closest("#xa")){$("#ac").classList.remove("on");N()}};
 {const hp=new URLSearchParams((typeof location!=="undefined"?location.hash:"").slice(1));if(hp.get("type")==="recovery"&&hp.get("access_token")){rec=hp.get("access_token");try{history.replaceState(null,"",location.pathname)}catch(_){}openAc()}}
 if(ses)loadProf();
 $("#gp").onclick=()=>{if(!navigator.geolocation){gst="err";gpsUI();return}
