@@ -39,10 +39,11 @@ a{color:#1b7a45}
 #ts.on{opacity:1}
 @media print{body *{visibility:hidden}[data-print],[data-print] *{visibility:visible}[data-print]{position:absolute;top:0;left:0;width:100%;border:0}.btns{display:none}@page{margin:6mm}}
 .pw{position:relative}.pw input{padding-inline-end:46px}.eye{position:absolute;inset-inline-end:6px;top:50%;transform:translateY(calc(-50% - 2px));background:none;border:0;padding:8px;line-height:0;color:var(--mut)}.eye svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.top select{width:auto;margin:0;background:#fff2;border:1px solid #fff5;color:#fff;border-radius:99px;padding:6px 10px;font-size:13px}.top select option{color:#000}
 </style>
 </head>
 <body>
-<header class="top"><b>🥜 لوحة الطلبات</b><span id="who"></span><button id="snd" type="button">🔔 تفعيل الصوت</button><button id="out" type="button" hidden>خروج</button></header>
+<header class="top"><b>🥜 لوحة الطلبات</b><span id="who"></span><select id="snsel" aria-label="نغمة التنبيه"></select><button id="snd" type="button">🔔 تفعيل الصوت</button><button id="out" type="button" hidden>خروج</button></header>
 <main id="app"></main>
 <div id="ts"></div>
 <script>
@@ -63,7 +64,16 @@ try{const r=await au("/auth/v1/token?grant_type=refresh_token",{method:"POST",bo
 ses=null;me=null;svs();return null}
 const isStaff=()=>!!me&&(me.role==="staff"||me.role==="admin"),isAdmin=()=>!!me&&me.role==="admin";
 function toast(m){const t=$("#ts");t.textContent=m;t.classList.add("on");clearTimeout(tm);tm=setTimeout(()=>t.classList.remove("on"),2200)}
-function beep(){if(!actx)return;try{[0,0.25,0.5].forEach(d=>{const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;g.gain.value=.25;o.connect(g);g.connect(actx.destination);o.start(actx.currentTime+d);o.stop(actx.currentTime+d+.18)})}catch(_){}}
+const ring=[];for(let k=0;k<2;k++)for(let j=0;j<10;j++)ring.push([j%2?480:440,k*1.5+j*.08,.08]);
+const SNDS={
+beep:{n:"بيب (الافتراضي)",w:"sine",g:.25,d:0,t:[[880,0,.18],[880,.25,.18],[880,.5,.18]]},
+bell:{n:"جرس",w:"sine",g:.4,d:1,t:[[988,0,.9],[784,.4,1.1],[988,1.5,.9],[784,1.9,1.1]]},
+ring:{n:"رنين هاتف",w:"square",g:.12,d:0,t:ring},
+alarm:{n:"تنبيه قوي",w:"sawtooth",g:.25,d:0,t:[[660,0,.2],[880,.25,.2],[660,.5,.2],[880,.75,.2],[660,1,.2],[880,1.25,.2]]},
+soft:{n:"هادئ",w:"triangle",g:.3,d:1,t:[[523,0,.5],[659,.25,.5],[784,.5,.9]]}};
+let snd="beep";try{const v=localStorage.getItem("nw_snd");if(v&&SNDS[v])snd=v}catch(_){}
+function beep(){if(!actx)return;const s=SNDS[snd]||SNDS.beep;
+try{s.t.forEach(([f,d,l])=>{const o=actx.createOscillator(),g=actx.createGain(),t0=actx.currentTime+d;o.type=s.w;o.frequency.value=f;g.gain.setValueAtTime(s.g,t0);if(s.d)g.gain.exponentialRampToValueAtTime(.001,t0+l);else g.gain.setValueAtTime(s.g,t0+l-.02);o.connect(g);g.connect(actx.destination);o.start(t0);o.stop(t0+l)})}catch(_){}}
 const tm2=s=>new Date(s).toLocaleString("en-GB",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
 const money=v=>v==null?"—":String(+(+v).toFixed(2))+" د.ل";
 const link=s=>esc(s).replace(/https?:\/\/[^\s<]+/g,u=>`<a href="${u}" target="_blank" rel="noopener">${u.length>34?"فتح الرابط":u}</a>`);
@@ -118,6 +128,8 @@ if(b=q("[data-rm]")){if(confirm("إزالة صلاحية هذا الحساب؟")
 document.addEventListener("submit",async e=>{const f=e.target.closest("[data-f]");if(!f)return;e.preventDefault();const fd=new FormData(f),k=f.dataset.f;
 if(k=="login"){msg="";try{const r=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({login:fd.get("l"),password:fd.get("pw")})});const d=await r.json().catch(()=>({}));if(!r.ok||!d.access_token)throw new Error("بيانات الدخول غير صحيحة");setS(d);await start()}catch(x){msg=x.message||"حصل خطأ";V()}}
 else if(k=="role"){try{await setRole(String(fd.get("em")||""),String(fd.get("rl")||"staff"));msg="";toast("تم الحفظ")}catch(x){msg=x.message}V()}});
+$("#snsel").innerHTML=Object.keys(SNDS).map(k=>`<option value="${k}">${SNDS[k].n}</option>`).join("");$("#snsel").value=snd;
+$("#snsel").onchange=()=>{const v=$("#snsel").value;if(!SNDS[v])return;snd=v;try{localStorage.setItem("nw_snd",v)}catch(_){}try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume();$("#snd").textContent="🔔 الصوت مفعل"}catch(_){}beep()};
 $("#snd").onclick=()=>{try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume();beep();$("#snd").textContent="🔔 الصوت مفعل";if(navigator.wakeLock)navigator.wakeLock.request("screen").catch(()=>{})}catch(_){toast("تعذر تفعيل الصوت")}};
 $("#out").onclick=()=>{const t=ses&&ses.access_token;ses=null;me=null;orders=[];known=null;svs();if(t)au("/auth/v1/logout",{method:"POST"},t).catch(()=>{});V()};
 document.addEventListener("visibilitychange",()=>{if(!document.hidden){newN=0;document.title=T0;if(ses&&isStaff())poll()}});
