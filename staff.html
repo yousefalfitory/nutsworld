@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>لوحة الطلبات - عالم المكسرات</title>
+<style>
+:root{--bg:#f6f3ea;--card:#fff;--tx:#1d2b22;--mut:#6b7a70;--line:#e3dcc8;--g:#0a5c33;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;font-family:Tajawal,"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--tx);padding-bottom:40px}
+.top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--g);color:#fff;padding:12px 14px}
+.top b{flex:1;font-size:17px}.top span{font-size:13px;opacity:.9}
+button{font:inherit;cursor:pointer}
+.top button{background:#fff2;border:1px solid #fff5;color:#fff;border-radius:99px;padding:6px 12px;font-size:13px}
+main{max-width:760px;margin:auto;padding:12px}
+.tabs,.fl{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px}
+.tabs button,.fl button{flex:none;border:1px solid var(--line);background:var(--card);border-radius:99px;padding:8px 14px;color:var(--tx)}
+.tabs .on,.fl .on{background:var(--g);color:#fff;border-color:var(--g)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
+.card.nw{border:2px solid #d97706}
+.card h3{margin:0 0 4px;display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:16px}
+.chip{font-size:12px;color:#fff;border-radius:99px;padding:3px 10px}
+.m{color:var(--mut);font-size:13px}
+.card ul{margin:8px 0;padding:0;list-style:none;font-size:14px}
+.card li{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px dashed var(--line)}
+.btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.btns button{border:1px solid var(--line);background:#f3f0e4;border-radius:10px;padding:8px 12px;font-size:13px}
+.btns .pri{background:var(--g);color:#fff;border-color:var(--g)}
+.box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:10px}
+input,select{width:100%;font:inherit;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--tx);margin:4px 0 8px}
+label{font-size:13px;color:var(--mut)}
+.sub{width:100%;background:var(--g);color:#fff;border:0;border-radius:12px;padding:12px;font-weight:700}
+.er{background:#fdecea;color:#b3261e;border-radius:10px;padding:8px 10px;font-size:13px;margin:8px 0}
+.row{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+a{color:#1b7a45}
+#ts{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:#1d2b22;color:#fff;padding:10px 18px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
+#ts.on{opacity:1}
+@media print{body *{visibility:hidden}[data-print],[data-print] *{visibility:visible}[data-print]{position:absolute;top:0;left:0;width:100%;border:0}.btns{display:none}@page{margin:6mm}}
+</style>
+</head>
+<body>
+<header class="top"><b>🥜 لوحة الطلبات</b><span id="who"></span><button id="snd" type="button">🔔 تفعيل الصوت</button><button id="out" type="button" hidden>خروج</button></header>
+<main id="app"></main>
+<div id="ts"></div>
+<script>
+const SBU="https://fffremcwrsgovpgfyrwd.supabase.co",SBK="sb_publishable_-JgCE3ZQ_hrQ53GcI7Q6Jw_ilrBUXXb";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ST={new:["جديد","#d97706"],preparing:["قيد التجهيز","#2563eb"],delivered:["تم التوصيل","#15803d"],cancelled:["ملغي","#b91c1c"]};
+const PAY={cod:"عند الاستلام",bank:"تحويل مصرفي (تأكد من الإيصال)",wallet:"من المحفظة",card:"بطاقة"};
+const T0="لوحة الطلبات - عالم المكسرات";
+let ses=null,me=null,tab="orders",flt="active",orders=[],known=null,newN=0,actx=null,msg="",logs=[],staff=[],sig="",tm;
+try{ses=JSON.parse(localStorage.getItem("nw_ses")||"null")}catch(_){}
+const svs=()=>{try{if(ses)localStorage.setItem("nw_ses",JSON.stringify(ses));else localStorage.removeItem("nw_ses")}catch(_){}};
+const au=(p,o,t)=>{o=o||{};return fetch(SBU+p,{...o,headers:{apikey:SBK,"Content-Type":"application/json",...(t?{Authorization:"Bearer "+t}:{}),...(o.headers||{})}})};
+const setS=d=>{ses={access_token:d.access_token,refresh_token:d.refresh_token,exp:Math.floor(Date.now()/1000)+(d.expires_in||3600),uid:(d.user&&d.user.id)||(ses&&ses.uid)};svs()};
+async function tok(){if(!ses)return null;if(ses.exp-60>Date.now()/1000)return ses.access_token;
+try{const r=await au("/auth/v1/token?grant_type=refresh_token",{method:"POST",body:JSON.stringify({refresh_token:ses.refresh_token})});const d=await r.json();if(r.ok&&d.access_token){setS(d);return ses.access_token}}catch(_){}
+ses=null;me=null;svs();return null}
+const isStaff=()=>!!me&&(me.role==="staff"||me.role==="admin"),isAdmin=()=>!!me&&me.role==="admin";
+function toast(m){const t=$("#ts");t.textContent=m;t.classList.add("on");clearTimeout(tm);tm=setTimeout(()=>t.classList.remove("on"),2200)}
+function beep(){if(!actx)return;try{[0,0.25,0.5].forEach(d=>{const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;g.gain.value=.25;o.connect(g);g.connect(actx.destination);o.start(actx.currentTime+d);o.stop(actx.currentTime+d+.18)})}catch(_){}}
+const tm2=s=>new Date(s).toLocaleString("en-GB",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
+const money=v=>v==null?"—":String(+(+v).toFixed(2))+" د.ل";
+const link=s=>esc(s).replace(/https?:\/\/[^\s<]+/g,u=>`<a href="${u}" target="_blank" rel="noopener">${u.length>34?"فتح الرابط":u}</a>`);
+
+async function loadMe(){const t=await tok();if(!t){me=null;return}
+try{const r=await au("/rest/v1/profiles?select=id,full_name,email,role&id=eq."+ses.uid,{},t);const a=await r.json();me=(Array.isArray(a)&&a[0])||null}catch(_){me=null}}
+const fl=o=>flt=="all"||(flt=="active"?(o.status=="new"||o.status=="preparing"):o.status==flt);
+function card(o){const its=(Array.isArray(o.items)?o.items:[]).map(i=>`<li><span>${esc(i.name)} · ${esc(i.qty)}</span><b>${esc(i.sum)} د.ل</b></li>`).join(""),s=ST[o.status]||[o.status,"#666"];
+const btn=Object.keys(ST).filter(k=>k!==o.status).map(k=>`<button type="button" data-st="${k}" data-id="${o.id}" class="${k=="preparing"||k=="delivered"?"pri":""}">${ST[k][0]}</button>`).join("");
+const loc=o.location&&o.location.lat?`<a href="https://maps.google.com/?q=${esc(o.location.lat)},${esc(o.location.lon)}" target="_blank" rel="noopener">📍 موقع العميل على الخريطة</a><br>`:"";
+return `<article class="card ${o.status=="new"?"nw":""}" data-id="${o.id}"><h3><span>#${o.id} · ${esc(o.customer_name)}</span><span class="chip" style="background:${s[1]}">${s[0]}</span></h3>
+<div class="m">${tm2(o.created_at)} · ${esc(PAY[o.payment]||o.payment)}${o.user_id?" · عميل مسجل":""}</div>
+<p style="margin:6px 0"><a href="tel:${esc(o.phone)}">📞 ${esc(o.phone)}</a><br>${esc(o.city)}<br>${loc}<span class="m">${link(o.address)}</span></p>
+<ul>${its}</ul>
+<div class="m">المجموع ${money(o.subtotal)}${+o.discount?" · خصم "+money(o.discount):""} · التوصيل ${o.delivery==null?"يُحدَّد":money(o.delivery)}</div>
+<b>الإجمالي ${money(o.total)}</b>
+<div class="btns">${btn}<button type="button" data-pr="${o.id}">🖨 طباعة</button></div></article>`}
+function V(){const a=$("#app");$("#out").hidden=!ses;$("#who").textContent=me?(me.full_name||me.email||""):"";
+if(!ses||!me){a.innerHTML=`<form class="box" data-f="login"><h3 style="margin-top:0">تسجيل الدخول</h3>${msg?`<div class="er">${esc(msg)}</div>`:""}<label>رقم الهاتف أو الإيميل</label><input name="l" autocomplete="username" required><label>كلمة المرور</label><input name="pw" type="password" autocomplete="current-password" required><button class="sub" type="submit">دخول</button></form>`;return}
+if(!isStaff()){a.innerHTML=`<div class="box">لا تملك صلاحية دخول هذه الصفحة. تواصل مع المدير.</div>`;return}
+const tabs=[["orders","الطلبات"]].concat(isAdmin()?[["log","سجل النشاط"],["staff","الموظفون"]]:[]);
+let h=`<div class="tabs">${tabs.map(t=>`<button type="button" data-tab="${t[0]}" class="${tab==t[0]?"on":""}">${t[1]}${t[0]=="orders"&&newN?` (${newN})`:""}</button>`).join("")}</div>`;
+if(tab=="orders"){const fs=[["active","النشطة"],["new","جديد"],["preparing","قيد التجهيز"],["delivered","تم التوصيل"],["cancelled","ملغي"],["all","الكل"]];
+const list=orders.filter(fl);
+h+=`<div class="fl">${fs.map(f=>`<button type="button" data-fl="${f[0]}" class="${flt==f[0]?"on":""}">${f[1]}</button>`).join("")}</div>`+(list.length?list.map(card).join(""):`<div class="box m">لا توجد طلبات هنا</div>`)}
+else if(tab=="log"){h+=`<div class="box"><div class="btns" style="margin:0 0 6px"><button type="button" data-rf="log">تحديث</button></div>`+(logs.length?logs.map(e=>`<div class="row"><span>${tm2(e.created_at)} · ${e.order_id?"#"+e.order_id+" · ":""}<b>${esc(e.actor_name||"النظام")}</b></span><span>${e.event=="created"?"وصل طلب جديد":e.event=="status"?`${(ST[e.from_status]||[e.from_status])[0]} ← ${(ST[e.to_status]||[e.to_status])[0]}`:esc(e.note||"")}</span></div>`).join(""):`<p class="m">لا توجد أحداث بعد</p>`)+`</div>`}
+else{h+=`${msg?`<div class="er">${esc(msg)}</div>`:""}<form class="box" data-f="role"><h3 style="margin-top:0">إضافة موظف</h3><p class="m">الموظف يسجل حساباً عادياً في الموقع أولاً، ثم اكتب إيميله هنا.</p><label>إيميل الحساب</label><input name="em" type="email" required><label>الصلاحية</label><select name="rl"><option value="staff">موظف</option><option value="admin">مدير</option></select><button class="sub" type="submit">حفظ</button></form><div class="box"><h3 style="margin-top:0">الفريق</h3>`+(staff.length?staff.map(s=>`<div class="row"><span>${esc(s.full_name||"")} <span class="m" dir="ltr">${esc(s.email||"")}</span></span><span>${s.role=="admin"?"مدير":"موظف"}${s.id!==ses.uid?` <button type="button" data-rm="${esc(s.email)}">إزالة</button>`:""}</span></div>`).join(""):`<p class="m">—</p>`)+`</div>`}
+a.innerHTML=h}
+async function loadOrders(){const t=await tok();if(!t)return false;
+try{const r=await au("/rest/v1/orders?select=*&order=created_at.desc&limit=100",{},t);const a=await r.json();if(!Array.isArray(a))return false;
+const ids=new Set(a.map(o=>o.id));
+if(known){const fresh=a.filter(o=>!known.has(o.id));if(fresh.length){newN+=fresh.length;beep();toast("🔔 طلب جديد #"+fresh.map(o=>o.id).join(" #"));document.title="🔔 ("+newN+") طلب جديد"}}
+known=ids;const s=JSON.stringify(a);const ch=s!==sig;sig=s;orders=a;return ch}catch(_){return false}}
+async function poll(){if(!ses||!isStaff())return;const ch=await loadOrders();if(ch&&tab=="orders")V()}
+async function loadLog(){const t=await tok();try{const r=await au("/rest/v1/order_events?select=*&order=created_at.desc&limit=200",{},t);const a=await r.json();logs=Array.isArray(a)?a:[]}catch(_){logs=[]}}
+async function loadStaff(){const t=await tok();try{const r=await au("/rest/v1/profiles?select=id,full_name,email,role&role=in.(staff,admin)&order=role.asc",{},t);const a=await r.json();staff=Array.isArray(a)?a:[]}catch(_){staff=[]}}
+async function setSt(id,s){if(s=="cancelled"&&!confirm("تأكيد إلغاء الطلب #"+id+"؟"))return;const t=await tok();
+try{const r=await au("/rest/v1/orders?id=eq."+id,{method:"PATCH",headers:{Prefer:"return=representation"},body:JSON.stringify({status:s})},t);const a=await r.json();
+if(r.ok&&Array.isArray(a)&&a.length){const o=orders.find(x=>String(x.id)===String(id));if(o)o.status=s;sig=JSON.stringify(orders);toast("تم تغيير الحالة")}else toast("تعذر تغيير الحالة")}catch(_){toast("تعذر تغيير الحالة")}V()}
+async function setRole(em,rl){const t=await tok();const r=await au("/rest/v1/rpc/admin_set_role",{method:"POST",body:JSON.stringify({p_email:em,p_role:rl})},t);const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(/not found/i.test(String(d.message))?"لم نجد حساباً بهذا الإيميل (أو لا يمكنك تغيير صلاحيتك)":"تعذر الحفظ");await loadStaff()}
+async function goTab(t){tab=t;msg="";if(t=="log")await loadLog();if(t=="staff")await loadStaff();if(t=="orders"){newN=0;document.title=T0}V()}
+function pr(id){const c=document.querySelector(`[data-id="${id}"]`);if(!c)return;c.setAttribute("data-print","1");window.print();setTimeout(()=>c.removeAttribute("data-print"),600)}
+async function start(){await loadMe();if(isStaff())await loadOrders();V()}
+document.addEventListener("click",async e=>{const q=s=>e.target.closest(s);let b;
+if(b=q("[data-st]"))return setSt(b.dataset.id,b.dataset.st);
+if(b=q("[data-pr]"))return pr(b.dataset.pr);
+if(b=q("[data-tab]"))return goTab(b.dataset.tab);
+if(b=q("[data-fl]")){flt=b.dataset.fl;return V()}
+if(b=q("[data-rf]")){await loadLog();return V()}
+if(b=q("[data-rm]")){if(confirm("إزالة صلاحية هذا الحساب؟")){try{await setRole(b.dataset.rm,"customer");msg=""}catch(x){msg=x.message}V()}}});
+document.addEventListener("submit",async e=>{const f=e.target.closest("[data-f]");if(!f)return;e.preventDefault();const fd=new FormData(f),k=f.dataset.f;
+if(k=="login"){msg="";try{const r=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({login:fd.get("l"),password:fd.get("pw")})});const d=await r.json().catch(()=>({}));if(!r.ok||!d.access_token)throw new Error("بيانات الدخول غير صحيحة");setS(d);await start()}catch(x){msg=x.message||"حصل خطأ";V()}}
+else if(k=="role"){try{await setRole(String(fd.get("em")||""),String(fd.get("rl")||"staff"));msg="";toast("تم الحفظ")}catch(x){msg=x.message}V()}});
+$("#snd").onclick=()=>{try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume();beep();$("#snd").textContent="🔔 الصوت مفعل";if(navigator.wakeLock)navigator.wakeLock.request("screen").catch(()=>{})}catch(_){toast("تعذر تفعيل الصوت")}};
+$("#out").onclick=()=>{const t=ses&&ses.access_token;ses=null;me=null;orders=[];known=null;svs();if(t)au("/auth/v1/logout",{method:"POST"},t).catch(()=>{});V()};
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){newN=0;document.title=T0;if(ses&&isStaff())poll()}});
+setInterval(poll,10000);
+start();
+</script>
+</body>
+</html>
