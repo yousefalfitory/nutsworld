@@ -53,6 +53,15 @@ const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;"
 const ST={new:["جديد","#d97706"],preparing:["قيد التجهيز","#2563eb"],delivered:["تم التوصيل","#15803d"],cancelled:["ملغي","#b91c1c"]};
 const PAY={cod:"عند الاستلام",bank:"تحويل مصرفي (تأكد من الإيصال)",wallet:"✅ مدفوع من المحفظة",card:"بطاقة"};
 const T0="لوحة الطلبات - عالم المكسرات";
+const B64={enc:b=>{let x="";new Uint8Array(b).forEach(c=>x+=String.fromCharCode(c));return btoa(x).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")},dec:x=>{x=String(x).replace(/-/g,"+").replace(/_/g,"/");while(x.length%4)x+="=";const r=atob(x),u=new Uint8Array(r.length);for(let i=0;i<r.length;i++)u[i]=r.charCodeAt(i);return u.buffer}};
+const pkOK=()=>!!(typeof window!=="undefined"&&window.PublicKeyCredential&&navigator.credentials&&navigator.credentials.get);
+const hasPk=()=>{try{return !!localStorage.getItem("nw_pk")}catch(_){return false}};
+async function pkLogin(){let cid="";try{cid=localStorage.getItem("nw_pk")||""}catch(_){}
+const post=async b=>{const r=await fetch("/api/passkey",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"err");return d};
+const o=await post({a:"login-options",cid});
+const c=await navigator.credentials.get({publicKey:{challenge:new TextEncoder().encode(o.challenge),rpId:o.rpId,timeout:60000,userVerification:"required",allowCredentials:(o.allowCredentials||[]).map(x=>({type:"public-key",id:B64.dec(x.id)}))}});
+const d=await post({a:"login-verify",id:c.id,response:{clientDataJSON:B64.enc(c.response.clientDataJSON),authenticatorData:B64.enc(c.response.authenticatorData),signature:B64.enc(c.response.signature)}});
+setS(d);await start()}
 const EYE0='<svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',EYE1='<svg viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M10.6 6.2A9.8 9.8 0 0 1 12 6c6 0 10 6 10 6a17 17 0 0 1-3.2 3.9M6.4 6.9C3.7 8.6 2 12 2 12s4 6 10 6c1.4 0 2.7-.3 3.9-.8"/><path d="M9.9 10a3 3 0 0 0 4.1 4.1"/></svg>';
 let ses=null,me=null,tab="orders",flt="active",orders=[],known=null,newN=0,actx=null,msg="",logs=[],staff=[],wtx=[],wpend=null,sig="",tm;
 try{ses=JSON.parse(localStorage.getItem("nw_ses")||"null")}catch(_){}
@@ -92,7 +101,7 @@ return `<article class="card ${o.status=="new"?"nw":""}" data-id="${o.id}"><h3><
 <b>الإجمالي ${money(o.total)}</b>
 <div class="btns">${btn}<button type="button" data-pr="${o.id}">🖨 طباعة</button></div></article>`}
 function V(){const a=$("#app");$("#out").hidden=!ses;$("#who").textContent=me?(me.full_name||me.email||""):"";
-if(!ses||!me){a.innerHTML=`<form class="box" data-f="login"><h3 style="margin-top:0">تسجيل الدخول</h3>${msg?`<div class="er">${esc(msg)}</div>`:""}<label>رقم الهاتف أو الإيميل</label><input name="l" autocomplete="username" required><label>كلمة المرور</label><div class="pw"><input name="pw" type="password" autocomplete="current-password" required><button type="button" class="eye" data-eye aria-label="إظهار كلمة المرور">${EYE0}</button></div><button class="sub" type="submit">دخول</button></form>`;return}
+if(!ses||!me){a.innerHTML=`${pkOK()&&hasPk()?`<button type="button" class="sub" data-pk="1" style="margin-bottom:10px;background:#1d4ed8">🔐 الدخول بالبصمة</button>`:""}<form class="box" data-f="login"><h3 style="margin-top:0">تسجيل الدخول</h3>${msg?`<div class="er">${esc(msg)}</div>`:""}<label>رقم الهاتف أو الإيميل</label><input name="l" autocomplete="username" required><label>كلمة المرور</label><div class="pw"><input name="pw" type="password" autocomplete="current-password" required><button type="button" class="eye" data-eye aria-label="إظهار كلمة المرور">${EYE0}</button></div><button class="sub" type="submit">دخول</button></form>`;return}
 if(!isStaff()){a.innerHTML=`<div class="box">لا تملك صلاحية دخول هذه الصفحة. تواصل مع المدير.</div>`;return}
 const tabs=[["orders","الطلبات"]].concat(isAdmin()?[["log","سجل النشاط"],["staff","الموظفون"],["wallet","المحفظة"]]:[]);
 let h=`<div class="tabs">${tabs.map(t=>`<button type="button" data-tab="${t[0]}" class="${tab==t[0]?"on":""}">${t[1]}${t[0]=="orders"&&newN?` (${newN})`:""}${t[0]=="wallet"&&wpend?` (${wpend})`:""}</button>`).join("")}</div>`;
@@ -128,6 +137,7 @@ async function goTab(t){tab=t;msg="";if(t=="log")await loadLog();if(t=="staff")a
 function pr(id){const c=document.querySelector(`[data-id="${id}"]`);if(!c)return;c.setAttribute("data-print","1");window.print();setTimeout(()=>c.removeAttribute("data-print"),600)}
 async function start(){await loadMe();if(isStaff())await loadOrders();if(isAdmin())await loadWtx();V()}
 document.addEventListener("click",async e=>{const q=s=>e.target.closest(s);let b;
+if(b=q("[data-pk]")){try{await pkLogin()}catch(x){msg=(x&&x.name=="NotAllowedError")?"تم إلغاء العملية":"تعذر الدخول بالبصمة، استخدم كلمة المرور";V()}return}
 if(b=q("[data-eye]")){const i=b.parentElement.querySelector("input"),on=i.type==="password";i.type=on?"text":"password";b.innerHTML=on?EYE1:EYE0;return}
 if(b=q("[data-st]"))return setSt(b.dataset.id,b.dataset.st);
 if(b=q("[data-pr]"))return pr(b.dataset.pr);
