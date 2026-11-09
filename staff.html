@@ -51,10 +51,10 @@ const SBU="https://fffremcwrsgovpgfyrwd.supabase.co",SBK="sb_publishable_-JgCE3Z
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const ST={new:["جديد","#d97706"],preparing:["قيد التجهيز","#2563eb"],delivered:["تم التوصيل","#15803d"],cancelled:["ملغي","#b91c1c"]};
-const PAY={cod:"عند الاستلام",bank:"تحويل مصرفي (تأكد من الإيصال)",wallet:"من المحفظة",card:"بطاقة"};
+const PAY={cod:"عند الاستلام",bank:"تحويل مصرفي (تأكد من الإيصال)",wallet:"✅ مدفوع من المحفظة",card:"بطاقة"};
 const T0="لوحة الطلبات - عالم المكسرات";
 const EYE0='<svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',EYE1='<svg viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M10.6 6.2A9.8 9.8 0 0 1 12 6c6 0 10 6 10 6a17 17 0 0 1-3.2 3.9M6.4 6.9C3.7 8.6 2 12 2 12s4 6 10 6c1.4 0 2.7-.3 3.9-.8"/><path d="M9.9 10a3 3 0 0 0 4.1 4.1"/></svg>';
-let ses=null,me=null,tab="orders",flt="active",orders=[],known=null,newN=0,actx=null,msg="",logs=[],staff=[],sig="",tm;
+let ses=null,me=null,tab="orders",flt="active",orders=[],known=null,newN=0,actx=null,msg="",logs=[],staff=[],wtx=[],wpend=null,sig="",tm;
 try{ses=JSON.parse(localStorage.getItem("nw_ses")||"null")}catch(_){}
 const svs=()=>{try{if(ses)localStorage.setItem("nw_ses",JSON.stringify(ses));else localStorage.removeItem("nw_ses")}catch(_){}};
 const au=(p,o,t)=>{o=o||{};return fetch(SBU+p,{...o,headers:{apikey:SBK,"Content-Type":"application/json",...(t?{Authorization:"Bearer "+t}:{}),...(o.headers||{})}})};
@@ -94,12 +94,16 @@ return `<article class="card ${o.status=="new"?"nw":""}" data-id="${o.id}"><h3><
 function V(){const a=$("#app");$("#out").hidden=!ses;$("#who").textContent=me?(me.full_name||me.email||""):"";
 if(!ses||!me){a.innerHTML=`<form class="box" data-f="login"><h3 style="margin-top:0">تسجيل الدخول</h3>${msg?`<div class="er">${esc(msg)}</div>`:""}<label>رقم الهاتف أو الإيميل</label><input name="l" autocomplete="username" required><label>كلمة المرور</label><div class="pw"><input name="pw" type="password" autocomplete="current-password" required><button type="button" class="eye" data-eye aria-label="إظهار كلمة المرور">${EYE0}</button></div><button class="sub" type="submit">دخول</button></form>`;return}
 if(!isStaff()){a.innerHTML=`<div class="box">لا تملك صلاحية دخول هذه الصفحة. تواصل مع المدير.</div>`;return}
-const tabs=[["orders","الطلبات"]].concat(isAdmin()?[["log","سجل النشاط"],["staff","الموظفون"]]:[]);
-let h=`<div class="tabs">${tabs.map(t=>`<button type="button" data-tab="${t[0]}" class="${tab==t[0]?"on":""}">${t[1]}${t[0]=="orders"&&newN?` (${newN})`:""}</button>`).join("")}</div>`;
+const tabs=[["orders","الطلبات"]].concat(isAdmin()?[["log","سجل النشاط"],["staff","الموظفون"],["wallet","المحفظة"]]:[]);
+let h=`<div class="tabs">${tabs.map(t=>`<button type="button" data-tab="${t[0]}" class="${tab==t[0]?"on":""}">${t[1]}${t[0]=="orders"&&newN?` (${newN})`:""}${t[0]=="wallet"&&wpend?` (${wpend})`:""}</button>`).join("")}</div>`;
 if(tab=="orders"){const fs=[["active","النشطة"],["new","جديد"],["preparing","قيد التجهيز"],["delivered","تم التوصيل"],["cancelled","ملغي"],["all","الكل"]];
 const list=orders.filter(fl);
 h+=`<div class="fl">${fs.map(f=>`<button type="button" data-fl="${f[0]}" class="${flt==f[0]?"on":""}">${f[1]}</button>`).join("")}</div>`+(list.length?list.map(card).join(""):`<div class="box m">لا توجد طلبات هنا</div>`)}
 else if(tab=="log"){h+=`<div class="box"><div class="btns" style="margin:0 0 6px"><button type="button" data-rf="log">تحديث</button></div>`+(logs.length?logs.map(e=>`<div class="row"><span>${tm2(e.created_at)} · ${e.order_id?"#"+e.order_id+" · ":""}<b>${esc(e.actor_name||"النظام")}</b></span><span>${e.event=="created"?"وصل طلب جديد":e.event=="status"?`${(ST[e.from_status]||[e.from_status])[0]} ← ${(ST[e.to_status]||[e.to_status])[0]}`:esc(e.note||"")}</span></div>`).join(""):`<p class="m">لا توجد أحداث بعد</p>`)+`</div>`}
+else if(tab=="wallet"){const pend=wtx.filter(x=>x.kind=="topup"&&x.status=="pending"),KD={topup:"شحن",gift:"هدية",refund:"استرجاع",purchase:"شراء",adjust:"تعديل"},SD={pending:"بانتظار الموافقة",approved:"",rejected:"مرفوض"},nm=x=>(x.profiles&&(x.profiles.full_name||x.profiles.email))||"—";
+h+=`${msg?`<div class="er">${esc(msg)}</div>`:""}<div class="box"><h3 style="margin-top:0">طلبات الشحن المعلقة (${pend.length})</h3>`+(pend.length?pend.map(x=>`<div class="row"><span><b>${esc(nm(x))}</b> <span class="m" dir="ltr">${esc((x.profiles&&x.profiles.phone)||"")}</span><br><span class="m">${tm2(x.created_at)} · طلب #${x.id}${x.note?" · "+esc(x.note):""}</span></span><span style="text-align:end"><b>${money(x.amount)}</b><br><span class="btns" style="margin:4px 0 0"><button type="button" class="pri" data-wd="1" data-tx="${x.id}">قبول</button><button type="button" data-wd="0" data-tx="${x.id}">رفض</button></span></span></div>`).join(""):`<p class="m">لا توجد طلبات معلقة</p>`)+`</div>
+<form class="box" data-f="credit"><h3 style="margin-top:0">إضافة رصيد لحساب</h3><p class="m">هدية أو استرجاع. ولخصم رصيد اكتب مبلغاً بالسالب مع نوع "تعديل".</p><label>إيميل العميل أو رقم هاتفه</label><input name="lg" required><label>المبلغ (دينار)</label><input name="am" type="number" step="0.01" required><label>النوع</label><select name="kd"><option value="gift">هدية</option><option value="refund">استرجاع</option><option value="adjust">تعديل</option></select><label>ملاحظة (اختياري)</label><input name="nt"><button class="sub" type="submit">تنفيذ</button></form>
+<div class="box"><div class="btns" style="margin:0 0 6px"><button type="button" data-rf="wallet">تحديث</button></div><h3 style="margin-top:0">آخر الحركات</h3>`+(wtx.length?wtx.map(x=>`<div class="row"><span>${tm2(x.created_at)} · <b>${esc(nm(x))}</b><br><span class="m">${KD[x.kind]||x.kind}${SD[x.status]?" · "+SD[x.status]:""}${x.note?" · "+esc(x.note):""}</span></span><b style="color:${+x.amount<0?"#b3261e":"#15803d"}">${+x.amount>0?"+":""}${money(x.amount)}</b></div>`).join(""):`<p class="m">لا توجد حركات بعد</p>`)+`</div>`}
 else{h+=`${msg?`<div class="er">${esc(msg)}</div>`:""}<form class="box" data-f="role"><h3 style="margin-top:0">إضافة موظف</h3><p class="m">الموظف يسجل حساباً عادياً في الموقع أولاً، ثم اكتب إيميله هنا.</p><label>إيميل الحساب</label><input name="em" type="email" required><label>الصلاحية</label><select name="rl"><option value="staff">موظف</option><option value="admin">مدير</option></select><button class="sub" type="submit">حفظ</button></form><div class="box"><h3 style="margin-top:0">الفريق</h3>`+(staff.length?staff.map(s=>`<div class="row"><span>${esc(s.full_name||"")} <span class="m" dir="ltr">${esc(s.email||"")}</span></span><span>${s.role=="admin"?"مدير":"موظف"}${s.id!==ses.uid?` <button type="button" data-rm="${esc(s.email)}">إزالة</button>`:""}</span></div>`).join(""):`<p class="m">—</p>`)+`</div>`}
 a.innerHTML=h}
 async function loadOrders(){const t=await tok();if(!t)return false;
@@ -107,26 +111,34 @@ try{const r=await au("/rest/v1/orders?select=*&order=created_at.desc&limit=100",
 const ids=new Set(a.map(o=>o.id));
 if(known){const fresh=a.filter(o=>!known.has(o.id));if(fresh.length){newN+=fresh.length;beep();toast("🔔 طلب جديد #"+fresh.map(o=>o.id).join(" #"));document.title="🔔 ("+newN+") طلب جديد"}}
 known=ids;const s=JSON.stringify(a);const ch=s!==sig;sig=s;orders=a;return ch}catch(_){return false}}
-async function poll(){if(!ses||!isStaff())return;const ch=await loadOrders();if(ch&&tab=="orders")V()}
+async function poll(){if(!ses||!isStaff())return;const ch=await loadOrders();let wc=false;
+if(isAdmin()){try{const t=await tok(),r=await au("/rest/v1/wallet_tx?select=id&kind=eq.topup&status=eq.pending",{},t),a=await r.json();if(Array.isArray(a)){if(wpend!==null&&a.length>wpend){beep();toast("💰 طلب شحن جديد");wc=true}else if(a.length!==wpend)wc=true;wpend=a.length;if(tab=="wallet"&&wc){await loadWtx()}}}catch(_){}}
+if((ch&&tab=="orders")||(wc&&(tab=="wallet"||tab=="orders")))V()}
 async function loadLog(){const t=await tok();try{const r=await au("/rest/v1/order_events?select=*&order=created_at.desc&limit=200",{},t);const a=await r.json();logs=Array.isArray(a)?a:[]}catch(_){logs=[]}}
 async function loadStaff(){const t=await tok();try{const r=await au("/rest/v1/profiles?select=id,full_name,email,role&role=in.(staff,admin)&order=role.asc",{},t);const a=await r.json();staff=Array.isArray(a)?a:[]}catch(_){staff=[]}}
-async function setSt(id,s){if(s=="cancelled"&&!confirm("تأكيد إلغاء الطلب #"+id+"؟"))return;const t=await tok();
+async function setSt(id,s){const o0=orders.find(x=>String(x.id)===String(id));if(s=="cancelled"&&!confirm("تأكيد إلغاء الطلب #"+id+"؟"+(o0&&o0.payment=="wallet"?"\nسيُرد المبلغ لمحفظة العميل تلقائياً.":"")))return;const t=await tok();
 try{const r=await au("/rest/v1/orders?id=eq."+id,{method:"PATCH",headers:{Prefer:"return=representation"},body:JSON.stringify({status:s})},t);const a=await r.json();
 if(r.ok&&Array.isArray(a)&&a.length){const o=orders.find(x=>String(x.id)===String(id));if(o)o.status=s;sig=JSON.stringify(orders);toast("تم تغيير الحالة")}else toast("تعذر تغيير الحالة")}catch(_){toast("تعذر تغيير الحالة")}V()}
+async function loadWtx(){const t=await tok();try{const r=await au("/rest/v1/wallet_tx?select=id,created_at,user_id,amount,kind,status,note,order_id,profiles(full_name,phone,email)&order=created_at.desc&limit=100",{},t);const a=await r.json();wtx=Array.isArray(a)?a:[];wpend=wtx.filter(x=>x.kind=="topup"&&x.status=="pending").length}catch(_){wtx=[]}}
+const WERR=m=>/not pending/.test(m)?"هذا الطلب تمت معالجته من قبل":/user not found/.test(m)?"لم نجد حساباً بهذا الإيميل أو الرقم":/insufficient/.test(m)?"رصيد العميل لا يكفي للخصم":/bad amount/.test(m)?"المبلغ غير صحيح":/not allowed/.test(m)?"ليس لديك صلاحية":"تعذر تنفيذ العملية";
+async function rpc(fn,args){const t=await tok();const r=await au("/rest/v1/rpc/"+fn,{method:"POST",body:JSON.stringify(args)},t);const d=await r.json().catch(()=>null);if(!r.ok)throw new Error(WERR(String((d&&d.message)||"")));return d}
+const normLg=v=>{v=String(v||"").trim();if(v.includes("@"))return v.toLowerCase();let d=v.replace(/\D/g,"");if(d.startsWith("00"))d=d.slice(2);if(d.startsWith("0"))d="218"+d.slice(1);else if(/^9\d{8}$/.test(d))d="218"+d;return d};
 async function setRole(em,rl){const t=await tok();const r=await au("/rest/v1/rpc/admin_set_role",{method:"POST",body:JSON.stringify({p_email:em,p_role:rl})},t);const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(/not found/i.test(String(d.message))?"لم نجد حساباً بهذا الإيميل (أو لا يمكنك تغيير صلاحيتك)":"تعذر الحفظ");await loadStaff()}
-async function goTab(t){tab=t;msg="";if(t=="log")await loadLog();if(t=="staff")await loadStaff();if(t=="orders"){newN=0;document.title=T0}V()}
+async function goTab(t){tab=t;msg="";if(t=="log")await loadLog();if(t=="staff")await loadStaff();if(t=="wallet")await loadWtx();if(t=="orders"){newN=0;document.title=T0}V()}
 function pr(id){const c=document.querySelector(`[data-id="${id}"]`);if(!c)return;c.setAttribute("data-print","1");window.print();setTimeout(()=>c.removeAttribute("data-print"),600)}
-async function start(){await loadMe();if(isStaff())await loadOrders();V()}
+async function start(){await loadMe();if(isStaff())await loadOrders();if(isAdmin())await loadWtx();V()}
 document.addEventListener("click",async e=>{const q=s=>e.target.closest(s);let b;
 if(b=q("[data-eye]")){const i=b.parentElement.querySelector("input"),on=i.type==="password";i.type=on?"text":"password";b.innerHTML=on?EYE1:EYE0;return}
 if(b=q("[data-st]"))return setSt(b.dataset.id,b.dataset.st);
 if(b=q("[data-pr]"))return pr(b.dataset.pr);
 if(b=q("[data-tab]"))return goTab(b.dataset.tab);
 if(b=q("[data-fl]")){flt=b.dataset.fl;return V()}
-if(b=q("[data-rf]")){await loadLog();return V()}
+if(b=q("[data-rf]")){if(b.dataset.rf=="wallet")await loadWtx();else await loadLog();return V()}
+if(b=q("[data-wd]")){const ap=b.dataset.wd==="1",x=wtx.find(y=>String(y.id)===b.dataset.tx);if(!confirm(ap?"تأكدت من وصول الحوالة بمبلغ "+(x?money(x.amount):"")+"؟ سيُضاف الرصيد لحساب العميل.":"رفض طلب الشحن؟"))return;try{const nb=await rpc("admin_decide_topup",{p_tx:+b.dataset.tx,p_approve:ap});msg="";toast(ap?"تمت الموافقة. رصيد العميل الآن "+money(nb):"تم رفض الطلب")}catch(e){msg=e.message}await loadWtx();return V()}
 if(b=q("[data-rm]")){if(confirm("إزالة صلاحية هذا الحساب؟")){try{await setRole(b.dataset.rm,"customer");msg=""}catch(x){msg=x.message}V()}}});
 document.addEventListener("submit",async e=>{const f=e.target.closest("[data-f]");if(!f)return;e.preventDefault();const fd=new FormData(f),k=f.dataset.f;
 if(k=="login"){msg="";try{const r=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({login:fd.get("l"),password:fd.get("pw")})});const d=await r.json().catch(()=>({}));if(!r.ok||!d.access_token)throw new Error("بيانات الدخول غير صحيحة");setS(d);await start()}catch(x){msg=x.message||"حصل خطأ";V()}}
+else if(k=="credit"){try{const n=Number(fd.get("am"));if(!Number.isFinite(n)||n===0)throw new Error("المبلغ غير صحيح");const nb=await rpc("admin_add_credit",{p_login:normLg(fd.get("lg")),p_amount:n,p_kind:String(fd.get("kd")||"gift"),p_note:String(fd.get("nt")||"")||null});msg="";toast("تم. رصيد العميل الآن "+money(nb));await loadWtx()}catch(e){msg=e.message}V()}
 else if(k=="role"){try{await setRole(String(fd.get("em")||""),String(fd.get("rl")||"staff"));msg="";toast("تم الحفظ")}catch(x){msg=x.message}V()}});
 $("#snsel").innerHTML=Object.keys(SNDS).map(k=>`<option value="${k}">${SNDS[k].n}</option>`).join("");$("#snsel").value=snd;
 $("#snsel").onchange=()=>{const v=$("#snsel").value;if(!SNDS[v])return;snd=v;try{localStorage.setItem("nw_snd",v)}catch(_){}try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume();$("#snd").textContent="🔔 الصوت مفعل"}catch(_){}beep()};
