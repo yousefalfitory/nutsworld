@@ -39,7 +39,7 @@ a{color:#1b7a45}
 #ts.on{opacity:1}
 @media print{body *{visibility:hidden}[data-print],[data-print] *{visibility:visible}[data-print]{position:absolute;top:0;left:0;width:100%;border:0}.btns{display:none}@page{margin:6mm}}
 .pw{position:relative}.pw input{padding-inline-end:46px}.eye{position:absolute;inset-inline-end:6px;top:50%;transform:translateY(calc(-50% - 2px));background:none;border:0;padding:8px;line-height:0;color:var(--mut)}.eye svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.fpw{display:flex;justify-content:center;margin:14px 0 4px}.fpb{width:62px;height:62px;border-radius:50%;border:1px solid #b9e0c6;background:#e4f5ea;color:#1b7a45;display:grid;place-items:center;padding:0;cursor:pointer}.fpb svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.fpw{display:flex;justify-content:center;margin:14px 0 4px}.fpb{width:64px;height:64px;border:0;background:none;color:#1b7a45;display:grid;place-items:center;padding:0;cursor:pointer}.fpb svg{width:52px;height:52px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .hand{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:8px}.hand select{width:auto;flex:1;min-width:140px;margin:0}
 .stt{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stt div{background:#e4f5ea;border-radius:14px;padding:14px;text-align:center}.stt b{display:block;font-size:30px;color:#0a5c33}.stt span{font-size:13px;color:#2f5a42}
 .big{font-size:16px;padding:14px}
@@ -56,7 +56,7 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const ST={new:["جديد","#d97706"],preparing:["قيد التجهيز","#2563eb"],handed:["سُلّم للمندوب","#7c3aed"],out:["مع المندوب في الطريق","#0891b2"],delivered:["تم التسليم","#15803d"],cancelled:["ملغي","#b91c1c"]};
 const PAY={cod:"كاش عند الاستلام",pos:"💳 بطاقة عند الاستلام (جهاز الدفع)",bank:"تحويل مصرفي (تأكد من الإيصال)",wallet:"✅ مدفوع من المحفظة",card:"بطاقة أونلاين"};
-const FP='<svg viewBox="0 0 24 24"><path d="M12 11.5v3.5"/><path d="M8.6 10.5a3.4 3.4 0 016.8.2v3.6"/><path d="M8.6 13.2v.8a5 5 0 001.6 3.7"/><path d="M15.4 17.2a9 9 0 01-1.1 2.8"/><path d="M5.8 8.2a7.2 7.2 0 0113.5 2.7v2.4"/><path d="M5.3 11.6v1.6a8 8 0 001.3 4.4"/><path d="M7.6 4.6a9.4 9.4 0 0113.3 4.2"/><path d="M3.6 8.6A9.3 9.3 0 015.4 6"/></svg>';
+const FP='<svg viewBox="0 0 24 24"><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/></svg>';
 const T0="لوحة الطلبات - عالم المكسرات";
 const B64={enc:b=>{let x="";new Uint8Array(b).forEach(c=>x+=String.fromCharCode(c));return btoa(x).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")},dec:x=>{x=String(x).replace(/-/g,"+").replace(/_/g,"/");while(x.length%4)x+="=";const r=atob(x),u=new Uint8Array(r.length);for(let i=0;i<r.length;i++)u[i]=r.charCodeAt(i);return u.buffer}};
 const pkOK=()=>!!(typeof window!=="undefined"&&window.PublicKeyCredential&&navigator.credentials&&navigator.credentials.get);
