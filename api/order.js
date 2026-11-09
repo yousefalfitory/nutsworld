@@ -133,6 +133,26 @@ async function walletOrder(uid, order) {
   } catch (e) { console.error("wallet rpc network error", e); return { ok: false, msg: "network" }; }
 }
 
+async function editOrder(uid, id, order) {
+  try {
+    const r = await fetch(SB + "/rest/v1/rpc/edit_order", {
+      method: "POST",
+      headers: { apikey: SK, "Content-Type": "application/json" },
+      body: JSON.stringify({ p_user: uid, p_id: id, p_order: order })
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) { console.error("edit rpc failed", r.status, JSON.stringify(d)); return { ok: false, msg: String((d && d.message) || "") }; }
+    return { ok: true, data: d };
+  } catch (e) { console.error("edit rpc network error", e); return { ok: false, msg: "network" }; }
+}
+
+const PAYTXT = {
+  cod: "الدفع: كاش عند الاستلام",
+  pos: "الدفع: 💳 بطاقة مصرفية عند الاستلام (جهّز جهاز الدفع)",
+  bank: "الدفع: تحويل مصرفي (بانتظار الإيصال على واتساب)",
+  wallet: "الدفع: ✅ مدفوع من المحفظة"
+};
+
 // Authoritative price calculation: nothing the browser sends about prices is trusted.
 function price(m) {
   const lines = m.lines;
@@ -205,7 +225,7 @@ async function main(req, res) {
     // health check: open /api/order in the browser. Shows only yes/no flags, never secrets.
     return res.status(200).json({
       ok: true,
-      version: 3,
+      version: 4,
       catalog: !!D,
       products: D ? D.P.length : 0,
       supabase: !!(SB && SK && PK),
@@ -231,14 +251,49 @@ async function main(req, res) {
   if (p.err) return res.status(400).json({ ok: false, error: p.err });
   if (Math.abs(num(m.tot) - p.total) > 0.01) return res.status(409).json({ ok: false, error: "price" });
 
-  const pay = m.pay === "bank" ? "bank" : m.pay === "wallet" ? "wallet" : "cod";
+  const pay = ["bank", "wallet", "pos"].includes(m.pay) ? m.pay : "cod";
   const uid = await userId(req);
   const t = placeTexts(p, m);
+  const z = m.zone && typeof m.zone === "object" ? m.zone : {};
+  const form = {
+    n: name, p: phone, a: s(m.a, 200), c: s(m.c, 60), code: p.code,
+    zone: z.t === "area" ? { t: "area", i: Number(z.i) } : z.t === "gps" && p.loc ? { t: "gps", lat: p.loc.lat, lon: p.loc.lon } : { t: "out" }
+  };
   const row = {
     customer_name: name, phone, city: t.city, address: t.address,
     items: p.items, subtotal: p.sub, discount: p.disc, delivery: p.delivery, total: p.total,
-    location: p.loc, lang: m.lang === "en" ? "en" : "ar"
+    location: p.loc, lang: m.lang === "en" ? "en" : "ar", form, code: p.code || null
   };
+
+  // A customer edits his own order (first 10 minutes, while it is still new). Payment stays the same.
+  if (m.edit != null) {
+    const eid = Number(m.edit);
+    if (!Number.isInteger(eid) || eid <= 0) return res.status(400).json({ ok: false, error: "bad" });
+    if (!uid) return res.status(401).json({ ok: false, error: "auth" });
+    const out = await editOrder(uid, eid, row);
+    if (!out.ok) {
+      const g = out.msg;
+      const map = /insufficient/.test(g) ? [402, "insufficient"] : /locked/.test(g) ? [409, "locked"] : /not found/.test(g) ? [404, "noorder"] : /zone/.test(g) ? [422, "zone"] : [500, "server"];
+      return res.status(map[0]).json({ ok: false, error: map[1] });
+    }
+    const d = out.data || {};
+    const etext = [
+      "✏️ تعديل على الطلب #" + eid + " - عالم المكسرات",
+      "العميل عدّل طلبه. الطلب بعد التعديل:",
+      ...p.items.map(i => `- ${i.name}: ${i.qty} = ${i.sum} د.ل`),
+      `المجموع: ${fmt(p.sub)} د.ل`,
+      p.disc ? `خصم كود ${p.code}: -${fmt(p.disc)} د.ل` : "",
+      p.delivery != null ? `التوصيل: ${fmt(p.delivery)} د.ل` : "التوصيل: يُحدَّد عند التأكيد",
+      `الإجمالي: ${fmt(p.total)} د.ل` + (d.old_total != null ? ` (كان ${fmt(d.old_total)} د.ل)` : ""),
+      `الاسم: ${name}`,
+      `الهاتف: ${phone}`,
+      `المدينة: ${t.city}`,
+      `العنوان: ${t.address}`,
+      PAYTXT[d.payment] || ""
+    ].filter(Boolean).join("\n");
+    await telegram(etext);
+    return res.status(200).json({ ok: true, id: eid, total: p.total, balance: d.balance == null ? null : d.balance, edited: true });
+  }
 
   let id = null, balance = null;
   if (pay === "wallet") {
@@ -265,7 +320,7 @@ async function main(req, res) {
     `الهاتف: ${phone}`,
     `المدينة: ${t.city}`,
     `العنوان: ${t.address}`,
-    pay === "wallet" ? "الدفع: ✅ مدفوع من المحفظة" : pay === "bank" ? "الدفع: تحويل مصرفي (بانتظار الإيصال على واتساب)" : "الدفع: عند الاستلام",
+    PAYTXT[pay],
     uid ? "👤 عميل مسجل" : ""
   ].filter(Boolean).join("\n");
   const sent = await telegram(text);
