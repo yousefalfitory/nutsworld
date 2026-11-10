@@ -12,6 +12,8 @@ module.exports = async (req, res) => {
   try { if (typeof b === "string") b = JSON.parse(b); } catch (_) { b = {}; }
   b = b || {};
   const amount = Number(b.amount);
+  const MT = { bank: "تحويل مصرفي", cash: "كاش", pos: "بطاقة مصرفية (جهاز الدفع)" };
+  const method = MT[b.method] ? b.method : "bank";
   if (!Number.isFinite(amount)) return res.status(400).json({ ok: false, error: "amount" });
   try {
     const u = await fetch(SB + "/auth/v1/user", { headers: { apikey: PK, Authorization: auth } });
@@ -20,7 +22,7 @@ module.exports = async (req, res) => {
     const r = await fetch(SB + "/rest/v1/rpc/request_topup", {
       method: "POST",
       headers: { apikey: PK, Authorization: auth, "Content-Type": "application/json" },
-      body: JSON.stringify({ p_amount: amount, p_note: s(b.note, 200) || null })
+      body: JSON.stringify({ p_amount: amount, p_note: "طريقة الدفع: " + MT[method] })
     });
     const d = await r.json().catch(() => null);
     if (!r.ok) {
@@ -40,7 +42,7 @@ module.exports = async (req, res) => {
       fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: chat, text: `💰 طلب شحن محفظة #${id}\nالمبلغ: ${fmt(amount)} د.ل\n${who}\nبانتظار الإيصال على واتساب، ثم الموافقة من صفحة المدير.` })
+        body: JSON.stringify({ chat_id: chat, text: `💰 طلب شحن محفظة #${id}\nالمبلغ: ${fmt(amount)} د.ل\nطريقة الدفع: ${MT[method]}\n${who}\n` + (method === "bank" ? "بانتظار الإيصال على واتساب، ثم الموافقة من صفحة المدير." : "تواصل مع العميل لتتفقوا على الدفع، ثم وافق على الطلب من صفحة المدير بعد استلام المبلغ.") })
       }).catch(() => {});
     }
     return res.status(200).json({ ok: true, id });
