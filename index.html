@@ -164,7 +164,12 @@ body:has(#ov.on) .otk{display:none!important}
 .sw{flex:none;width:48px;height:28px;border-radius:99px;background:#c9d3cc;position:relative;transition:background .2s;border:0;padding:0}
 .sw::after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0003;transition:inset-inline-start .2s}
 .sw.on{background:#2fa35f}.sw.on::after{inset-inline-start:23px}
-.phd{display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 0 4px}.phd .av{width:64px;height:64px;border-radius:50%;background:#e4f5ea;color:#1b7a45;display:grid;place-items:center;font-size:26px;font-weight:800;margin-bottom:8px}
+.phd{display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 0 4px}.phd .av{width:84px;height:84px;border-radius:50%;background:#e4f5ea;color:#1b7a45;display:grid;place-items:center;font-size:26px;font-weight:800;margin-bottom:8px}
+.phd .av{position:relative;cursor:pointer;overflow:visible}
+.phd .av img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+.phd .av .cam{position:absolute;bottom:-2px;inset-inline-end:-4px;width:26px;height:26px;border-radius:50%;background:#2f8a57;border:2px solid var(--bg);display:grid;place-items:center}
+.phd .av .cam svg{width:14px;height:14px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.phd .av.busy{opacity:.5}
 .phd b{font-size:19px}.phd span{color:var(--mut);margin-top:2px}
 [data-theme="dark"] .phd .av{background:#1f3a2b;color:#7fe0a8}
 .ibox{border:1px solid var(--line);border-radius:16px;padding:4px 14px;margin:6px 0 12px;background:var(--card)}
@@ -428,7 +433,7 @@ const pkBox=()=>`<div class="bk"><div>🔐 ${T2("الدخول بالبصمة","F
 const locPh=p=>{p=String(p||"");return p.startsWith("218")?"0"+p.slice(3):p};
 function prefill(){if(!prof)return;const set=(id,v)=>{const e=$(id);if(e&&!e.value&&v)e.value=v};const ph=String(prof.phone||"");set("#n",prof.full_name);set("#p",ph.startsWith("218")?"0"+ph.slice(3):ph);set("#a",prof.address);set("#c",prof.city)}
 async function loadProf(){const t=await tok();if(!t){prof=null;updPay();return}
-try{const r=await au("/rest/v1/profiles?select=full_name,phone,email,city,address,role,phone_verified&id=eq."+ses.uid,{},t);const a=await r.json();prof=(Array.isArray(a)&&a[0])||null}catch(_){prof=null}
+try{const r=await au("/rest/v1/profiles?select=full_name,phone,email,city,address,role,phone_verified,avatar_url&id=eq."+ses.uid,{},t);const a=await r.json();prof=(Array.isArray(a)&&a[0])||null}catch(_){prof=null}
 prefill();loadWallet()}
 async function doReg(fd){const nm=String(fd.get("fn")||"").trim(),ph=normPh(fd.get("ph")),em=String(fd.get("em")||"").trim().toLowerCase(),pw=String(fd.get("pw")||"");
 if(nm.length<2)throw new Error("name");if(!/^\d{8,15}$/.test(ph))throw new Error("phone");if(!EMR.test(em))throw new Error("email");if(!pwOK(pw))throw new Error("weak");
@@ -454,6 +459,17 @@ async function loadOrd(){const t=await tok(),e=$("#ol");if(!t||!e)return;
 try{const r=await au("/rest/v1/orders?select=id,created_at,total,status,payment,items,form,code,customer_name,phone&order=created_at.desc&limit=15",{},t);const a=await r.json(),en=lang=="en";if(!Array.isArray(a))return;myOrd=a;
 e.innerHTML=a.length?a.map(o=>{const c=CS[o.status]||[o.status,o.status,0],st=c[2],left=edLeft(o);return `<div class="r" style="display:block"><div style="display:flex;justify-content:space-between;gap:8px"><span>#${esc(o.id)} · ${new Date(o.created_at).toLocaleDateString("en-GB")}</span><b>${fmt(+o.total)} ${CU()}</b></div><div class="os${st<0?" x":""}">${esc(c[en?1:0])}</div>${st>=0?`<div class="trk">${[0,1,2,3].map(i=>`<i class="${i<=st?"on":""}"></i>`).join("")}</div>`:""}${left>0?`<button type="button" class="lk" style="padding:4px 0" data-ed="${esc(o.id)}">✏️ ${T2("تعديل الطلب","Edit order")} (${T2("باقي","left")} ${Math.ceil(left/60000)} ${T2("د","min")})</button>`:""}</div>`}).join(""):`<p class="m">${T2("لا توجد طلبات سابقة","No previous orders")}</p>`}catch(_){}}
 setInterval(()=>{if(ses&&pg=="acct"&&$("#ac").classList.contains("on")&&$("#ol")&&!document.hidden)loadOrd()},20000);
+async function avUp(file){if(!file||!ses)return;const L2=$("#avl");if(L2)L2.classList.add("busy");
+try{const url=URL.createObjectURL(file),img=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=url});
+const n=320,sz=Math.min(img.naturalWidth,img.naturalHeight),c=document.createElement("canvas");c.width=c.height=n;
+c.getContext("2d").drawImage(img,(img.naturalWidth-sz)/2,(img.naturalHeight-sz)/2,sz,sz,0,0,n,n);URL.revokeObjectURL(url);
+const blob=await new Promise(ok=>c.toBlob(ok,"image/jpeg",.85));const t=await tok();if(!t||!blob)throw 0;
+const path="avatars/"+ses.uid+"/avatar.jpg",r=await fetch(SBU+"/storage/v1/object/"+path,{method:"POST",headers:{apikey:SBK,Authorization:"Bearer "+t,"Content-Type":"image/jpeg","x-upsert":"true","cache-control":"3600"},body:blob});
+if(!r.ok)throw 0;const pub=SBU+"/storage/v1/object/public/"+path+"?v="+Date.now();
+const r2=await au("/rest/v1/profiles?id=eq."+ses.uid,{method:"PATCH",body:JSON.stringify({avatar_url:pub})},t);if(!r2.ok)throw 0;
+if(prof)prof.avatar_url=pub;am=T2("تم تحديث صورتك","Your photo was updated");amok=true}
+catch(_){am=T2("ما قدرناش نرفع الصورة، جرّب صورة ثانية","Could not upload the photo, try another one");amok=false}AC()}
+document.addEventListener("change",e=>{if(e.target&&e.target.id=="avf"){const f=e.target.files&&e.target.files[0];if(f)avUp(f)}});
 const OACT=["new","preparing","handed","out"];let otkT=0;
 const otkHide=()=>{$("#otk").hidden=true};
 async function otkLoad(){const b=$("#otk");if(!ses){b.hidden=true;return}const t=await tok();if(!t){b.hidden=true;return}
@@ -487,7 +503,7 @@ h=msg+(infoEd?F("save",I("الاسم","Name","fn","text",`value="${esc(p.full_na
 :`<div class="ibox">${row("الاسم","Name",p.full_name)}${row("رقم الهاتف","Phone",locPh(p.phone),1)}${row("الإيميل","Email",p.email,1)}${row("المدينة","City",p.city)}${row("العنوان","Address",p.address)}</div><button type="button" class="sub" data-a="infoed">✏️ ${T2("تعديل بياناتي الشخصية","Edit my details")}</button>`)}
 else if(v=="ords")h=msg+`<p class="m" style="margin:0 0 6px;font-size:13px">${T2("تقدر تعدّل طلبك خلال 10 دقائق من إرساله. لإلغاء طلب تواصل معنا على واتساب.","You can edit an order within 10 minutes of placing it. To cancel, contact us on WhatsApp.")}</p><div id="ol"></div>`;
 else{const p=prof||{},ini=String(p.full_name||"؟").trim().charAt(0),go=`<span class="go">${lang=="en"?"›":"‹"}</span>`;
-h=`<div class="phd"><div class="av">${esc(ini)}</div><b>${esc(p.full_name||"")}</b><span dir="ltr">${esc(locPh(p.phone))}</span></div>`+msg+wvBox()
+h=`<div class="phd"><label class="av" id="avl" title="${T2("تغيير الصورة","Change photo")}" aria-label="${T2("تغيير الصورة","Change photo")}">${p.avatar_url?`<img src="${esc(p.avatar_url)}" alt="">`:esc(ini)}<span class="cam"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg></span><input type="file" accept="image/*" id="avf" hidden></label><b>${esc(p.full_name||"")}</b><span dir="ltr">${esc(locPh(p.phone))}</span></div>`+msg+wvBox()
 +`<button type="button" class="mi" data-a="goinfo"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg></span><span class="tx">${T2("بياناتي الشخصية","My details")}</span>${go}</button>`
 +(pkOK()?`<div class="mi"><span class="ic">${FP}</span><span class="tx">${T2("الدخول بالبصمة","Fingerprint login")}<br><small class="m" style="font-weight:400">${hasPk()?T2("مفعّلة على هذا الجهاز","On for this device"):T2("غير مفعّلة","Off")}</small></span><button type="button" class="sw${hasPk()?" on":""}" role="switch" aria-checked="${hasPk()}" aria-label="${T2("الدخول بالبصمة","Fingerprint login")}" data-a="pktog"></button></div>`:"")
 +`<button type="button" class="mi" data-a="goords"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"/><path d="M4 6h16M9 10a3 3 0 006 0"/></svg></span><span class="tx">${T2("طلباتي","My orders")}</span>${go}</button>`
