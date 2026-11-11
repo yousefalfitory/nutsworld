@@ -232,6 +232,9 @@ body:has(#ov.on) .otk{display:none!important}
 .dbox{border:1px solid #f1c4bf;background:#fdf1ef;border-radius:16px;padding:14px;color:#5b1a14}
 [data-theme="dark"] .dbox{background:#3b1f1d;border-color:#6b2e29;color:#ffdad5}
 .dbtn{width:100%;border:0;border-radius:14px;padding:13px;background:#b3261e;color:#fff;font:inherit;font-weight:800;margin-top:10px}
+
+.ct .ce{overflow:hidden}.ct .ce img{width:100%;height:100%;object-fit:cover;display:block}
+.pr s,.c s{color:var(--mut);text-decoration:line-through;text-decoration-color:#e0443e;text-decoration-thickness:2px}
 </style>
 <script>try{var m=localStorage.getItem("nw_theme")||"auto";if(m==="dark"||(m==="auto"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.dataset.theme="dark"}catch(_){}</script>
 </head>
@@ -297,7 +300,7 @@ let P=[
 ];
 const $=s=>document.querySelector(s),fmt=x=>String(+x.toFixed(2)),qla=k=>k<1?k*1000+" غ":fmt(k)+" كغ",ql=k=>lang=="en"?(k<1?k*1000+" g":fmt(k)+" kg"):qla(k);
 let cat="الكل",q="",cart={},edId=null,edBk=null,edPay="";
-var PID=P.map((_,i)=>i+1),PIMG=[],PAV=P.map(()=>true),catVer=0;
+var CIMG={},PID=P.map((_,i)=>i+1),PIMG=[],PAV=P.map(()=>true),catVer=0;
 const svc=()=>{if(edId!=null)return;try{const o={};for(const [i,k] of Object.entries(cart))if(PID[i])o[PID[i]]=k;localStorage.setItem("nw_cart2",JSON.stringify(o))}catch(_){}};
 const FEE=20,CODES={YF:10};let SALE={};
 const MIN=40,AREAS=[["المقاصبة","Al-Maqasba",10],["المقاوبة","Al-Maqawba",10],["عباد","Abbad",10],["القوشي","Al-Qushi",10],["الرويسات","Al-Ruwaisat",10],["أبوشعالة","Abu Shaalah",10],["اقزير","Aqzeer",10],["الشواهدة","Al-Shawahida",10],["الشراكسة","Al-Sharakisa",10],["الجزيرة","Al-Jazira",15],["يدر","Yadar",10],["الرملة","Al-Ramla",15],["الزروق","Al-Zarouq",15],["الهبارة","Al-Hubara",15],["السكيرات","Al-Sukayrat",15],["الرعيضات","Al-Ruaidat",15],["قصر أحمد","Qasr Ahmed",20],["طمينة","Tamina",20],["كرزاز","Karzaz",20],["الغيران","Al-Ghiran",20],["زاوية المحجوب","Zawiyat Al-Mahjoub",20],["أبوروية","Abu Ruwaya",20],["الدافنية","Al-Dafniya",25],["زريق","Zreeq",25],["الصوالح","Al-Sawalih",10],["زمورة","Zamoura",10],["الجهانات","Al-Jahanat",10]];
@@ -347,7 +350,7 @@ const calc=()=>{const s=tot(),d=code(),ds=d?(d.k=="fix"?Math.min(d.v,s):Math.rou
 const tot=()=>Object.entries(cart).reduce((s,[i,k])=>s+P[i][2]*k,0);
 const stp=i=>`<div class="st"><button data-i="${i}" data-d="-1">−</button><b>${ql(cart[i])}</b><button data-i="${i}" data-d="1">+</button></div>`;
 function C(){$("#ch").innerHTML=Object.keys(E).map(c=>`<button data-c="${c}" class="${view=="home"&&c==cat?"on":""}">${cn(c)}</button>`).join("")}
-const TL=()=>{const en=lang=="en";return Object.keys(E).map(c=>{const n=P.filter(p=>p[0]==c).length;return `<button type="button" class="ct" data-c="${c}"><span class="ce">${E[c]}</span><b>${cn(c)}</b><small>${n?n+" "+(en?"items":"صنف"):(en?"Soon":"قريباً")}</small></button>`}).join("")};
+const TL=()=>{const en=lang=="en";return Object.keys(E).map(c=>{const n=P.filter(p=>p[0]==c).length;return `<button type="button" class="ct" data-c="${c}"><span class="ce">${CIMG[c]?`<img src="${esc(CIMG[c])}" alt="" loading="lazy">`:E[c]}</span><b>${cn(c)}</b><small>${n?n+" "+(en?"items":"صنف"):(en?"Soon":"قريباً")}</small></button>`}).join("")};
 function R(){
 const en=lang=="en",ql2=q.toLowerCase(),root=view=="home"&&cat=="الكل"&&!q;
 $("#ch").hidden=root;{const hs=$("#hs");if(hs)hs.hidden=!(root&&hsL.length)}
@@ -594,12 +597,12 @@ function remapC(o,oldPID){const r={};if(!o)return o;for(const [i,k] of Object.en
 function setCatalog(cats,prods,quiet){const oldPID=PID.slice();
 const cs=cats.filter(c=>!c.hidden).sort((a,b)=>(a.sort-b.sort)||(a.id-b.id)),cid=new Map(cs.map(c=>[c.id,c])),today=new Date(Date.now()+72e5).toISOString().slice(0,10);
 const ps=prods.filter(p=>cid.has(p.cat_id)).sort((a,b)=>(cs.indexOf(cid.get(a.cat_id))-cs.indexOf(cid.get(b.cat_id)))||(a.sort-b.sort)||(a.id-b.id));
-E={};CEN=[];cs.forEach(c=>{E[c.name]=c.emoji||"🥜";CEN.push(c.name_en||c.name)});
+E={};CEN=[];CIMG={};cs.forEach(c=>{E[c.name]=c.emoji||"🥜";CEN.push(c.name_en||c.name);if(c.image_url)CIMG[c.name]=c.image_url});
 P=[];PEN=[];PID=[];PIMG=[];PAV=[];SALE={};
 ps.forEach(p=>{const sale=p.sale_price!=null&&+p.sale_price>0&&+p.sale_price<+p.price&&(!p.sale_until||String(p.sale_until).slice(0,10)>=today);P.push([cid.get(p.cat_id).name,p.name,+(sale?p.sale_price:p.price)]);PEN.push(p.name_en||p.name);PID.push(+p.id);PIMG.push(p.image_url||"");PAV.push(p.available!==false);if(sale)SALE[p.name]=+p.price});
 cart=remapC(cart,oldPID);if(edBk)edBk=remapC(edBk,oldPID);if(cat!="الكل"&&!E[cat])cat="الكل";catVer++;
 if(!quiet){C();R();if($("#ov").classList.contains("on"))S()}}
-async function catLoad(){try{const h={headers:{apikey:SBK}},[r1,r2]=await Promise.all([fetch(SBU+"/rest/v1/categories?select=id,name,name_en,emoji,sort,hidden",h),fetch(SBU+"/rest/v1/products?select=id,cat_id,name,name_en,price,sale_price,sale_until,image_url,available,sort",h)]);
+async function catLoad(){try{const h={headers:{apikey:SBK}},[r1,r2]=await Promise.all([fetch(SBU+"/rest/v1/categories?select=*",h),fetch(SBU+"/rest/v1/products?select=id,cat_id,name,name_en,price,sale_price,sale_until,image_url,available,sort",h)]);
 const cats=await r1.json(),prods=await r2.json();if(!r1.ok||!r2.ok||!Array.isArray(cats)||!Array.isArray(prods)||!prods.length)return;const sg=JSON.stringify([cats,prods]);let old=null;try{old=localStorage.getItem("nw_cat")}catch(_){}
 const was=old&&old===JSON.stringify({cats,prods});try{localStorage.setItem("nw_cat",JSON.stringify({cats,prods}))}catch(_){}if(!was||!catVer)setCatalog(cats,prods)}catch(_){}}
 try{const c=JSON.parse(localStorage.getItem("nw_cat")||"null");if(c&&Array.isArray(c.cats)&&Array.isArray(c.prods)&&c.prods.length)setCatalog(c.cats,c.prods,1)}catch(_){}
