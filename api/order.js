@@ -146,6 +146,32 @@ async function editOrder(uid, id, order) {
   } catch (e) { console.error("edit rpc network error", e); return { ok: false, msg: "network" }; }
 }
 
+// Discount codes live in Supabase (the admin adds them from the staff page).
+// Today's date in Libya (UTC+2, no summer time) decides if a code has expired.
+async function lookupCode(raw) {
+  const code = String(raw || "").trim().toUpperCase().slice(0, 20);
+  if (!code) return null;
+  if (SB && SK) {
+    try {
+      const r = await fetch(SB + "/rest/v1/discount_codes?select=code,kind,value,expires_on,active&code=eq." + encodeURIComponent(code), {
+        headers: { apikey: SK }
+      });
+      if (r.ok) {
+        const a = await r.json();
+        const c = Array.isArray(a) && a[0];
+        if (!c || !c.active) return null;
+        const today = new Date(Date.now() + 2 * 3600 * 1000).toISOString().slice(0, 10);
+        if (c.expires_on && String(c.expires_on).slice(0, 10) < today) return null;
+        if (!(Number(c.value) > 0)) return null;
+        return { code: c.code, kind: c.kind === "fix" ? "fix" : "pct", value: Number(c.value) };
+      }
+      console.error("code lookup failed", r.status);
+    } catch (e) { console.error("code lookup error", e); }
+  }
+  // table not there yet (setup_9 not run): the old built-in codes still work
+  return Object.prototype.hasOwnProperty.call(D.CODES, code) ? { code, kind: "pct", value: D.CODES[code] } : null;
+}
+
 const PAYTXT = {
   cod: "الدفع: كاش عند الاستلام",
   pos: "الدفع: 💳 بطاقة مصرفية عند الاستلام (جهّز جهاز الدفع)",
@@ -154,7 +180,7 @@ const PAYTXT = {
 };
 
 // Authoritative price calculation: nothing the browser sends about prices is trusted.
-function price(m) {
+function price(m, cd) {
   const lines = m.lines;
   if (!Array.isArray(lines) || !lines.length || lines.length > 60) return { err: "bad" };
   const seen = new Set();
@@ -171,9 +197,8 @@ function price(m) {
   }
   sub = r2(sub);
   if (sub < D.MIN) return { err: "min" };
-  const code = String(m.code || "").trim().toUpperCase();
-  const pct = Object.prototype.hasOwnProperty.call(D.CODES, code) ? D.CODES[code] : 0;
-  const disc = pct ? Math.round(sub * pct) / 100 : 0;
+  // cd = the discount code checked on the server ({code, kind: "pct"|"fix", value}) or null
+  const disc = !cd ? 0 : cd.kind === "fix" ? r2(Math.min(Number(cd.value), sub)) : Math.round(sub * Number(cd.value)) / 100;
   const z = m.zone && typeof m.zone === "object" ? m.zone : {};
   let delivery = null, where = "out", area = "", km = null, loc = null;
   if (z.t === "area") {
@@ -192,7 +217,7 @@ function price(m) {
     }
   }
   const total = r2(sub - disc + (delivery || 0));
-  return { sub, disc, code: pct ? code : "", delivery, where, area, km, loc, total, items };
+  return { sub, disc, code: disc ? cd.code : "", delivery, where, area, km, loc, total, items };
 }
 
 function placeTexts(p, m) {
@@ -225,7 +250,7 @@ async function main(req, res) {
     // health check: open /api/order in the browser. Shows only yes/no flags, never secrets.
     return res.status(200).json({
       ok: true,
-      version: 4,
+      version: 5,
       catalog: !!D,
       products: D ? D.P.length : 0,
       supabase: !!(SB && SK && PK),
@@ -247,7 +272,7 @@ async function main(req, res) {
 
   const name = s(m.n || b.name, 80), phone = s(b.phone, 30);
   if (!name || !phone) return res.status(400).json({ ok: false, error: "bad" });
-  const p = price(m);
+  const p = price(m, await lookupCode(m.code));
   if (p.err) return res.status(400).json({ ok: false, error: p.err });
   if (Math.abs(num(m.tot) - p.total) > 0.01) return res.status(409).json({ ok: false, error: "price" });
 
@@ -282,7 +307,7 @@ async function main(req, res) {
       "العميل عدّل طلبه. الطلب بعد التعديل:",
       ...p.items.map(i => `- ${i.name}: ${i.qty} = ${i.sum} د.ل`),
       `المجموع: ${fmt(p.sub)} د.ل`,
-      p.disc ? `خصم كود ${p.code}: -${fmt(p.disc)} د.ل` : "",
+      p.disc ? `🏷️ خصم كود ${p.code}: -${fmt(p.disc)} د.ل` : "",
       p.delivery != null ? `التوصيل: ${fmt(p.delivery)} د.ل` : "التوصيل: يُحدَّد عند التأكيد",
       `الإجمالي: ${fmt(p.total)} د.ل` + (d.old_total != null ? ` (كان ${fmt(d.old_total)} د.ل)` : ""),
       `الاسم: ${name}`,
@@ -313,7 +338,7 @@ async function main(req, res) {
     "🛒 طلب جديد" + (id ? " #" + id : "") + " - عالم المكسرات",
     ...p.items.map(i => `- ${i.name}: ${i.qty} = ${i.sum} د.ل`),
     `المجموع: ${fmt(p.sub)} د.ل`,
-    p.disc ? `خصم كود ${p.code}: -${fmt(p.disc)} د.ل` : "",
+    p.disc ? `🏷️ خصم كود ${p.code}: -${fmt(p.disc)} د.ل` : "",
     p.delivery != null ? `التوصيل: ${fmt(p.delivery)} د.ل` : "التوصيل: يُحدَّد عند التأكيد",
     `الإجمالي: ${fmt(p.total)} د.ل` + (p.delivery == null ? " (بدون التوصيل)" : ""),
     `الاسم: ${name}`,
