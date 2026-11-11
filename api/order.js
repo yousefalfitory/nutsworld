@@ -146,30 +146,55 @@ async function editOrder(uid, id, order) {
   } catch (e) { console.error("edit rpc network error", e); return { ok: false, msg: "network" }; }
 }
 
-// Discount codes live in Supabase (the admin adds them from the staff page).
-// Today's date in Libya (UTC+2, no summer time) decides if a code has expired.
-async function lookupCode(raw) {
+const libyaToday = () => new Date(Date.now() + 2 * 3600 * 1000).toISOString().slice(0, 10);
+
+// Products live in Supabase (the admin edits them from the staff page).
+// Fallback (setup_10 not run yet): the built-in list above, numbered 1, 2, 3...
+let catCache = null, catAt = 0;
+async function catalog() {
+  if (catCache && Date.now() - catAt < 30000) return catCache;
+  if (SB && SK) {
+    try {
+      const r = await fetch(SB + "/rest/v1/products?select=id,name,price,sale_price,sale_until,available,categories(hidden)", { headers: { apikey: SK } });
+      if (r.ok) {
+        const a = await r.json();
+        if (Array.isArray(a) && a.length) {
+          const today = libyaToday(), m = new Map();
+          for (const p of a) {
+            const sale = p.sale_price != null && Number(p.sale_price) > 0 && Number(p.sale_price) < Number(p.price) && (!p.sale_until || String(p.sale_until).slice(0, 10) >= today);
+            m.set(Number(p.id), { name: p.name, price: Number(sale ? p.sale_price : p.price), ok: p.available !== false && !(p.categories && p.categories.hidden) });
+          }
+          catCache = m; catAt = Date.now();
+          return m;
+        }
+      } else console.error("catalog failed", r.status);
+    } catch (e) { console.error("catalog error", e); }
+  }
+  const m = new Map();
+  D.P.forEach((p, i) => m.set(i + 1, { name: p[1], price: p[2], ok: true }));
+  return m;
+}
+
+// Discount codes live in Supabase. Returns {code, kind, value}, or {err: "bad"|"used"|"full"}, or null (no code).
+async function lookupCode(raw, phone, excl) {
   const code = String(raw || "").trim().toUpperCase().slice(0, 20);
   if (!code) return null;
   if (SB && SK) {
     try {
-      const r = await fetch(SB + "/rest/v1/discount_codes?select=code,kind,value,expires_on,active&code=eq." + encodeURIComponent(code), {
-        headers: { apikey: SK }
+      const r = await fetch(SB + "/rest/v1/rpc/code_check", {
+        method: "POST",
+        headers: { apikey: SK, "Content-Type": "application/json" },
+        body: JSON.stringify({ p_code: code, p_phone: String(phone || ""), p_excl: excl || null })
       });
       if (r.ok) {
-        const a = await r.json();
-        const c = Array.isArray(a) && a[0];
-        if (!c || !c.active) return null;
-        const today = new Date(Date.now() + 2 * 3600 * 1000).toISOString().slice(0, 10);
-        if (c.expires_on && String(c.expires_on).slice(0, 10) < today) return null;
-        if (!(Number(c.value) > 0)) return null;
-        return { code: c.code, kind: c.kind === "fix" ? "fix" : "pct", value: Number(c.value) };
+        const d = await r.json();
+        if (d && d.ok) return { code: d.code, kind: d.kind === "fix" ? "fix" : "pct", value: Number(d.value) };
+        return { err: (d && d.err) || "bad" };
       }
-      console.error("code lookup failed", r.status);
-    } catch (e) { console.error("code lookup error", e); }
+      console.error("code_check failed", r.status);
+    } catch (e) { console.error("code_check error", e); }
   }
-  // table not there yet (setup_9 not run): the old built-in codes still work
-  return Object.prototype.hasOwnProperty.call(D.CODES, code) ? { code, kind: "pct", value: D.CODES[code] } : null;
+  return Object.prototype.hasOwnProperty.call(D.CODES, code) ? { code, kind: "pct", value: D.CODES[code] } : { err: "bad" };
 }
 
 const PAYTXT = {
@@ -180,20 +205,27 @@ const PAYTXT = {
 };
 
 // Authoritative price calculation: nothing the browser sends about prices is trusted.
-function price(m, cd) {
+function price(m, cd, cat) {
   const lines = m.lines;
   if (!Array.isArray(lines) || !lines.length || lines.length > 60) return { err: "bad" };
   const seen = new Set();
   const items = [];
   let sub = 0;
+  // new pages send product ids (m.v = 2); older cached pages send list positions (0, 1, 2...)
+  const byId = m.v === 2;
   for (const l of lines) {
-    const i = Number(l && l[0]), k = Number(l && l[1]);
-    if (!Number.isInteger(i) || i < 0 || i >= D.P.length || seen.has(i)) return { err: "bad" };
+    let i = Number(l && l[0]);
+    const k = Number(l && l[1]);
+    if (!Number.isInteger(i)) return { err: "bad" };
+    if (!byId) i += 1;
+    const p = cat && cat.get(i);
+    if (!p || seen.has(i)) return { err: "bad" };
+    if (!p.ok) return { err: "soldout", name: p.name };
     if (!(k >= 0.25 && k <= 50) || Math.abs(k * 4 - Math.round(k * 4)) > 1e-9) return { err: "bad" };
     seen.add(i);
-    const line = r2(D.P[i][2] * k);
+    const line = r2(p.price * k);
     sub += line;
-    items.push({ name: D.P[i][1], qty: qtyAr(k), sum: fmt(line) });
+    items.push({ name: p.name, qty: qtyAr(k), sum: fmt(line) });
   }
   sub = r2(sub);
   if (sub < D.MIN) return { err: "min" };
@@ -250,7 +282,7 @@ async function main(req, res) {
     // health check: open /api/order in the browser. Shows only yes/no flags, never secrets.
     return res.status(200).json({
       ok: true,
-      version: 5,
+      version: 6,
       catalog: !!D,
       products: D ? D.P.length : 0,
       supabase: !!(SB && SK && PK),
@@ -272,8 +304,11 @@ async function main(req, res) {
 
   const name = s(m.n || b.name, 80), phone = s(b.phone, 30);
   if (!name || !phone) return res.status(400).json({ ok: false, error: "bad" });
-  const p = price(m, await lookupCode(m.code));
-  if (p.err) return res.status(400).json({ ok: false, error: p.err });
+  const eid0 = m.edit != null ? Number(m.edit) : null;
+  const cd = await lookupCode(m.code, phone, Number.isInteger(eid0) ? eid0 : null);
+  if (cd && cd.err) return res.status(409).json({ ok: false, error: "code_" + cd.err });
+  const p = price(m, cd, await catalog());
+  if (p.err) return res.status(p.err === "soldout" ? 409 : 400).json({ ok: false, error: p.err, name: p.name || undefined });
   if (Math.abs(num(m.tot) - p.total) > 0.01) return res.status(409).json({ ok: false, error: "price" });
 
   const pay = ["bank", "wallet", "pos"].includes(m.pay) ? m.pay : "cod";
