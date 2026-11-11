@@ -220,9 +220,8 @@ body:has(#ov.on) .otk{display:none!important}
 .kst{font-size:13px;margin:4px 0 0}.kst.y{color:#15803d}.kst.n{color:#b3261e}
 [data-theme="dark"] .kst.y{color:#7fe0a8}[data-theme="dark"] .kst.n{color:#ffb4ab}
 
-#nv .nsale{color:#e0443e;font-weight:700}#nv .nsale svg{fill:#e0443e22}#nv .nsale.on{color:#fff}#nv .nsale.on svg{fill:#ffffff33}
-#nv .nsale.on::before{content:"";position:absolute;inset:6px 10%;border-radius:14px;background:#e0443e;z-index:-1}
-#nv .nsale{isolation:isolate}
+#nv .nsale.on{color:#e0443e}#nv .nsale.on svg{fill:#e0443e33}
+[data-theme="dark"] #nv .nsale.on{color:#ff6b62}
 .bd.sl2{background:#e0443e;color:#fff}
 .sh2{background:#e0443e;color:#fff;border-radius:14px;padding:10px 14px;margin-bottom:10px}
 .pim{width:100%;aspect-ratio:4/3;border-radius:12px;overflow:hidden;background:#f2b45733}.pim img{width:100%;height:100%;object-fit:cover;display:block}
@@ -235,6 +234,26 @@ body:has(#ov.on) .otk{display:none!important}
 
 .ct .ce{overflow:hidden}.ct .ce img{width:100%;height:100%;object-fit:cover;display:block}
 .pr s,.c s{color:var(--mut);text-decoration:line-through;text-decoration-color:#e0443e;text-decoration-thickness:2px}
+
+.mi{background:var(--card);border-color:var(--line);color:var(--tx);box-shadow:0 1px 3px #0000000d}
+.mi .tx small.m{color:var(--mut)!important}
+.mi .go{color:var(--mut);opacity:1}
+.mi .ic,[data-theme="dark"] .mi .ic{background:#2f8a57;color:#fff}
+.mi .sw{background:#c9d3cc;box-shadow:none}.mi .sw::after{background:#fff}
+.mi .sw.on{background:#2f8a57;box-shadow:none}.mi .sw.on::after{background:#fff}
+[data-theme="dark"] .mi .sw{background:#3a4a40}
+.stp{display:flex;margin:12px 0 4px}
+.stp .s{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;font-size:10.5px;line-height:1.25;color:var(--mut)}
+.stp .s::before{content:"";position:absolute;top:11px;inset-inline-start:calc(-50% + 14px);inset-inline-end:calc(50% + 14px);height:3px;border-radius:9px;background:var(--line);transition:background .4s}
+.stp .s:first-child::before{display:none}
+.stp .s.on::before{background:#2f8a57}
+.stp .d{flex:none;box-sizing:border-box;width:24px;height:24px;min-width:24px;min-height:24px;line-height:1;padding:0;border-radius:50%;background:var(--line);color:var(--mut);display:grid;place-items:center;font-size:12px;font-weight:800;position:relative;z-index:1;transition:background .4s}
+.stp .s.on .d{background:#2f8a57;color:#fff}
+.stp .s.on{color:#1b7a45;font-weight:700}
+[data-theme="dark"] .stp .s.on{color:#7fe0a8}
+.stp .s.cur .d{animation:stpP 1.6s infinite}
+.stp .s.cur .d i{width:8px;height:8px;border-radius:50%;background:#fff}
+@keyframes stpP{0%{box-shadow:0 0 0 0 #2f8a5799}70%{box-shadow:0 0 0 9px #2f8a5700}100%{box-shadow:0 0 0 0 #2f8a5700}}
 </style>
 <script>try{var m=localStorage.getItem("nw_theme")||"auto";if(m==="dark"||(m==="auto"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.dataset.theme="dark"}catch(_){}</script>
 </head>
@@ -469,7 +488,9 @@ wvE=M?T2(M[0],M[1]):T2("حصل خطأ، حاول مرة ثانية","Something w
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&wvT)wvCheck()});
 const FP='<svg viewBox="0 0 24 24"><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/></svg>';
 const VB='<svg class="vb" viewBox="0 0 24 24" role="img" aria-label="Verified"><path fill="#0866FF" d="M12.00 0.55 L12.60 0.64 L13.17 0.89 L13.70 1.27 L14.19 1.72 L14.63 2.17 L15.06 2.57 L15.50 2.88 L15.97 3.08 L16.50 3.17 L17.09 3.19 L17.72 3.18 L18.38 3.21 L19.03 3.32 L19.61 3.55 L20.10 3.90 L20.45 4.39 L20.68 4.97 L20.79 5.62 L20.82 6.28 L20.81 6.91 L20.83 7.50 L20.92 8.03 L21.12 8.50 L21.43 8.94 L21.83 9.37 L22.28 9.81 L22.73 10.30 L23.11 10.83 L23.36 11.40 L23.45 12.00 L23.36 12.60 L23.11 13.17 L22.73 13.70 L22.28 14.19 L21.83 14.63 L21.43 15.06 L21.12 15.50 L20.92 15.97 L20.83 16.50 L20.81 17.09 L20.82 17.72 L20.79 18.38 L20.68 19.03 L20.45 19.61 L20.10 20.10 L19.61 20.45 L19.03 20.68 L18.38 20.79 L17.72 20.82 L17.09 20.81 L16.50 20.83 L15.97 20.92 L15.50 21.12 L15.06 21.43 L14.63 21.83 L14.19 22.28 L13.70 22.73 L13.17 23.11 L12.60 23.36 L12.00 23.45 L11.40 23.36 L10.83 23.11 L10.30 22.73 L9.81 22.28 L9.37 21.83 L8.94 21.43 L8.50 21.12 L8.03 20.92 L7.50 20.83 L6.91 20.81 L6.28 20.82 L5.62 20.79 L4.97 20.68 L4.39 20.45 L3.90 20.10 L3.55 19.61 L3.32 19.03 L3.21 18.38 L3.18 17.72 L3.19 17.09 L3.17 16.50 L3.08 15.97 L2.88 15.50 L2.57 15.06 L2.17 14.63 L1.72 14.19 L1.27 13.70 L0.89 13.17 L0.64 12.60 L0.55 12.00 L0.64 11.40 L0.89 10.83 L1.27 10.30 L1.72 9.81 L2.17 9.37 L2.57 8.94 L2.88 8.50 L3.08 8.03 L3.17 7.50 L3.19 6.91 L3.18 6.28 L3.21 5.62 L3.32 4.97 L3.55 4.39 L3.90 3.90 L4.39 3.55 L4.97 3.32 L5.62 3.21 L6.28 3.18 L6.91 3.19 L7.50 3.17 L8.03 3.08 L8.50 2.88 L8.94 2.57 L9.37 2.17 L9.81 1.72 L10.30 1.27 L10.83 0.89 L11.40 0.64Z"/><path d="M7.4 12.2l3.1 3.1 6.1-6.3" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-const CS={new:["تم استلام طلبك","Order received",0],preparing:["قيد التجهيز","Preparing",1],handed:["قيد التجهيز","Preparing",1],out:["مع المندوب، في الطريق إليك","On the way with the courier",2],delivered:["تم التسليم","Delivered",3],cancelled:["ملغي","Cancelled",-1]};
+const CS={new:["وصل طلبك","Order received",0],preparing:["قيد التجهيز","Preparing",1],handed:["سُلّم للمندوب","Handed to the courier",2],out:["المندوب في الطريق إليك","The courier is on the way",3],delivered:["تم التسليم","Delivered",4],cancelled:["ملغي","Cancelled",-1]};
+const STPL=[["وصل طلبك","Received"],["قيد التجهيز","Preparing"],["سُلّم للمندوب","With courier"],["في الطريق إليك","On the way"],["تم التسليم","Delivered"]];
+const stpH=st=>`<div class="stp">${STPL.map((l,i)=>`<div class="s${i<=st?" on":""}${i==st&&st<4?" cur":""}"><span class="d">${i<st||st==4?"✓":i==st?"<i></i>":i+1}</span><span>${T2(l[0],l[1])}</span></div>`).join("")}</div>`;
 const EDW=10*60*1000;
 const edLeft=o=>o&&o.status=="new"?EDW-(Date.now()-new Date(o.created_at).getTime()):0;
 const qParse=t=>{t=String(t||"");let m=t.match(/([\d.]+)\s*كغ/);if(m)return +m[1];m=t.match(/([\d.]+)\s*غ/);if(m)return +m[1]/1000;m=t.match(/([\d.]+)\s*kg/i);if(m)return +m[1];m=t.match(/([\d.]+)\s*g/i);return m?+m[1]/1000:0};
@@ -521,7 +542,7 @@ const bal=$("#wamt");if(bal)bal.textContent=fm(wal.b)+" "+CU();
 e.innerHTML=wal.tx.length?wal.tx.map(x=>{const a=+x.amount,st=(S2[x.status]||["",""])[en?1:0];return `<div class="r"><span>${esc((K[x.kind]||[x.kind,x.kind])[en?1:0])}${x.note?" · "+esc(x.note):""}<br><small class="m">${new Date(x.created_at).toLocaleDateString("en-GB")}${st?" · "+st:""}</small></span><b style="color:${a<0?"#b3261e":x.status=="pending"?"var(--mut)":"#15803d"}">${a>0?"+":""}${fm(a)} ${CU()}</b></div>`}).join(""):`<p class="m">${T2("لا توجد حركات بعد","No activity yet")}</p>`}
 async function loadOrd(){const t=await tok(),e=$("#ol");if(!t||!e)return;
 try{const r=await au("/rest/v1/orders?select=id,created_at,total,status,payment,items,form,code,customer_name,phone&order=created_at.desc&limit=15",{},t);const a=await r.json(),en=lang=="en";if(!Array.isArray(a))return;myOrd=a;
-e.innerHTML=a.length?a.map(o=>{const c=CS[o.status]||[o.status,o.status,0],st=c[2],left=edLeft(o);return `<div class="r" style="display:block"><div style="display:flex;justify-content:space-between;gap:8px"><span>#${esc(o.id)} · ${new Date(o.created_at).toLocaleDateString("en-GB")}</span><b>${fmt(+o.total)} ${CU()}</b></div><div class="os${st<0?" x":""}">${esc(c[en?1:0])}</div>${st>=0?`<div class="trk">${[0,1,2,3].map(i=>`<i class="${i<=st?"on":""}"></i>`).join("")}</div>`:""}${left>0?`<button type="button" class="lk" style="padding:4px 0" data-ed="${esc(o.id)}">✏️ ${T2("تعديل الطلب","Edit order")} (${T2("باقي","left")} ${Math.ceil(left/60000)} ${T2("د","min")})</button>`:""}</div>`}).join(""):`<p class="m">${T2("لا توجد طلبات سابقة","No previous orders")}</p>`}catch(_){}}
+e.innerHTML=a.length?a.map(o=>{const c=CS[o.status]||[o.status,o.status,0],st=c[2],left=edLeft(o);return `<div class="r" style="display:block"><div style="display:flex;justify-content:space-between;gap:8px"><span>#${esc(o.id)} · ${new Date(o.created_at).toLocaleDateString("en-GB")}</span><b>${fmt(+o.total)} ${CU()}</b></div><div class="os${st<0?" x":""}">${esc(c[en?1:0])}</div>${st>=0?stpH(st):""}${left>0?`<button type="button" class="lk" style="padding:4px 0" data-ed="${esc(o.id)}">✏️ ${T2("تعديل الطلب","Edit order")} (${T2("باقي","left")} ${Math.ceil(left/60000)} ${T2("د","min")})</button>`:""}</div>`}).join(""):`<p class="m">${T2("لا توجد طلبات سابقة","No previous orders")}</p>`}catch(_){}}
 setInterval(()=>{if(ses&&pg=="acct"&&$("#ac").classList.contains("on")&&$("#ol")&&!document.hidden)loadOrd()},20000);
 async function avUp(file){if(!file||!ses)return;const L2=$("#avl");if(L2)L2.classList.add("busy");
 try{const url=URL.createObjectURL(file),img=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=url});
