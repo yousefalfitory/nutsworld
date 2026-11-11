@@ -276,6 +276,11 @@ body:has(#ov.on) .otk{display:none!important}
 .thm.out button{opacity:0;transform:translateY(-36px) scale(.3);transition:transform .25s ease-in,opacity .22s}
 .thm.out button:nth-child(2){transition-delay:.05s}.thm.out button:nth-child(1){transition-delay:.1s}
 @media (prefers-reduced-motion:reduce){.thm button{transition:none!important}}
+
+.mi{border:1.5px solid #2f8a57}
+.mi .ic,[data-theme="dark"] .mi .ic{background:#2f8a57;color:#f2b457}
+.mi .ic svg{stroke:#f2b457}
+[data-theme="dark"] .mi{border-color:#3f9e68}
 </style>
 <script>try{var m=localStorage.getItem("nw_theme")||"auto";if(m==="dark"||(m==="auto"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.dataset.theme="dark"}catch(_){}</script>
 </head>
