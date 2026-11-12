@@ -1,10 +1,11 @@
 // Nuts World app helper: lets the app open and show a friendly page when there is no internet.
 // It never stores orders, prices or account data; those always come fresh from the internet.
-const C = "nw-shell-v2";
+const C = "nw-shell-v3";
 const SHELL = ["/", "/icons/icon-192.png", "/icons/icon-512.png", "/manifest.json"];
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(C).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  // caching must never block the install (otherwise notifications cannot start)
+  e.waitUntil(caches.open(C).then((c) => c.addAll(SHELL)).catch(() => {}).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (e) => {
@@ -42,7 +43,7 @@ self.addEventListener("push", (e) => {
   e.waitUntil(
     self.registration.showNotification(d.title || "عالم المكسرات", {
       body: d.body || "",
-      icon: "/icons/staff-192.png",
+      icon: d.icon || "/icons/staff-192.png",
       badge: "/icons/favicon-48.png",
       tag: d.tag || undefined,
       renotify: true,
