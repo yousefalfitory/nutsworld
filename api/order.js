@@ -81,6 +81,7 @@ const D = {
   PR: {"base": 5, "km": 2, "min": 10, "max": 40, "f": 1.3, "out": 40},
   CODES: {"YF": 10}
 };
+const PUSH = require("./_push");
 const SB = process.env.SUPABASE_URL;
 const SK = process.env.SUPABASE_SECRET_KEY;
 const PK = process.env.SUPABASE_PUBLISHABLE_KEY;
@@ -282,7 +283,8 @@ async function main(req, res) {
     // health check: open /api/order in the browser. Shows only yes/no flags, never secrets.
     return res.status(200).json({
       ok: true,
-      version: 6,
+      version: 7,
+      push: PUSH.ready(),
       catalog: !!D,
       products: D ? D.P.length : 0,
       supabase: !!(SB && SK && PK),
@@ -383,7 +385,16 @@ async function main(req, res) {
     PAYTXT[pay],
     uid ? "👤 عميل مسجل" : ""
   ].filter(Boolean).join("\n");
-  const sent = await telegram(text);
+  const [sent] = await Promise.all([
+    telegram(text),
+    // ring the staff phones (home-screen app), even when the app is closed
+    PUSH.sendTo("role=in.(staff,admin)", {
+      title: "🛒 طلب جديد" + (id ? " #" + id : ""),
+      body: name + " · " + fmt(p.total) + " د.ل" + (t.city ? " · " + t.city : ""),
+      url: "/staff.html",
+      tag: "nw-order-" + (id || Date.now())
+    }).catch(() => 0)
+  ]);
   if (!sent && !id) return res.status(502).json({ ok: false });
   return res.status(200).json({ ok: true, id, total: p.total, balance });
 }
