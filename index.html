@@ -335,6 +335,38 @@ body.hasotk main{padding-bottom:96px}
 .wli{display:inline-grid;place-items:center;vertical-align:middle;font-style:normal}
 .wcard .wl{display:inline-flex;align-items:center;gap:6px}.wcard .wli svg{width:20px;height:20px}
 .wli.g{color:#2f8a57}.wli.g svg{width:20px;height:20px;vertical-align:-4px}
+
+/* ===== update 15 ===== */
+.otk{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;height:54px;display:flex!important;align-items:center;justify-content:center;left:76px;right:10px;pointer-events:none}
+.otk[hidden]{display:none!important}
+.otk .stp3{width:100%;align-items:center}
+.stp3 .s{flex:none;width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:var(--card);color:#2f8a57;box-shadow:0 2px 8px #0002;opacity:1!important}
+.stp3 .s svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.stp3 .s:not(.dn):not(.cur){color:#9fb3a7}
+.stp3 .s.cur{width:42px;height:42px;background:#2f8a57;color:#fff;box-shadow:0 0 0 4px #2f8a5733,0 3px 10px #0003;animation:odp 1.8s infinite}
+.stp3 .s.cur svg{width:23px;height:23px}
+.stp3 .ln{flex:1;min-width:4px;height:3px;margin:0;background:#c9d6cd;border-radius:9px}
+.stp3 .ln.on{background:#2f8a57}
+@media (prefers-reduced-motion:reduce){.stp3 .s.cur{animation:none}}
+body.hasotk main{padding-bottom:80px}
+.phd .pnm{gap:3px;align-items:center}
+.phd .pnm .vb{width:.78em;height:.78em;top:-.09em}
+.otk{bottom:calc(var(--nh) + 16px + env(safe-area-inset-bottom,0px))}
+#bar.on~.otk{bottom:calc(var(--nh) + 76px + env(safe-area-inset-bottom,0px))}
+label[for=z],#z{display:none!important}
+.svp{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}
+.svp button{display:inline-flex;align-items:center;gap:5px;border:1.5px solid #2f8a57;background:#e4f5ea;color:#1b7a45;border-radius:99px;padding:7px 12px;font:inherit;font-size:13.5px;font-weight:700}
+.svp button.on{background:#2f8a57;color:#fff}
+.svp button.sv{border-style:dashed;background:var(--card)}
+.svp svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+[data-theme="dark"] .svp button{background:#1f3a2b;color:#7fe0a8}
+.plr{display:flex;align-items:center;gap:10px;padding:12px;border:1.5px solid #2f8a57;background:#e4f5ea;border-radius:16px;margin-top:10px}
+[data-theme="dark"] .plr{background:#1f3a2b}
+.plr b{flex:1}.plr a{font-size:13px}.plr button{border:0;background:none;color:#b91c1c;font:inherit;font-weight:700}
+.ptr{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));z-index:30;width:38px;height:38px;margin-left:-19px;border-radius:50%;background:var(--card);box-shadow:0 4px 14px #0003;display:grid;place-items:center;transform:translateY(-70px) scale(.6);opacity:0;pointer-events:none}
+.ptr svg{width:22px;height:22px;fill:none;stroke:#2f8a57;stroke-width:2.4;stroke-linecap:round}
+.ptr.go svg{animation:ptrs .8s linear infinite}
+@keyframes ptrs{to{transform:rotate(360deg)}}
 </style>
 <script>try{var m=localStorage.getItem("nw_theme")||"auto";if(m==="dark"||(m==="auto"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.dataset.theme="dark"}catch(_){}</script>
 <link rel="manifest" href="/manifest.json">
@@ -384,7 +416,7 @@ body.hasotk main{padding-bottom:96px}
 <label for="n" data-t="l_n">الاسم</label><input id="n" name="n" required>
 <label for="p" data-t="l_p">رقم الهاتف</label><input id="p" name="p" type="tel" required>
 <button type="button" id="gp" class="gpb" data-t="gp">📍 حدد موقعي لحساب سعر التوصيل</button>
-<p class="m" data-t="gn">نستخدم موقعك لحساب التوصيل فقط، ويُرسل مع طلبك.</p><p id="gs" class="m" hidden></p>
+<p class="m" data-t="gn">نستخدم موقعك لحساب التوصيل فقط، ويُرسل مع طلبك.</p><p id="gs" class="m" hidden></p><div id="svp" class="svp" hidden></div>
 <label for="z" data-t="l_z">أو اختر منطقتك</label><select id="z" name="z" required></select>
 <div id="cw" hidden><label for="c" data-t="l_c">المدينة أو الحي</label><input id="c" name="c"></div>
 <label for="a" data-t="l_a">العنوان</label><input id="a" name="a" required>
@@ -432,13 +464,27 @@ const cn=c=>lang!="en"?c:c=="الكل"?"All":CEN[Object.keys(E).indexOf(c)];
 const nmOf=i=>lang=="en"?PEN[i]:P[i][1];
 const BANK={a:"عالم المكسرات لتوزيع المكسرات والبقوليات والتسالي",no:"114020691020028",ib:"LY33005114114020691020028"};
 const BK=()=>{const en=lang=="en",cp=v=>`<button type="button" class="cpb" data-cp="${v}">${en?"Copy":"نسخ"}</button>`;return `<div class="bk"><b>${en?"Bank transfer details":"بيانات التحويل المصرفي"}</b><div>${en?"Bank":"المصرف"}: <b>${en?"Wahda Bank":"مصرف الوحدة"}</b></div><div>${en?"Account name":"اسم الحساب"}: <b>${BANK.a}</b></div><div>${en?"Account no.":"رقم الحساب"}: <b dir="ltr">${BANK.no}</b> ${cp(BANK.no)}</div><div>IBAN: <b dir="ltr">${BANK.ib}</b> ${cp(BANK.ib)}</div></div>`};
-const zu=()=>{const v=$("#z").value,need=v==="o"||(v===""&&!!gps&&gps.out);$("#cw").hidden=!need;$("#c").required=need;$("#z").required=!gps};
+const zu=()=>{const v=$("#z").value,need=v==="o"||(v===""&&!!gps&&gps.out);$("#cw").hidden=!need;$("#c").required=need;$("#z").required=false};
+function setLoc(lat,lon,pl){const d=hav(SHOP[0],SHOP[1],lat,lon),rd=d*PR.f;gst="";gps=d>PR.out?{out:true,d,lat,lon}:{d:rd,fee:Math.min(PR.max,Math.max(PR.min,Math.round(PR.base+PR.km*rd))),lat,lon};if(pl)gps.pl=pl;$("#z").value="";zu();gpsUI();S()}
+const PIN='<svg viewBox="0 0 24 24"><path d="M12 21s-6-5.3-6-10a6 6 0 0112 0c0 4.7-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/></svg>';
+const myPl=()=>Array.isArray(prof&&prof.places)?prof.places:[];
+function svpUI(){const w=$("#svp");if(!w)return;if(!ses||!prof){w.hidden=true;return}const L=myPl(),near=x=>gps&&Math.abs(x.lat-gps.lat)<2e-4&&Math.abs(x.lon-gps.lon)<2e-4;
+let h=L.map((x,i)=>`<button type="button" class="${near(x)?"on":""}" data-pl="${i}">${PIN}${esc(x.n)}</button>`).join("");
+if(gps&&!L.some(near)&&L.length<10)h+=`<button type="button" class="sv" data-plsave>💾 ${T2("احفظ الموقع هذا","Save this place")}</button>`;
+w.innerHTML=h;w.hidden=!h}
+async function plSave(L){const t=await tok();if(!t)return false;try{const r=await au("/rest/v1/profiles?id=eq."+ses.uid,{method:"PATCH",body:JSON.stringify({places:L})},t);if(!r.ok)throw 0;prof.places=L;return true}catch(_){T(T2("ما قدرناش نحفظ الموقع","Could not save the place"));return false}}
+document.addEventListener("click",async e=>{const b=e.target.closest("[data-pl],[data-plsave],[data-pldel]");if(!b)return;e.preventDefault();
+if(b.dataset.pl!=null){const x=myPl()[+b.dataset.pl];if(x)setLoc(x.lat,x.lon,x.n);return}
+if(b.hasAttribute("data-plsave")){if(!gps)return;const n=(prompt(T2("اسم الموقع (مثلاً: المنزل، العمل، حوش الأخت)","Place name (e.g. Home, Work)"),T2(myPl().length?"العمل":"المنزل",myPl().length?"Work":"Home"))||"").trim().slice(0,30);if(!n)return;
+if(await plSave(myPl().concat([{n,lat:+gps.lat.toFixed(6),lon:+gps.lon.toFixed(6)}]))){T(T2("تم حفظ «"+n+"»","Saved “"+n+"”"));svpUI()}return}
+if(b.dataset.pldel!=null){const i=+b.dataset.pldel,x=myPl()[i];if(!x||!confirm(T2("مسح «"+x.n+"»؟","Delete “"+x.n+"”?")))return;const L=myPl().slice();L.splice(i,1);if(await plSave(L)){svpUI();AC()}}});
 function gpsUI(){const e=$("#gs"),en=lang=="en";let m="";
 if(gst=="wait")m=en?"Locating…":"جاري تحديد الموقع…";
-else if(gst=="err")m=en?"Could not get your location. Please choose your area below.":"تعذر تحديد موقعك. اختر منطقتك من القائمة.";
+else if(gst=="err")m=en?"Could not get your location. Turn on location for this app in your phone settings, then try again.":"تعذر تحديد موقعك. افتح صلاحية الموقع للمتجر من إعدادات التلفون (الإعدادات ← الخصوصية ← خدمات الموقع)، وحاول مرة ثانية.";
+else if(gst=="need")m=en?"⚠️ Set your location first so we can calculate delivery.":"⚠️ حدد موقعك أولاً باش نحسبوا سعر التوصيل.";
 else if(gps&&gps.out)m=en?"Your location is outside Misrata. Delivery fee is set on confirmation.":"موقعك خارج مصراتة، سعر التوصيل يُحدَّد عند التأكيد.";
 else if(gps)m=en?`✅ Location set: about ${gps.d.toFixed(1)} km from the shop. Delivery ${gps.fee} LYD.`:`✅ تم تحديد موقعك: حوالي ${gps.d.toFixed(1)} كم من المحل، التوصيل ${gps.fee} د.ل.`;
-e.textContent=m;e.hidden=!m}
+e.textContent=m;e.hidden=!m;svpUI()}
 const ZO=()=>{const s=$("#z"),v=s.value,en=lang=="en";s.innerHTML=`<option value="">${L("zp")}</option>`+AREAS.map((a,i)=>`<option value="${i}">${en?a[1]:a[0]} - ${a[2]} ${CU()}</option>`).join("")+`<option value="o">${L("zo")}</option>`;s.value=v;zu()};
 function A(){const en=lang=="en",d=document.documentElement;d.lang=en?"en":"ar";d.dir=en?"ltr":"rtl";
 document.querySelectorAll("[data-t]").forEach(e=>{e.textContent=TR[e.dataset.t][en?1:0]});
@@ -475,7 +521,7 @@ $("#g").innerHTML=root?TL():hd+list;
 svc();const n=Object.keys(cart).length;$("#bar").classList.toggle("on",n>0);$("#bn").textContent=n+(en?" items":" أصناف");$("#bt").textContent=fmt(tot())+" "+CU();$("#nb").hidden=!n;$("#nb").textContent=n}
 function S(){updPay();const ks=Object.keys(cart),en=lang=="en";$("#f").hidden=!ks.length||!$("#dn").hidden;if(!ks.length){$("#cl").innerHTML=`<div class="emp"><span class="ei">🛒</span><b>${T2("سلتك فارغة","Your cart is empty")}</b><span class="m">${T2("أضف أصناف من المتجر وترجع تلقاها هنا.","Add items from the store and they will show up here.")}</span><button type="button" class="sub" id="emb">${T2("تسوّق الآن","Start shopping")}</button></div>`;return}const t=calc(),c=CU();
 $("#f").querySelector('button[type="submit"]').disabled=t.s<MIN;
-$("#cl").innerHTML=ks.map(i=>`<div class="r"><span>${nmOf(i)}<br><small class="m">${fmt(P[i][2]*cart[i])} ${c}</small></span>${stp(i)}</div>`).join("")+`<div class="tt"><div>${en?"Subtotal":"المجموع"} <b>${fmt(t.s)} ${c}</b></div>${t.d?`<div>${en?"Discount":"خصم"} ${t.d.c} <b>-${fmt(t.ds)} ${c}</b></div>`:""}<div>${en?(t.ar?"Delivery - "+t.ar[1]:t.gf?"Delivery ("+t.gf.d.toFixed(1)+" km)":"Delivery"):(t.ar?"التوصيل - "+t.ar[0]:t.gf?"التوصيل ("+t.gf.d.toFixed(1)+" كم)":"التوصيل")} <b>${t.known?fmt(t.fe)+" "+c:(t.out?(en?"Set on confirmation":"يُحدَّد عند التأكيد"):(en?"Choose your area":"اختر منطقتك"))}</b></div><div class="g">${en?"Total":"الإجمالي"} <b>${fmt(t.g)} ${c}${t.known?"":(en?" + delivery":" + التوصيل")}</b></div></div>${t.s<MIN?`<p class="mw">${en?`Minimum order is ${MIN} LYD. Add ${fmt(MIN-t.s)} LYD more to continue.`:`أقل قيمة للطلب ${MIN} دينار ليبي. أضف ${fmt(MIN-t.s)} دينار لتكمل الطلب.`}</p>`:""}`}
+$("#cl").innerHTML=ks.map(i=>`<div class="r"><span>${nmOf(i)}<br><small class="m">${fmt(P[i][2]*cart[i])} ${c}</small></span>${stp(i)}</div>`).join("")+`<div class="tt"><div>${en?"Subtotal":"المجموع"} <b>${fmt(t.s)} ${c}</b></div>${t.d?`<div>${en?"Discount":"خصم"} ${t.d.c} <b>-${fmt(t.ds)} ${c}</b></div>`:""}<div>${en?(t.ar?"Delivery - "+t.ar[1]:t.gf?"Delivery ("+t.gf.d.toFixed(1)+" km)":"Delivery"):(t.ar?"التوصيل - "+t.ar[0]:t.gf?"التوصيل ("+t.gf.d.toFixed(1)+" كم)":"التوصيل")} <b>${t.known?fmt(t.fe)+" "+c:(t.out?(en?"Set on confirmation":"يُحدَّد عند التأكيد"):(en?"Set your location":"حدد موقعك"))}</b></div><div class="g">${en?"Total":"الإجمالي"} <b>${fmt(t.g)} ${c}${t.known?"":(en?" + delivery":" + التوصيل")}</b></div></div>${t.s<MIN?`<p class="mw">${en?`Minimum order is ${MIN} LYD. Add ${fmt(MIN-t.s)} LYD more to continue.`:`أقل قيمة للطلب ${MIN} دينار ليبي. أضف ${fmt(MIN-t.s)} دينار لتكمل الطلب.`}</p>`:""}`}
 document.addEventListener("click",e=>{
 const b=e.target.closest("[data-d]");
 if(b){const i=b.dataset.i,d=+b.dataset.d,k=cart[i]||0;if(d>0&&!PAV[i])return;const n=!k&&d>0?0.1:Math.round((k+d*0.05)*100)/100;if(n>50)return;if(n>=0.1)cart[i]=n;else delete cart[i];R();S();return}
@@ -483,7 +529,7 @@ const c=e.target.closest("[data-c]");if(c){cat=c.dataset.c;view="home";q="";$("#
 $("#q").oninput=e=>{q=e.target.value.trim();R()};
 $("#go").onclick=()=>{$("#ac").classList.remove("on");$("#ov").classList.add("on");$("#ov .sh").scrollTop=0;$("#f").hidden=false;$("#cl").hidden=false;$("#dn").hidden=true;S();N()};
 $("#ov").onclick=e=>{if(e.target.id=="emb"){$("#ov").classList.remove("on");V("home");return}if(e.target.id=="x"){if(edId!=null)edCancel();$("#ov").classList.remove("on");N()}};
-$("#f").onsubmit=async e=>{e.preventDefault();if(tot()<MIN)return;const f=new FormData(e.target),btn=e.target.querySelector(".sub");btn.disabled=true;btn.textContent=L("snd");
+$("#f").onsubmit=async e=>{e.preventDefault();if(tot()<MIN)return;if(!gps){gst="need";gpsUI();$("#gp").scrollIntoView({block:"center",behavior:"smooth"});return}const f=new FormData(e.target),btn=e.target.querySelector(".sub");btn.disabled=true;btn.textContent=L("snd");
 const t=calc(),items=Object.entries(cart).map(([i,k])=>({name:P[i][1],qty:qla(k),sum:fmt(P[i][2]*k)}));if(t.d)items.push({name:"خصم كود "+t.d.c,qty:"-",sum:"-"+fmt(t.ds)});
 const body={name:f.get("n")+(edId==null&&f.get("pay")=="bank"?" 💳 تحويل مصرفي":""),phone:f.get("p"),city:t.ar?"مصراتة - "+t.ar[0]:t.gf?"مصراتة - حسب الموقع":"خارج مصراتة - "+f.get("c"),address:(gps?"📍 https://maps.google.com/?q="+gps.lat.toFixed(6)+","+gps.lon.toFixed(6)+" | ":"")+(t.known?"توصيل "+fmt(t.fe)+" د.ل"+(t.gf?" (~"+gps.d.toFixed(1)+" كم)":"")+"، الإجمالي "+fmt(t.g)+" د.ل":"التوصيل يُحدَّد عند التأكيد")+" | "+f.get("a"),total:fmt(t.sub),items};const isEd=edId!=null,payv=isEd?edPay:(["bank","wallet","pos"].includes(f.get("pay"))?f.get("pay"):"cod"),bank=payv=="bank"&&!isEd;body.pay={bank:"تحويل مصرفي (بانتظار الإيصال على واتساب)",wallet:"المحفظة",pos:"بطاقة مصرفية عند الاستلام",cod:"كاش عند الاستلام"}[payv];body.meta={cn:f.get("n"),sub:t.s,disc:t.ds,del:t.known?t.fe:null,tot:t.g,loc:gps?{lat:gps.lat,lon:gps.lon}:null,lang,pay:payv,n:f.get("n"),c:f.get("c"),a:f.get("a"),v:2,lines:Object.entries(cart).map(([i,k])=>[PID[i],k]),zone:t.ar?{t:"area",i:AREAS.indexOf(t.ar)}:t.gf?{t:"gps",lat:gps.lat,lon:gps.lon}:{t:"out"},code:t.d?t.d.c:"",...(isEd?{edit:edId}:{})};
 try{const t0=await tok(),r=await fetch("/api/order",{method:"POST",headers:{"Content-Type":"application/json",...(t0?{Authorization:"Bearer "+t0}:{})},body:JSON.stringify(body)});const rj=await r.json().catch(()=>({}));if(!r.ok){if(rj.error=="soldout"||rj.error=="price")catLoad();if(String(rj.error||"").startsWith("code_")){kcFor="";kc=null;kChk()}throw {code:rj.error,name:rj.name}}$("#dn b[data-t=d1]").textContent=isEd?T2("تم حفظ التعديل ✅","Your changes were saved ✅"):L("d1");$("#on").textContent=isEd?T2("طلب رقم #"+rj.id+(payv=="wallet"&&rj.balance!=null?" - رصيدك الآن "+fm(rj.balance)+" د.ل":""),"Order #"+rj.id+(payv=="wallet"&&rj.balance!=null?" - balance now "+fm(rj.balance)+" LYD":"")):rj.id?(payv=="wallet"&&rj.balance!=null?T2("رقم طلبك: #"+rj.id+" - تم الدفع من محفظتك، رصيدك الآن "+fm(rj.balance)+" د.ل","Order #"+rj.id+" - paid from your wallet, balance now "+fm(rj.balance)+" LYD"):T2("رقم طلبك: #"+rj.id,"Your order number: #"+rj.id)):"";if(payv=="wallet")loadWallet();
@@ -598,10 +644,10 @@ const GB=VB.replace('class="vb"','class="vb gold"').replace(/#0866FF/g,"#D9A21B"
 const nmB=(n,own,gold)=>`<b class="pnm${own?" own":""}" dir="auto">${esc(n||"")}${own?VB:gold?GB:""}</b>`;
 
 const CS={new:["وصل طلبك","Order received",0],preparing:["قيد التجهيز","Preparing",1],handed:["سُلّم للمندوب","Handed to the courier",2],out:["المندوب في الطريق إليك","The courier is on the way",3],delivered:["تم التسليم","Delivered",4],cancelled:["ملغي","Cancelled",-1]};
-const STPL=[["وصل طلبك","Received"],["المندوب في الطريق إلى المحل","Courier heading to the shop"],["قيد التجهيز","Preparing"],["سُلّم للمندوب","With courier"],["في الطريق إليك","On the way"],["تم التسليم","Delivered"]];
-const STPI=['<svg viewBox="0 0 24 24"><circle cx="12" cy="14" r="7"/><path d="M12 10.5V14l2 1.5M10 3h4M12 3v4M18.5 7.5l1.2-1.2"/></svg>','<svg viewBox="0 0 24 24"><path d="M12 21s-6-5.3-6-10a6 6 0 0112 0c0 4.7-6 10-6 10z"/><circle cx="12" cy="11" r="2.2"/></svg>','<svg viewBox="0 0 24 24"><path d="M4 13h16v2a5 5 0 01-5 5H9a5 5 0 01-5-5v-2z"/><path d="M2 13h20M9 4c-.8 1 .8 2 0 3M12 4c-.8 1 .8 2 0 3M15 4c-.8 1 .8 2 0 3"/></svg>','<svg viewBox="0 0 24 24"><path d="M4 10v10h16V10"/><path d="M3 10l1.5-5h15L21 10a2.5 2.5 0 01-4.5 1.5 2.5 2.5 0 01-4.5 0 2.5 2.5 0 01-4.5 0A2.5 2.5 0 013 10z"/><path d="M10 20v-5h4v5"/></svg>','<svg viewBox="0 0 24 24"><circle cx="5.5" cy="16.5" r="3"/><circle cx="18.5" cy="16.5" r="3"/><path d="M8.5 16.5h5l3-6h-4M14 6h3l1.5 4.5M5.5 16.5l2.5-5h5"/></svg>','<svg viewBox="0 0 24 24"><path d="M6 21V4a1 1 0 011-1h10a1 1 0 011 1v17M4 21h16"/><circle cx="14.5" cy="12.5" r=".8"/></svg>'];
-const STK=["new","accepted","preparing","handed","out","delivered"];
-const stI=o=>{const x={new:0,preparing:2,handed:3,out:4,delivered:5,cancelled:-1}[o.status];return x==null?0:(x==0&&o.courier_ok_at?1:x)};
+const STPL=[["قيد القبول","Awaiting acceptance"],["تم قبول طلبك","Order accepted"],["المندوب في الطريق للمحل، والطلبية قيد التجهيز","Courier heading to the shop, order being prepared"],["المندوب في الطريق إليك","Courier on the way to you"],["تم التسليم","Delivered"]];
+const STPI=['<svg viewBox="0 0 24 24"><circle cx="12" cy="14" r="7"/><path d="M12 10.5V14l2 1.5M10 3h4M12 3v4M18.5 7.5l1.2-1.2"/></svg>','<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.5"/></svg>','<svg viewBox="0 0 24 24"><path d="M4 10v10h16V10"/><path d="M3 10l1.5-5h15L21 10a2.5 2.5 0 01-4.5 1.5 2.5 2.5 0 01-4.5 0 2.5 2.5 0 01-4.5 0A2.5 2.5 0 013 10z"/><path d="M10 20v-5h4v5"/></svg>','<svg viewBox="0 0 24 24"><circle cx="5.5" cy="16.5" r="3"/><circle cx="18.5" cy="16.5" r="3"/><path d="M8.5 16.5h5l3-6h-4M14 6h3l1.5 4.5M5.5 16.5l2.5-5h5"/></svg>','<svg viewBox="0 0 24 24"><path d="M6 21V4a1 1 0 011-1h10a1 1 0 011 1v17M4 21h16"/><circle cx="14.5" cy="12.5" r=".8"/></svg>'];
+const STK=["new","assigned","accepted","handed","delivered"];
+const stI=o=>{const s0=o.status;if(s0=="cancelled")return -1;if(s0=="delivered")return 4;if(s0=="handed"||s0=="out")return 3;return o.courier_ok_at?2:o.courier_id?1:0};
 const stL=o=>{const i=stI(o);return i<0?T2("ملغي","Cancelled"):T2(STPL[i][0],STPL[i][1])};
 const tmF=x=>{if(!x)return "";const d=new Date(x),t=d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});return lang=="en"?t:t.replace("AM","ص").replace("PM","م")};
 var OT={};
@@ -671,23 +717,40 @@ const r2=await au("/rest/v1/profiles?id=eq."+ses.uid,{method:"PATCH",body:JSON.s
 if(prof)prof.avatar_url=pub;am=T2("تم تحديث صورتك","Your photo was updated");amok=true}
 catch(_){am=T2("ما قدرناش نرفع الصورة، جرّب صورة ثانية","Could not upload the photo, try another one");amok=false}AC()}
 document.addEventListener("change",e=>{if(e.target&&e.target.id=="avf"){const f=e.target.files&&e.target.files[0];if(f)avUp(f)}});
-const OACT=["new","preparing","handed","out"];let otkT=0,otkO=null;
+let cpOn=false;try{cpOn=localStorage.getItem("nw_cpush")==="1"}catch(_){}
+const u8=k=>{const p="=".repeat((4-k.length%4)%4),r=atob((k+p).replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from([...r].map(c=>c.charCodeAt(0)))};
+const TO=(pr,ms,n)=>Promise.race([pr,new Promise((_,no)=>setTimeout(()=>no(new Error(n)),ms))]);
+const inApp=()=>(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
+async function cpushTog(){const iOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+if(cpOn){cpOn=false;try{localStorage.setItem("nw_cpush","0")}catch(_){}try{const reg=await navigator.serviceWorker.getRegistration("/"),sb=reg&&await reg.pushManager.getSubscription();if(sb){const ep=sb.endpoint;await sb.unsubscribe();const t=await tok();fetch("/api/push",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+t},body:JSON.stringify({action:"del",endpoint:ep})}).catch(()=>{})}}catch(_){}return}
+if(!("serviceWorker" in navigator)||!("PushManager" in window)||!("Notification" in window)){T(iOS&&!inApp()?T2("ضيف المتجر للشاشة الرئيسية من زر المشاركة، وافتحه من الأيقونة وفعّل التنبيهات","Add the shop to your home screen, open it from the icon, then turn alerts on"):T2("جهازك ما يدعمش التنبيهات","Your device does not support alerts"));return}
+let perm;try{perm=await Notification.requestPermission()}catch(_){perm="default"}if(perm!=="granted"){T(T2("لازم تسمح بالتنبيهات","Please allow notifications"));return}
+try{const k=await TO(fetch("/api/push").then(r=>r.json()),12000,"key");if(!k.key)throw 0;const reg=await TO(navigator.serviceWorker.register("/sw.js"),12000,"sw");
+if(!reg.active){const w=reg.installing||reg.waiting;if(w)await TO(new Promise(ok=>{w.addEventListener("statechange",()=>{if(w.state==="activated")ok()});if(w.state==="activated")ok()}),20000,"sw")}
+let sb=await TO(reg.pushManager.getSubscription(),10000,"sub");if(!sb)sb=await TO(reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:u8(k.key)}),20000,"sub");
+const t=await tok(),r=await TO(fetch("/api/push",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+t},body:JSON.stringify({action:"save",sub:sb.toJSON()})}),15000,"save");if(!r.ok)throw 0;
+cpOn=true;try{localStorage.setItem("nw_cpush","1")}catch(_){}T(T2("تم تفعيل تنبيهات طلباتك 🔔","Order alerts are on 🔔"))}catch(_){T(T2("ما قدرناش نفعّل التنبيهات، حاول مرة ثانية","Could not turn alerts on, try again"))}}
+const OACT=["new","preparing","handed","out"];let otkO=null;
 const otkHide=()=>{$("#otk").hidden=true;otkO=null;document.body.classList.remove("hasotk")};
-function otkPaint(){const b=$("#otk"),o=otkO;if(!o){otkHide();return}const st=stI(o),tt=OT[o.id]||{};
-b.innerHTML=`<div class="otl"><b>${esc(stL(o))}</b><span>#${esc(o.id)}</span></div><div class="stp3">${STPI.map((ic,i)=>`${i?`<span class="ln${i<=st?" on":""}"></span>`:""}<div class="s${i<st?" dn":i==st?" cur":""}" title="${esc(T2(STPL[i][0],STPL[i][1]))}"><span class="ic">${ic}</span><small>${i<=st?tmF(tt[STK[i]]):""}</small></div>`).join("")}</div>`;
-b.classList.toggle("dn",o.status=="delivered");b.hidden=false;document.body.classList.add("hasotk")}
+function otkPaint(){const b=$("#otk"),o=otkO;if(!o){otkHide();return}const st=stI(o);
+b.innerHTML=`<div class="stp3">${STPI.map((ic,i)=>`${i?`<span class="ln${i<=st?" on":""}"></span>`:""}<span class="s${i<st?" dn":i==st?" cur":""}" title="${esc(T2(STPL[i][0],STPL[i][1]))}">${ic}</span>`).join("")}</div>`;
+b.setAttribute("aria-label",T2("طلبك #","Your order #")+o.id+": "+stL(o));b.hidden=false;document.body.classList.add("hasotk")}
 async function otkLoad(){if(!ses){otkHide();return}const t=await tok();if(!t){otkHide();return}
 try{const r=await au("/rest/v1/orders?select=*&order=created_at.desc&limit=8",{},t),a=await r.json();if(!Array.isArray(a))return;
-let o=a.find(x=>OACT.includes(x.status)),last=null;try{last=JSON.parse(localStorage.getItem("nw_otk")||"null")}catch(_){}
-if(o){try{localStorage.setItem("nw_otk",JSON.stringify({id:o.id}))}catch(_){}}
-else if(last&&last.id){const d=a.find(x=>String(x.id)==String(last.id));if(d&&d.status=="delivered"){const until=last.until||Date.now()+90000;try{localStorage.setItem("nw_otk",JSON.stringify({id:d.id,until}))}catch(_){}
-if(Date.now()<until){o=d;clearTimeout(otkT);otkT=setTimeout(otkHide,until-Date.now())}}if(!o)try{localStorage.removeItem("nw_otk")}catch(_){}}
-if(!o){otkHide();return}otkO=o;otkPaint();
-try{const r2=await au("/rest/v1/rpc/my_order_times",{method:"POST",body:JSON.stringify({p_ids:[+o.id]})},t),d2=await r2.json();if(r2.ok&&d2&&typeof d2=="object"){Object.assign(OT,d2);otkPaint()}}catch(_){}}catch(_){}}
+const o=a.find(x=>OACT.includes(x.status));if(!o){otkHide();return}otkO=o;otkPaint()}catch(_){}}
 setInterval(()=>{if(!document.hidden)otkLoad()},20000);
+if(inApp()){const m=document.querySelector('meta[name=viewport]');if(m)m.content=m.content.replace(/,\s*(maximum-scale|user-scalable)=[^,]*/g,"")+", maximum-scale=1, user-scalable=no";document.documentElement.style.touchAction="manipulation";document.addEventListener("gesturestart",e=>e.preventDefault());document.addEventListener("dblclick",e=>e.preventDefault())}
+(()=>{let y0=null,dy=0,busy=false;const el=document.createElement("div");el.className="ptr";el.setAttribute("aria-hidden","true");el.innerHTML='<svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 11-2.3-5.6M20 4v5h-5"/></svg>';document.body.appendChild(el);
+const hide=()=>{el.style.transition="transform .25s,opacity .25s";el.style.opacity=0;el.style.transform="translateY(-70px) scale(.6)"};
+const scr=()=>{const a=$("#ac"),o=$("#ov .sh");return a&&a.classList.contains("on")?a.scrollTop:$("#ov").classList.contains("on")?(o?o.scrollTop:0):window.scrollY};
+addEventListener("touchstart",e=>{y0=null;if(busy||scr()>2||e.touches.length>1||$("#ov").classList.contains("on"))return;y0=e.touches[0].clientY;dy=0},{passive:true});
+addEventListener("touchmove",e=>{if(y0==null)return;dy=e.touches[0].clientY-y0;if(dy<=0){el.style.opacity=0;return}const d=Math.min(dy,130);el.style.transition="none";el.style.opacity=Math.min(1,d/80);el.style.transform=`translateY(${d*.6-30}px) rotate(${d*3}deg)`},{passive:true});
+addEventListener("touchend",async()=>{if(y0==null)return;y0=null;if(dy<85){hide();return}busy=true;el.style.transition="transform .2s";el.style.opacity=1;el.style.transform="translateY(40px)";el.classList.add("go");
+try{await Promise.all([catLoad(),otkLoad(),ses?loadProf():null]);if($("#ac").classList.contains("on"))AC();T(T2("تم التحديث","Updated"))}catch(_){}el.classList.remove("go");hide();busy=false});
+document.documentElement.style.overscrollBehaviorY="contain"})();
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)otkLoad()});
-function AC(){const b=$("#acb"),v=rec?"rec":pg=="wal"?(ses?((acv=="topup"||acv=="topm"||acv=="topdone")?acv:"wal"):"walin"):ses?(sub=="info"?"info":sub=="ords"?"ords":sub=="chat"?"chat":sub=="del"?"del":"prof"):acv,msg=am?`<p class="${amok?"ok":"mw"}">${esc(am)}</p>`:"";
-const ttl={topup:["شحن المحفظة","Top up wallet"],topm:["شحن المحفظة","Top up wallet"],topdone:["طلب الشحن","Top-up request"],login:["تسجيل الدخول","Sign in"],reg:["حساب جديد","Create account"],ver:["تأكيد الإيميل","Verify email"],forgot:["استعادة كلمة المرور","Reset password"],rec:["كلمة مرور جديدة","New password"],prof:["حسابي","My account"],wal:["المحفظة","Wallet"],walin:["المحفظة","Wallet"],info:["بياناتي الشخصية","My details"],ords:["طلباتي","My orders"],chat:["راسلنا","Chat with us"],del:["حذف الحساب","Delete account"]}[v]||["",""];
+function AC(){const b=$("#acb"),v=rec?"rec":pg=="wal"?(ses?((acv=="topup"||acv=="topm"||acv=="topdone")?acv:"wal"):"walin"):ses?(sub=="info"?"info":sub=="ords"?"ords":sub=="chat"?"chat":sub=="del"?"del":sub=="plc"?"plc":"prof"):acv,msg=am?`<p class="${amok?"ok":"mw"}">${esc(am)}</p>`:"";
+const ttl={plc:["مواقعي","My places"],topup:["شحن المحفظة","Top up wallet"],topm:["شحن المحفظة","Top up wallet"],topdone:["طلب الشحن","Top-up request"],login:["تسجيل الدخول","Sign in"],reg:["حساب جديد","Create account"],ver:["تأكيد الإيميل","Verify email"],forgot:["استعادة كلمة المرور","Reset password"],rec:["كلمة مرور جديدة","New password"],prof:["حسابي","My account"],wal:["المحفظة","Wallet"],walin:["المحفظة","Wallet"],info:["بياناتي الشخصية","My details"],ords:["طلباتي","My orders"],chat:["راسلنا","Chat with us"],del:["حذف الحساب","Delete account"]}[v]||["",""];
 $("#act").textContent=ttl[lang=="en"?1:0];
 const F=(k,body,btn)=>`<form class="f" data-f="${k}">${body}<button class="sub" type="submit">${btn}</button></form>`,I=(a,e,n,t,x)=>t=="password"?`<label>${T2(a,e)}</label><div class="pw"><input name="${n}" type="password" ${x||""}><button type="button" class="eye" data-eye aria-label="${T2("إظهار كلمة المرور","Show password")}">${EYE0}</button></div>`:`<label>${T2(a,e)}</label><input name="${n}" type="${t||"text"}" ${x||""}>`,B=(k,a,e)=>`<button type="button" class="lk" data-a="${k}">${T2(a,e)}</button>`;
 let h="";
@@ -708,17 +771,22 @@ h=msg+(infoEd?F("save",I("الاسم","Name","fn","text",`value="${esc(p.full_na
 :`<div class="ibox">${row("الاسم","Name",p.full_name)}${row("رقم الهاتف","Phone",locPh(p.phone),1)}${row("الإيميل","Email",p.email,1)}${row("المدينة","City",p.city)}${row("العنوان","Address",p.address)}</div><button type="button" class="sub" data-a="infoed">✏️ ${T2("تعديل بياناتي الشخصية","Edit my details")}</button>`)}
 else if(v=="del")h=msg+(wal.b>0?`<div class="dbox"><b><i class="wli g"><svg viewBox="0 0 24 24"><path d="M19 7V5.5A1.5 1.5 0 0017.5 4H5a2 2 0 00-2 2"/><path d="M3 6v12a2 2 0 002 2h15a1 1 0 001-1V9a1 1 0 00-1-1H5a2 2 0 01-2-2"/><circle cx="16.5" cy="14" r="1.2"/></svg></i> ${T2("عندك رصيد في المحفظة","You have money in your wallet")}: ${fm(wal.b)} ${CU()}</b><p style="margin:6px 0 0">${T2("ما تقدرش تحذف حسابك والرصيد فيه فلوس. تواصل معنا الأول باش نصفّروا رصيدك، وبعدها تقدر تحذف الحساب.","You cannot delete your account while it has a balance. Contact us first to settle it, then you can delete the account.")}</p></div><button type="button" class="sub" data-a="gochat">💬 ${T2("راسلنا","Chat with us")}</button>`:`<div class="dbox"><b>⚠️ ${T2("حذف الحساب نهائي","Deleting your account is permanent")}</b><p style="margin:6px 0 0">${T2("بيتمسح حسابك وبياناتك الشخصية وصورتك ومحادثاتك وبصمتك، وما تقدرش ترجعها. الطلبات القديمة تبقى عندنا في سجل المحل بدون ربط بحسابك.","Your account, personal details, photo, chats and fingerprint login will be erased and cannot be restored. Past orders stay in the shop records without a link to your account.")}</p></div><label style="display:flex;gap:8px;align-items:center;margin-top:12px"><input type="checkbox" id="delok" style="width:20px;height:20px">${T2("فاهم، نبي نحذف حسابي","I understand, delete my account")}</label><button type="button" class="dbtn" data-a="delacc">${T2("حذف حسابي نهائياً","Delete my account permanently")}</button>`)+`<p style="text-align:center">${B("delx","إلغاء","Cancel")}</p>`;
 else if(v=="chat")h=msg+`<div class="chw"><div class="chl" id="chl">${chHtml()}</div><form class="chf" data-f="chat"><textarea name="m" maxlength="1000" placeholder="${T2("اكتب رسالتك…","Type your message…")}" required></textarea><button type="submit" aria-label="${T2("إرسال","Send")}"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg></button></form></div>`;
+else if(v=="plc"){const L=myPl();h=msg+`<p class="m" style="margin:0 0 6px">${T2("المواقع اللي حفظتها تطلعلك في السلة، تختار واحد بضغطة ويتحسب التوصيل على طول. باش تزيد موقع: في السلة اضغط «حدد موقعي» وبعدها «احفظ الموقع هذا».","Saved places appear in the cart: tap one and delivery is calculated. To add one, tap “Locate me” in the cart, then “Save this place”.")}</p>`+(L.length?L.map((x,i)=>`<div class="plr"><span class="wli g">${PIN}</span><b>${esc(x.n)}</b><a href="https://maps.google.com/?q=${x.lat},${x.lon}" target="_blank" rel="noopener">${T2("الخريطة","Map")}</a><button type="button" data-pldel="${i}">${T2("مسح","Delete")}</button></div>`).join(""):`<p class="m">${T2("ما عندكش مواقع محفوظة بعد.","No saved places yet.")}</p>`)}
 else if(v=="ords")h=msg+`<p class="m" style="margin:0 0 6px;font-size:13px">${T2("تقدر تعدّل طلبك خلال 10 دقائق من إرساله. لإلغاء طلب تواصل معنا على واتساب.","You can edit an order within 10 minutes of placing it. To cancel, contact us on WhatsApp.")}</p><div id="ol"></div>`;
 else{const p=prof||{},ini=String(p.full_name||"؟").trim().charAt(0),go=`<span class="go">${lang=="en"?"›":"‹"}</span>`;
 h=`<div class="phd"><label class="av" id="avl" title="${T2("تغيير الصورة","Change photo")}" aria-label="${T2("تغيير الصورة","Change photo")}">${p.avatar_url?`<img src="${esc(p.avatar_url)}" alt="">`:esc(ini)}<span class="cam"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg></span><input type="file" accept="image/*" id="avf" hidden></label>${nmB(p.full_name,String(p.email||"").toLowerCase()==OWNER,p.badge)}<span dir="ltr">${esc(locPh(p.phone))}</span></div>`+msg+wvBox()
 +`<button type="button" class="mi" data-a="goinfo"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg></span><span class="tx">${T2("بياناتي الشخصية","My details")}</span>${go}</button>`
 +(pkOK()?`<div class="mi"><span class="ic">${FP}</span><span class="tx">${T2("الدخول بالبصمة","Fingerprint login")}<br><small class="m" style="font-weight:400">${hasPk()?T2("مفعّلة على هذا الجهاز","On for this device"):T2("غير مفعّلة","Off")}</small></span><button type="button" class="sw${hasPk()?" on":""}" role="switch" aria-checked="${hasPk()}" aria-label="${T2("الدخول بالبصمة","Fingerprint login")}" data-a="pktog"></button></div>`:"")
++`<button type="button" class="mi" data-a="goplc"><span class="ic">${PIN}</span><span class="tx">${T2("مواقعي","My places")}${myPl().length?`<br><small class="m" style="font-weight:400">${myPl().length} ${T2("محفوظة","saved")}</small>`:""}</span>${go}</button>`
++`<div class="mi"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 1112 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 003.4 0"/></svg></span><span class="tx">${T2("تنبيهات طلباتي","Order alerts")}<br><small class="m" style="font-weight:400">${cpOn?T2("يوصلك تنبيه مع كل خطوة","You get an alert at every step"):T2("موقوفة","Off")}</small></span><button type="button" class="sw${cpOn?" on":""}" role="switch" aria-checked="${cpOn}" aria-label="${T2("تنبيهات طلباتي","Order alerts")}" data-a="ntog"></button></div>`
 +`<button type="button" class="mi" data-a="goords"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"/><path d="M4 6h16M9 10a3 3 0 006 0"/></svg></span><span class="tx">${T2("طلباتي","My orders")}</span>${go}</button>`
 +`<button type="button" class="mi" data-a="gochat"><span class="ic"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/><path d="M8 11h.01M12 11h.01M16 11h.01"/></svg></span><span class="tx">${T2("راسلنا","Chat with us")}</span>${chU?`<span class="cnb">${chU>99?"99+":chU}</span>`:""}${go}</button>`
 +`<p style="text-align:center;margin-top:18px">${B("logout","تسجيل الخروج","Sign out")}</p><p style="text-align:center;margin:0"><button type="button" class="dz" data-a="godel">${T2("حذف حسابي","Delete my account")}</button></p>`}
 b.innerHTML=h;if(v=="prof")loadWallet();if(v=="ords")loadOrd();if(v=="login"&&pkShow())pkPrefetch("login");if(v=="prof"&&pkOK()&&!hasPk())pkPrefetch("reg");if(v=="wal")loadWalletUI();if(v=="chat"){chScroll();chLoad()}}
 const openAc=p=>{pg=p=="wal"?"wal":"acct";sub="";infoEd=false;if(pg=="wal"&&acv!="topup"&&acv!="topm"&&acv!="topdone")acv="login";$("#ac").classList.add("on");$("#ac").scrollTop=0;N();AC();if(ses&&!prof)loadProf().then(AC)};
 document.addEventListener("click",async e=>{const a=e.target.closest("[data-a]");if(!a)return;e.preventDefault();let k=a.dataset.a;if(k=="pktog")k=hasPk()?"pkoff":"pkon";if(k=="logout"){doOut();return}if(k=="delx"){sub="";am="";AC();N();return}if(k=="delacc"){if(!$("#delok")||!$("#delok").checked){am=T2("علّم على المربع للتأكيد","Tick the box to confirm");amok=false;AC();return}if(!confirm(T2("متأكد؟ الحذف نهائي.","Are you sure? This is permanent.")))return;a.disabled=true;try{const t=await tok(),r=await fetch("/api/account",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+t},body:"{}"}),d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"err");try{localStorage.removeItem("nw_pk")}catch(_){}doOut();T(T2("تم حذف حسابك","Your account was deleted"));am=T2("تم حذف حسابك. نتمنى نشوفوك مرة ثانية 🌰","Your account was deleted. We hope to see you again 🌰");amok=true;AC()}catch(x){am=x.message=="balance"?T2("ما تقدرش تحذف الحساب وعندك رصيد أو طلب شحن معلق. تواصل معنا الأول.","You cannot delete the account while you have a balance or a pending top-up. Contact us first."):x.message=="staff"?T2("حسابات الموظفين تتحذف من الإدارة","Staff accounts are removed by the admin"):T2("تعذر حذف الحساب، حاول مرة ثانية","Could not delete the account, please try again");amok=false;a.disabled=false;AC()}return}
+if(k=="goplc"){sub="plc";am="";AC();N();$("#ac").scrollTop=0;return}
+if(k=="ntog"){await cpushTog();AC();return}
 if(k=="goinfo"||k=="goords"||k=="gochat"||k=="godel"){sub=k=="goinfo"?"info":k=="gochat"?"chat":k=="godel"?"del":"ords";if(k=="godel"){const b0=wal.b;loadWallet().then(()=>{if(sub=="del"&&wal.b!==b0)AC()})}infoEd=false;am="";AC();N();$("#ac").scrollTop=0;return}if(k=="infoed"||k=="infox"){infoEd=k=="infoed";am="";AC();return}if(k=="gologin"){pg="acct";acv="login";am="";AC();N();return}if(k=="wav"){a.disabled=true;try{await wvGo()}catch(_){wvE=T2("حصل خطأ، حاول مرة ثانية","Something went wrong, please try again")}wvUpd();return}if(k=="resend"){try{await acAct("resend",{get:()=>pend})}catch(x){am=errMsg(x);amok=false}AC();return}if(k=="pklogin"||k=="pkon"||k=="pkoff"){try{if(k=="pklogin"){await pkLogin();am=""}else if(k=="pkon"){await pkRegister();am=T2("تم تفعيل الدخول بالبصمة على هذا الجهاز","Fingerprint login is on for this device");amok=true}else{await pkRemove();am=T2("تم إلغاء البصمة على هذا الجهاز","Fingerprint login turned off on this device");amok=true}}catch(x){am=pkMsg(x);amok=false}AC();return}acv=k;am="";AC()});
 document.addEventListener("submit",async e=>{const f=e.target.closest("[data-f]");if(!f)return;e.preventDefault();const fd=new FormData(f),k=f.dataset.f,bt=f.querySelector('button[type="submit"]');if(bt)bt.disabled=true;
 try{await acAct(k,fd)}catch(x){am=errMsg(x);amok=false}AC()});
@@ -726,10 +794,10 @@ document.addEventListener("click",async e=>{const b=e.target.closest("[data-tm]"
 document.addEventListener("click",e=>{const b=e.target.closest("[data-eye]");if(!b)return;const i=b.parentElement.querySelector("input"),s=i.type==="password";i.type=s?"text":"password";b.innerHTML=s?EYE1:EYE0;b.setAttribute("aria-label",s?T2("إخفاء كلمة المرور","Hide password"):T2("إظهار كلمة المرور","Show password"))});
 $("#ac").onclick=e=>{if(e.target.closest&&e.target.closest("#xa")){if(ses&&pg=="acct"&&sub){sub="";infoEd=false;am="";AC();N();$("#ac").scrollTop=0;return}if(ses&&pg=="wal"&&acv=="topm"){acv="topup";am="";AC();return}if(ses&&pg=="wal"&&(acv=="topup"||acv=="topdone")){acv="login";am="";AC();return}$("#ac").classList.remove("on");N()}};
 {const hp=new URLSearchParams((typeof location!=="undefined"?location.hash:"").slice(1));if(hp.get("type")==="recovery"&&hp.get("access_token")){rec=hp.get("access_token");try{history.replaceState(null,"",location.pathname)}catch(_){}openAc()}}
-if(ses)loadProf();
+if(ses)loadProf().then(svpUI);
 $("#gp").onclick=()=>{if(!navigator.geolocation){gst="err";gpsUI();return}
 gst="wait";gpsUI();
-navigator.geolocation.getCurrentPosition(p=>{const lat=p.coords.latitude,lon=p.coords.longitude,d=hav(SHOP[0],SHOP[1],lat,lon),rd=d*PR.f;gst="";gps=d>PR.out?{out:true,d,lat,lon}:{d:rd,fee:Math.min(PR.max,Math.max(PR.min,Math.round(PR.base+PR.km*rd))),lat,lon};$("#z").value="";zu();gpsUI();S()},()=>{gps=null;gst="err";zu();gpsUI();S()},{enableHighAccuracy:true,timeout:15000,maximumAge:60000})};
+navigator.geolocation.getCurrentPosition(p=>{setLoc(p.coords.latitude,p.coords.longitude,null)},()=>{gps=null;gst="err";zu();gpsUI();S()},{enableHighAccuracy:true,timeout:15000,maximumAge:60000})};
 
 function remapC(o,oldPID){const r={};if(!o)return o;for(const [i,k] of Object.entries(o)){const id=oldPID[i];const j=PID.indexOf(id);if(j>=0&&(PAV[j]||edId!=null))r[j]=k}return r}
 function setCatalog(cats,prods,quiet){const oldPID=PID.slice();
