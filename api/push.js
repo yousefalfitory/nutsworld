@@ -3,7 +3,7 @@ const P = require("./_push");
 const SB = process.env.SUPABASE_URL;
 const SK = process.env.SUPABASE_SECRET_KEY;
 const PK = process.env.SUPABASE_PUBLISHABLE_KEY;
-const H = () => ({ apikey: SK, Authorization: "Bearer " + SK, "Content-Type": "application/json" });
+const H = () => ({ apikey: SK, "Content-Type": "application/json" });
 
 async function who(req) {
   const h = (req.headers && req.headers.authorization) || "";
@@ -42,6 +42,22 @@ module.exports = async (req, res) => {
     if (b.action === "del") {
       if (typeof b.endpoint === "string") await fetch(SB + "/rest/v1/push_subs?endpoint=eq." + encodeURIComponent(b.endpoint) + "&user_id=eq." + me.id, { method: "DELETE", headers: H() });
       return res.status(200).json({ ok: true });
+    }
+    if (b.action === "assign" || b.action === "accepted") {
+      const id = Number(b.order_id);
+      if (!Number.isInteger(id)) return res.status(400).json({ ok: false });
+      const r = await fetch(SB + "/rest/v1/orders?select=id,courier_id,city,customer_name&id=eq." + id, { headers: H() });
+      const a = await r.json();
+      const o = Array.isArray(a) && a[0];
+      if (!o || !o.courier_id) return res.status(404).json({ ok: false });
+      if (b.action === "assign") {
+        if (!["staff", "admin"].includes(me.role)) return res.status(403).json({ ok: false });
+        const sent = await P.sendTo("user_id=eq." + o.courier_id, { title: "🛵 طلب جديد ليك #" + o.id, body: "افتح الطلب واضغط «قبول الطلب»" + (o.city ? " · " + o.city : ""), url: "/staff.html", tag: "nw-asg-" + o.id });
+        return res.status(200).json({ ok: true, sent });
+      }
+      if (o.courier_id !== me.id) return res.status(403).json({ ok: false });
+      const sent = await P.sendTo("role=in.(staff,admin)", { title: "✅ المندوب قبل الطلب #" + o.id, body: (me.full_name || "المندوب") + " في الطريق للمحل", url: "/staff.html", tag: "nw-acc-" + o.id });
+      return res.status(200).json({ ok: true, sent });
     }
     if (b.action === "hand") {
       // staff handed an order to a courier: ring the courier's phone

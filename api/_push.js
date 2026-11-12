@@ -65,7 +65,7 @@ async function sendOne(sub, payload) {
   } catch (_) { return "fail"; }
 }
 
-const H = () => ({ apikey: SK, Authorization: "Bearer " + SK, "Content-Type": "application/json" });
+const H = () => ({ apikey: SK, "Content-Type": "application/json" });
 
 // Sends to every saved device that matches the filter (a PostgREST query string, e.g. "role=in.(staff,admin)").
 async function sendTo(filter, payload) {

@@ -13,7 +13,7 @@ async function isAdmin(req) {
     const r = await fetch(SB + "/auth/v1/user", { headers: { apikey: PK, Authorization: h } });
     if (!r.ok) return false;
     const u = await r.json();
-    const r2 = await fetch(SB + "/rest/v1/profiles?select=role&id=eq." + u.id, { headers: { apikey: SK, Authorization: "Bearer " + SK } });
+    const r2 = await fetch(SB + "/rest/v1/profiles?select=role&id=eq." + u.id, { headers: { apikey: SK } });
     const a = await r2.json();
     return Array.isArray(a) && a[0] && a[0].role === "admin";
   } catch (_) { return false; }

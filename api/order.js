@@ -89,7 +89,7 @@ const s = (v, n = 200) => String(v == null ? "" : v).slice(0, n);
 const r2 = x => Math.round(x * 100) / 100;
 const num = v => { const x = Number(v); return Number.isFinite(x) ? r2(x) : 0; };
 const fmt = x => String(+Number(x).toFixed(2));
-const qtyAr = k => (k < 1 ? k * 1000 + " غ" : fmt(k) + " كغ");
+const qtyAr = k => (k < 1 ? Math.round(k * 1000) + " غ" : fmt(k) + " كغ");
 const hav = (a, b, c, d) => {
   const r = Math.PI / 180;
   const x = Math.sin((c - a) * r / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin((d - b) * r / 2) ** 2;
@@ -222,7 +222,7 @@ function price(m, cd, cat) {
     const p = cat && cat.get(i);
     if (!p || seen.has(i)) return { err: "bad" };
     if (!p.ok) return { err: "soldout", name: p.name };
-    if (!(k >= 0.25 && k <= 50) || Math.abs(k * 4 - Math.round(k * 4)) > 1e-9) return { err: "bad" };
+    if (!(k >= 0.1 - 1e-9 && k <= 50) || Math.abs(k * 20 - Math.round(k * 20)) > 1e-6) return { err: "bad" };
     seen.add(i);
     const line = r2(p.price * k);
     sub += line;
@@ -283,7 +283,7 @@ async function main(req, res) {
     // health check: open /api/order in the browser. Shows only yes/no flags, never secrets.
     return res.status(200).json({
       ok: true,
-      version: 7,
+      version: 8,
       push: PUSH.ready(),
       catalog: !!D,
       products: D ? D.P.length : 0,
