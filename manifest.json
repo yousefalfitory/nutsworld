@@ -1,0 +1,23 @@
+{
+  "id": "/",
+  "name": "عالم المكسرات",
+  "short_name": "عالم المكسرات",
+  "description": "اطلب المكسرات والتسالي من عالم المكسرات في مصراتة، والتوصيل لحد باب بيتك.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/?source=app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#0a5c33",
+  "categories": ["food", "shopping"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "screenshots": [
+    { "src": "/img/shop1.jpg", "sizes": "1440x810", "type": "image/jpeg", "form_factor": "wide", "label": "عالم المكسرات" }
+  ]
+}
