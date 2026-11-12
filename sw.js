@@ -1,6 +1,6 @@
 // Nuts World app helper: lets the app open and show a friendly page when there is no internet.
 // It never stores orders, prices or account data; those always come fresh from the internet.
-const C = "nw-shell-v1";
+const C = "nw-shell-v2";
 const SHELL = ["/", "/icons/icon-192.png", "/icons/icon-512.png", "/manifest.json"];
 
 self.addEventListener("install", (e) => {
@@ -32,5 +32,34 @@ self.addEventListener("fetch", (e) => {
             )
         )
       )
+  );
+});
+
+// ---------- notifications («إدارة المتجر»): ring even when the app is closed ----------
+self.addEventListener("push", (e) => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (_) { d = { title: e.data ? e.data.text() : "" }; }
+  e.waitUntil(
+    self.registration.showNotification(d.title || "عالم المكسرات", {
+      body: d.body || "",
+      icon: "/icons/staff-192.png",
+      badge: "/icons/favicon-48.png",
+      tag: d.tag || undefined,
+      renotify: true,
+      requireInteraction: true,
+      vibrate: [300, 150, 300, 150, 600],
+      data: { url: d.url || "/staff.html" }
+    })
+  );
+});
+
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  const url = (e.notification.data && e.notification.data.url) || "/staff.html";
+  e.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((cs) => {
+      for (const c of cs) if (new URL(c.url).pathname === new URL(url, self.location.origin).pathname && "focus" in c) return c.focus();
+      return self.clients.openWindow(url);
+    })
   );
 });

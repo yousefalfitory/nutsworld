@@ -280,6 +280,30 @@ body:has(#ov.on) .otk{display:none!important}
 .mi{border:1.5px solid #2f8a57}
 .mi .ic,[data-theme="dark"] .mi .ic{background:#2f8a57;color:#fff}
 [data-theme="dark"] .mi{border-color:#3f9e68}
+
+/* ===== update 13 ===== */
+.mi{background:#e4f5ea;border:1.5px solid #2f8a57;box-shadow:none}
+[data-theme="dark"] .mi{background:#1f3a2b;border-color:#3f9e68}
+.phd .pnm{display:inline-flex;align-items:center;gap:6px;font-size:19px;line-height:1.2}
+.phd .pnm .vb{width:1em;height:1em;flex:none;margin:0;vertical-align:0;display:block}
+.otk{padding:5px 14px 5px 6px;gap:8px}
+.otk .oi{flex:none;width:32px;height:32px;border-radius:50%;background:#2f8a57;color:#fff;display:grid;place-items:center;animation:odp 1.8s infinite}
+.otk .oi svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.otk.dn .oi{background:#f2b457;animation:none}
+.otk .oc{flex:none;font-style:normal;font-size:11px;font-weight:800;background:#2f8a57;color:#fff;border-radius:99px;min-width:20px;height:20px;display:grid;place-items:center;padding:0 5px}
+@media (prefers-reduced-motion:reduce){.otk .oi{animation:none}}
+#otks{position:fixed;inset:0;z-index:40;background:#0007;display:flex;align-items:flex-end;opacity:0;transition:opacity .22s}
+#otks.on{opacity:1}
+#otks .osh{width:100%;max-width:560px;margin:0 auto;background:var(--card);color:var(--tx);border-radius:22px 22px 0 0;padding:10px 16px calc(18px + env(safe-area-inset-bottom,0px));max-height:85vh;overflow:auto;transform:translateY(100%);transition:transform .28s cubic-bezier(.2,.9,.3,1)}
+#otks.on .osh{transform:none}
+#otks .grb{display:block;width:40px;height:5px;border-radius:9px;background:var(--line);margin:0 auto 8px}
+#otks h3{display:flex;justify-content:space-between;align-items:center;margin:4px 0 6px;font-size:18px}
+#otks h3 button{background:var(--soft,#eef5f0);border:0;border-radius:50%;width:34px;height:34px;font-size:16px;color:var(--tx)}
+#otks .oit{border:1.5px solid var(--line);border-radius:16px;padding:10px 12px;margin:8px 0}
+#otks .oit .top{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+#otks .oit .stp2{justify-content:center}
+#otks .lk2{display:block;width:100%;margin-top:6px;background:none;border:0;color:#1b7a45;font-weight:800;font-family:inherit;font-size:14px;padding:8px}
+@media (prefers-reduced-motion:reduce){#otks,#otks .osh{transition:none}}
 </style>
 <script>try{var m=localStorage.getItem("nw_theme")||"auto";if(m==="dark"||(m==="auto"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.dataset.theme="dark"}catch(_){}</script>
 <link rel="manifest" href="/manifest.json">
@@ -598,7 +622,7 @@ e.innerHTML=wal.tx.length?wal.tx.map(x=>{const a=+x.amount,st=(S2[x.status]||[""
 async function loadOrd(){const t=await tok(),e=$("#ol");if(!t||!e)return;
 try{const r=await au("/rest/v1/orders?select=id,created_at,total,status,payment,items,form,code,customer_name,phone&order=created_at.desc&limit=15",{},t);const a=await r.json(),en=lang=="en";if(!Array.isArray(a))return;myOrd=a;
 try{const ids=a.filter(o=>o.status!="cancelled").map(o=>+o.id);if(ids.length){const r2=await au("/rest/v1/rpc/my_order_times",{method:"POST",body:JSON.stringify({p_ids:ids})},t);const d2=await r2.json();if(r2.ok&&d2&&typeof d2=="object")OT=d2}}catch(_){}
-e.innerHTML=a.length?a.map(o=>{const c=CS[o.status]||[o.status,o.status,0],st=c[2],left=edLeft(o);return `<div class="r" style="display:block"><div style="display:flex;justify-content:space-between;gap:8px"><span>#${esc(o.id)} · ${new Date(o.created_at).toLocaleDateString("en-GB")}</span><b>${fmt(+o.total)} ${CU()}</b></div><div class="os${st<0?" x":""}">${esc(c[en?1:0])}</div>${st>=0?stpH(st,o.id):""}${left>0?`<button type="button" class="lk" style="padding:4px 0" data-ed="${esc(o.id)}">✏️ ${T2("تعديل الطلب","Edit order")} (${T2("باقي","left")} ${Math.ceil(left/60000)} ${T2("د","min")})</button>`:""}</div>`}).join(""):`<p class="m">${T2("لا توجد طلبات سابقة","No previous orders")}</p>`}catch(_){}}
+e.innerHTML=a.length?a.map(o=>{const c=CS[o.status]||[o.status,o.status,0],st=c[2],left=edLeft(o);return `<div class="r" style="display:block"><div style="display:flex;justify-content:space-between;gap:8px"><span>#${esc(o.id)} · ${new Date(o.created_at).toLocaleDateString("en-GB")}</span><b>${fmt(+o.total)} ${CU()}</b></div><div class="os${st<0?" x":""}">${esc(c[en?1:0])}</div>${left>0?`<button type="button" class="lk" style="padding:4px 0" data-ed="${esc(o.id)}">✏️ ${T2("تعديل الطلب","Edit order")} (${T2("باقي","left")} ${Math.ceil(left/60000)} ${T2("د","min")})</button>`:""}</div>`}).join(""):`<p class="m">${T2("لا توجد طلبات سابقة","No previous orders")}</p>`}catch(_){}}
 setInterval(()=>{if(ses&&pg=="acct"&&$("#ac").classList.contains("on")&&$("#ol")&&!document.hidden)loadOrd()},20000);
 async function avUp(file){if(!file||!ses)return;const L2=$("#avl");if(L2)L2.classList.add("busy");
 try{const url=URL.createObjectURL(file),img=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=url});
@@ -611,19 +635,28 @@ const r2=await au("/rest/v1/profiles?id=eq."+ses.uid,{method:"PATCH",body:JSON.s
 if(prof)prof.avatar_url=pub;am=T2("تم تحديث صورتك","Your photo was updated");amok=true}
 catch(_){am=T2("ما قدرناش نرفع الصورة، جرّب صورة ثانية","Could not upload the photo, try another one");amok=false}AC()}
 document.addEventListener("change",e=>{if(e.target&&e.target.id=="avf"){const f=e.target.files&&e.target.files[0];if(f)avUp(f)}});
-const OACT=["new","preparing","handed","out"];let otkT=0;
-const otkHide=()=>{$("#otk").hidden=true};
+const OACT=["new","preparing","handed","out"];let otkT=0,otkActs=[],otkDone=null;
+const otkHide=()=>{$("#otk").hidden=true;otkDone=null};
+const otkPill=(o,dn)=>{const st=Math.max(0,(CS[o.status]||[0,0,0])[2]);return `<span class="oi">${STPI[st]}</span><b>${esc(dn?T2("تم التسليم ✅","Delivered ✅"):T2(STPL[st][0],STPL[st][1]))}</b>${!dn&&otkActs.length>1?`<i class="oc">${otkActs.length}</i>`:""}`};
 async function otkLoad(){const b=$("#otk");if(!ses){b.hidden=true;return}const t=await tok();if(!t){b.hidden=true;return}
-try{const r=await au("/rest/v1/orders?select=id,status,created_at&order=created_at.desc&limit=5",{},t),a=await r.json();if(!Array.isArray(a))return;
-const act=a.find(o=>OACT.includes(o.status));let last=null;try{last=JSON.parse(localStorage.getItem("nw_otk")||"null")}catch(_){}
-if(act){try{localStorage.setItem("nw_otk",JSON.stringify({id:act.id}))}catch(_){}const c=CS[act.status]||[act.status,act.status];
-b.className="otk";b.innerHTML=`<span class="od"></span><b>#${esc(act.id)} · ${esc(c[lang=="en"?1:0])}</b>`;b.hidden=false;return}
+try{const r=await au("/rest/v1/orders?select=id,status,created_at,total&order=created_at.desc&limit=8",{},t),a=await r.json();if(!Array.isArray(a))return;
+otkActs=a.filter(o=>OACT.includes(o.status));const act=otkActs[0];let last=null;try{last=JSON.parse(localStorage.getItem("nw_otk")||"null")}catch(_){}
+if(act){otkDone=null;try{localStorage.setItem("nw_otk",JSON.stringify({id:act.id}))}catch(_){}b.className="otk";b.innerHTML=otkPill(act);b.setAttribute("aria-label",T2("تتبّع طلبك","Track your order"));b.hidden=false;otkPaint();return}
 if(last&&last.id){const o=a.find(x=>String(x.id)==String(last.id));if(o&&o.status=="delivered"){const until=last.until||Date.now()+90000;try{localStorage.setItem("nw_otk",JSON.stringify({id:o.id,until}))}catch(_){}
-if(Date.now()<until){b.className="otk dn";b.innerHTML=`<span class="od"></span><b>#${esc(o.id)} · ${T2("تم التسليم ✅","Delivered ✅")}</b>`;b.hidden=false;clearTimeout(otkT);otkT=setTimeout(otkHide,until-Date.now());return}}
+if(Date.now()<until){otkDone=o;b.className="otk dn";b.innerHTML=otkPill(o,1);b.hidden=false;otkPaint();clearTimeout(otkT);otkT=setTimeout(()=>{otkHide();otkClose()},until-Date.now());return}}
 try{localStorage.removeItem("nw_otk")}catch(_){}}
-b.hidden=true}catch(_){}}
-$("#otk").onclick=()=>{openAc("acct");sub="ords";AC();N()};
-setInterval(()=>{if(!document.hidden)otkLoad()},20000);
+b.hidden=true;otkClose()}catch(_){}}
+async function otkTimes(){const L=otkActs.concat(otkDone?[otkDone]:[]);if(!L.length)return;try{const t=await tok(),r=await au("/rest/v1/rpc/my_order_times",{method:"POST",body:JSON.stringify({p_ids:L.map(o=>+o.id)})},t),d=await r.json();if(r.ok&&d&&typeof d=="object")Object.assign(OT,d)}catch(_){}}
+function otkBody(){const L=otkActs.length?otkActs:(otkDone?[otkDone]:[]);return L.map(o=>{const c=CS[o.status]||[o.status,o.status,0];return `<div class="oit"><div class="top"><span>#${esc(o.id)} · ${tmF(o.created_at)}</span><b>${fmt(+o.total)} ${CU()}</b></div><div class="os">${esc(c[lang=="en"?1:0])}</div>${stpH(c[2],o.id)}</div>`}).join("")}
+function otkPaint(){const w=$("#otks");if(w){const x=w.querySelector(".obd");if(x)x.innerHTML=otkBody()}}
+function otkClose(){const w=$("#otks");if(!w)return;w.classList.remove("on");setTimeout(()=>w.remove(),260)}
+async function otkOpen(){if(!otkActs.length&&!otkDone)return;let w=$("#otks");if(!w){w=document.createElement("div");w.id="otks";w.setAttribute("role","dialog");w.setAttribute("aria-modal","true");
+w.innerHTML=`<div class="osh"><span class="grb"></span><h3><span>${T2("تتبّع طلبك","Track your order")}</span><button type="button" data-otx aria-label="${T2("إغلاق","Close")}">✕</button></h3><div class="obd"></div><button type="button" class="lk2" data-otords>${T2("كل طلباتي","All my orders")}</button></div>`;
+document.body.appendChild(w);w.addEventListener("click",e=>{if(e.target===w||e.target.closest("[data-otx]"))otkClose();else if(e.target.closest("[data-otords]")){otkClose();openAc("acct");sub="ords";AC();N()}});requestAnimationFrame(()=>w.classList.add("on"))}
+otkPaint();await otkTimes();otkPaint()}
+$("#otk").onclick=otkOpen;
+document.addEventListener("keydown",e=>{if(e.key=="Escape")otkClose()});
+setInterval(()=>{if(!document.hidden)otkLoad().then(()=>{if($("#otks"))otkTimes().then(otkPaint)})},20000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)otkLoad()});
 function AC(){const b=$("#acb"),v=rec?"rec":pg=="wal"?(ses?((acv=="topup"||acv=="topm"||acv=="topdone")?acv:"wal"):"walin"):ses?(sub=="info"?"info":sub=="ords"?"ords":sub=="chat"?"chat":sub=="del"?"del":"prof"):acv,msg=am?`<p class="${amok?"ok":"mw"}">${esc(am)}</p>`:"";
 const ttl={topup:["شحن المحفظة","Top up wallet"],topm:["شحن المحفظة","Top up wallet"],topdone:["طلب الشحن","Top-up request"],login:["تسجيل الدخول","Sign in"],reg:["حساب جديد","Create account"],ver:["تأكيد الإيميل","Verify email"],forgot:["استعادة كلمة المرور","Reset password"],rec:["كلمة مرور جديدة","New password"],prof:["حسابي","My account"],wal:["المحفظة","Wallet"],walin:["المحفظة","Wallet"],info:["بياناتي الشخصية","My details"],ords:["طلباتي","My orders"],chat:["راسلنا","Chat with us"],del:["حذف الحساب","Delete account"]}[v]||["",""];
@@ -649,7 +682,7 @@ else if(v=="del")h=msg+(wal.b>0?`<div class="dbox"><b>💰 ${T2("عندك رصي
 else if(v=="chat")h=msg+`<div class="chw"><div class="chl" id="chl">${chHtml()}</div><form class="chf" data-f="chat"><textarea name="m" maxlength="1000" placeholder="${T2("اكتب رسالتك…","Type your message…")}" required></textarea><button type="submit" aria-label="${T2("إرسال","Send")}"><svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg></button></form></div>`;
 else if(v=="ords")h=msg+`<p class="m" style="margin:0 0 6px;font-size:13px">${T2("تقدر تعدّل طلبك خلال 10 دقائق من إرساله. لإلغاء طلب تواصل معنا على واتساب.","You can edit an order within 10 minutes of placing it. To cancel, contact us on WhatsApp.")}</p><div id="ol"></div>`;
 else{const p=prof||{},ini=String(p.full_name||"؟").trim().charAt(0),go=`<span class="go">${lang=="en"?"›":"‹"}</span>`;
-h=`<div class="phd"><label class="av" id="avl" title="${T2("تغيير الصورة","Change photo")}" aria-label="${T2("تغيير الصورة","Change photo")}">${p.avatar_url?`<img src="${esc(p.avatar_url)}" alt="">`:esc(ini)}<span class="cam"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg></span><input type="file" accept="image/*" id="avf" hidden></label><b>${esc(p.full_name||"")}</b><span dir="ltr">${esc(locPh(p.phone))}</span></div>`+msg+wvBox()
+h=`<div class="phd"><label class="av" id="avl" title="${T2("تغيير الصورة","Change photo")}" aria-label="${T2("تغيير الصورة","Change photo")}">${p.avatar_url?`<img src="${esc(p.avatar_url)}" alt="">`:esc(ini)}<span class="cam"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="12" cy="13" r="3.5"/></svg></span><input type="file" accept="image/*" id="avf" hidden></label><b class="pnm">${esc(p.full_name||"")}${String(p.email||"").toLowerCase()==OWNER?VB:""}</b><span dir="ltr">${esc(locPh(p.phone))}</span></div>`+msg+wvBox()
 +`<button type="button" class="mi" data-a="goinfo"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg></span><span class="tx">${T2("بياناتي الشخصية","My details")}</span>${go}</button>`
 +(pkOK()?`<div class="mi"><span class="ic">${FP}</span><span class="tx">${T2("الدخول بالبصمة","Fingerprint login")}<br><small class="m" style="font-weight:400">${hasPk()?T2("مفعّلة على هذا الجهاز","On for this device"):T2("غير مفعّلة","Off")}</small></span><button type="button" class="sw${hasPk()?" on":""}" role="switch" aria-checked="${hasPk()}" aria-label="${T2("الدخول بالبصمة","Fingerprint login")}" data-a="pktog"></button></div>`:"")
 +`<button type="button" class="mi" data-a="goords"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"/><path d="M4 6h16M9 10a3 3 0 006 0"/></svg></span><span class="tx">${T2("طلباتي","My orders")}</span>${go}</button>`
