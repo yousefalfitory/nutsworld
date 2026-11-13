@@ -4,8 +4,10 @@ const crypto = require("crypto");
 
 const SB = process.env.SUPABASE_URL;
 const SK = process.env.SUPABASE_SECRET_KEY;
-const PUB = process.env.VAPID_PUBLIC_KEY || "";
-const PRIV = process.env.VAPID_PRIVATE_KEY || "";
+// Clean the keys: a pasted value can carry spaces, quotes, new lines or the variable name.
+const clean = (v, n) => { const m = String(v || "").replace(/\s+/g, "").replace(/=+$/,"").match(new RegExp("[A-Za-z0-9_-]{" + n + ",}", "g")); return m ? m.sort((a, b) => b.length - a.length)[0] : ""; };
+const PUB = clean(process.env.VAPID_PUBLIC_KEY, 80);
+const PRIV = clean(process.env.VAPID_PRIVATE_KEY, 40);
 const SUBJ = process.env.VAPID_SUBJECT || "mailto:yalfitory@gmail.com";
 
 const b64u = (buf) => Buffer.from(buf).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
