@@ -1,6 +1,6 @@
 // Nuts World app helper: lets the app open and show a friendly page when there is no internet.
 // It never stores orders, prices or account data; those always come fresh from the internet.
-const C = "nw-shell-v3";
+const C = "nw-shell-v4";
 const SHELL = ["/", "/icons/icon-192.png", "/icons/icon-512.png", "/manifest.json"];
 
 self.addEventListener("install", (e) => {
@@ -40,6 +40,12 @@ self.addEventListener("fetch", (e) => {
 self.addEventListener("push", (e) => {
   let d = {};
   try { d = e.data ? e.data.json() : {}; } catch (_) { d = { title: e.data ? e.data.text() : "" }; }
+  // red number on the app icon
+  try {
+    if (typeof d.badge === "number" && self.navigator && self.navigator.setAppBadge) {
+      d.badge > 0 ? self.navigator.setAppBadge(d.badge).catch(() => {}) : self.navigator.clearAppBadge().catch(() => {});
+    }
+  } catch (_) {}
   e.waitUntil(
     self.registration.showNotification(d.title || "عالم المكسرات", {
       body: d.body || "",
