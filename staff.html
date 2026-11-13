@@ -476,7 +476,7 @@ ${o.status=="new"||o.status=="preparing"?(o.courier_ok_at?`<div class="accd">✅
 let pushSt="?",cdash=null,cdErr="",sfDash=null,dw={src:"meta",posts:null,pg:null,igu:"",post:null,comments:null,manual:"",mode:"person",kw:"",kwAll:false,ment:0,n:1,winners:[],busy:false,err:"",loading:false};
 const isIOS=()=>/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 const isApp=()=>(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
-const u8=k=>{const p="=".repeat((4-k.length%4)%4),r=atob((k+p).replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from([...r].map(c=>c.charCodeAt(0)))};
+const u8=k=>{k=String(k||"").replace(/[^A-Za-z0-9_\-+/]/g,"");const p="=".repeat((4-k.length%4)%4),r=atob((k+p).replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from([...r].map(c=>c.charCodeAt(0)))};
 async function pushCheck(){try{if(!("serviceWorker" in navigator)||!("PushManager" in window)||!("Notification" in window)){pushSt="no";return}
 if(Notification.permission==="denied"){pushSt="denied";return}const reg=await TO(navigator.serviceWorker.getRegistration(location.href),5000,"sw");const sb=reg&&/sw-staff/.test((reg.active||reg.installing||reg.waiting||{}).scriptURL||"")&&await TO(reg.pushManager.getSubscription(),5000,"sub");
 if(sb&&Notification.permission==="granted"){pushSt="on";bell=true;pushSave(sb,true).catch(()=>{})}else pushSt="off"}catch(_){pushSt="off"}}

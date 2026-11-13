@@ -824,7 +824,7 @@ if(prof)prof.avatar_url=pub;am=T2("تم تحديث صورتك","Your photo was u
 catch(_){am=T2("ما قدرناش نرفع الصورة، جرّب صورة ثانية","Could not upload the photo, try another one");amok=false}AC()}
 document.addEventListener("change",e=>{if(e.target&&e.target.id=="avf"){const f=e.target.files&&e.target.files[0];if(f)avUp(f)}});
 let cpOn=false;try{cpOn=localStorage.getItem("nw_cpush")==="1"}catch(_){}
-const u8=k=>{const p="=".repeat((4-k.length%4)%4),r=atob((k+p).replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from([...r].map(c=>c.charCodeAt(0)))};
+const u8=k=>{k=String(k||"").replace(/[^A-Za-z0-9_\-+/]/g,"");const p="=".repeat((4-k.length%4)%4),r=atob((k+p).replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from([...r].map(c=>c.charCodeAt(0)))};
 const TO=(pr,ms,n)=>Promise.race([pr,new Promise((_,no)=>setTimeout(()=>no(new Error(n)),ms))]);
 const inApp=()=>(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
 let cpPrep=null;const cpPrepare=()=>cpPrep=cpPrep||Promise.all([TO(fetch("/api/push").then(r=>r.json()),12000,"key").then(k=>k&&k.key||null).catch(()=>null),("serviceWorker" in navigator)?TO(navigator.serviceWorker.register("/sw.js"),12000,"sw").then(async reg=>{if(!reg.active){const w=reg.installing||reg.waiting;if(w)await TO(new Promise(ok=>{w.addEventListener("statechange",()=>{if(w.state==="activated")ok()});if(w.state==="activated")ok()}),20000,"sw-start")}return reg}).catch(e=>{cpPrep=null;throw e}):Promise.resolve(null)]);
