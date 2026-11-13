@@ -388,12 +388,13 @@ async function main(req, res) {
   const [sent] = await Promise.all([
     telegram(text),
     // ring the staff phones (home-screen app), even when the app is closed
-    PUSH.sendTo("role=in.(staff,admin)", {
+    PUSH.count("status=in.(new,preparing)&courier_id=is.null").then((badge) => PUSH.sendTo("role=in.(staff,admin)", {
+      badge,
       title: "🛒 طلب جديد" + (id ? " #" + id : ""),
       body: name + " · " + fmt(p.total) + " د.ل" + (t.city ? " · " + t.city : ""),
       url: "/staff.html",
       tag: "nw-order-" + (id || Date.now())
-    }).catch(() => 0)
+    })).catch(() => 0)
   ]);
   if (!sent && !id) return res.status(502).json({ ok: false });
   return res.status(200).json({ ok: true, id, total: p.total, balance });

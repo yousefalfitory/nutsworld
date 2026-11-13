@@ -59,7 +59,8 @@ module.exports = async (req, res) => {
       const C = (title, body) => ({ title, body, url: "/", tag: "nw-ord-" + o.id, icon: "/icons/icon-192.png" });
       const jobs = [];
       if (k === "assign") {
-        if (o.courier_id) jobs.push(P.sendTo("user_id=eq." + o.courier_id, { title: "🛵 طلب جديد ليك #" + o.id, body: "افتح الطلب واضغط «قبول الطلب»" + (o.city ? " · " + o.city : ""), url: "/staff.html", tag: "nw-asg-" + o.id }));
+        const badge = o.courier_id ? await P.count("courier_id=eq." + o.courier_id + "&status=in.(new,preparing)&courier_ok_at=is.null") : undefined;
+        if (o.courier_id) jobs.push(P.sendTo("user_id=eq." + o.courier_id, { badge, title: "🛵 طلب جديد ليك #" + o.id, body: "افتح الطلب واضغط «قبول الطلب»" + (o.city ? " · " + o.city : ""), url: "/staff.html", tag: "nw-asg-" + o.id }));
         if (o.user_id) jobs.push(P.sendTo("user_id=eq." + o.user_id, C("✅ تم قبول طلبك #" + o.id, "تم تحديد المندوب، وبيوصلك تنبيه مع كل خطوة.")));
       } else if (k === "accept") {
         jobs.push(P.sendTo("role=in.(staff,admin)", { title: "✅ المندوب قبل الطلب #" + o.id, body: (me.full_name || "المندوب") + " في الطريق للمحل", url: "/staff.html", tag: "nw-acc-" + o.id }));

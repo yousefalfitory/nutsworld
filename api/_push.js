@@ -86,4 +86,13 @@ async function sendTo(filter, payload) {
   return res.filter((x) => x === "ok").length;
 }
 
-module.exports = { ready, sendTo, sendOne, PUB: () => PUB };
+// how many orders match (for the red number on the app icon)
+async function count(filter) {
+  try {
+    const r = await fetch(SB + "/rest/v1/orders?select=id&limit=99&" + filter, { headers: H() });
+    const a = await r.json();
+    return Array.isArray(a) ? a.length : undefined;
+  } catch (_) { return undefined; }
+}
+
+module.exports = { ready, sendTo, sendOne, count, PUB: () => PUB };
