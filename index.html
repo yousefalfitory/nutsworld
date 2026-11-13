@@ -386,6 +386,32 @@ label[for=z],#z{display:none!important}
 #plm input{width:100%;box-sizing:border-box}
 body.noscr{overflow:hidden}
 body.hasotk #acb{padding-bottom:84px}
+.cx{position:fixed;inset:0;z-index:80;background:#111;color:#fff;display:flex;flex-direction:column;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+.cx-top{padding:12px 16px 8px;text-align:center}.cx-top b{display:block;font-size:16px}.cx-top span{font-size:12px;opacity:.75}
+.cx-st{position:relative;flex:1;min-height:0;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+.cx-st img{position:absolute;left:0;top:0;transform-origin:0 0;max-width:none;pointer-events:none}
+.cx-f{position:absolute;border:2px solid #fff;box-shadow:0 0 0 9999px rgba(0,0,0,.55);cursor:move;touch-action:none}
+.cx-f.rd{border-radius:50%}
+.cx-f::before,.cx-f::after{content:"";position:absolute;inset:0;pointer-events:none;border:solid #ffffff55;border-width:0 1px}
+.cx-f::before{left:33.3%;right:33.3%}.cx-f::after{top:33.3%;bottom:33.3%;border-width:1px 0}
+.cx-f.rd::before,.cx-f.rd::after{display:none}
+.cx-f i{position:absolute;width:26px;height:26px;margin:-13px;touch-action:none}
+.cx-f i::after{content:"";position:absolute;left:8px;top:8px;width:10px;height:10px;background:#fff;border-radius:3px;box-shadow:0 0 0 1px #0004}
+.cx-f .h-nw{left:0;top:0;cursor:nwse-resize}.cx-f .h-n{left:50%;top:0;cursor:ns-resize}.cx-f .h-ne{left:100%;top:0;cursor:nesw-resize}.cx-f .h-e{left:100%;top:50%;cursor:ew-resize}
+.cx-f .h-se{left:100%;top:100%;cursor:nwse-resize}.cx-f .h-s{left:50%;top:100%;cursor:ns-resize}.cx-f .h-sw{left:0;top:100%;cursor:nesw-resize}.cx-f .h-w{left:0;top:50%;cursor:ew-resize}
+.cx-ar{display:flex;justify-content:center;gap:8px;padding:10px 12px 4px}
+.cx-ar button{border:1.5px solid #ffffff55;background:none;color:#fff;border-radius:99px;padding:6px 14px;font:inherit;font-size:13px}
+.cx-ar button.on{background:#2f8a57;border-color:#2f8a57}
+.cx-bt{display:flex;gap:10px;padding:10px 16px 14px}.cx-bt button{flex:1;border:0;border-radius:14px;padding:13px;font:inherit;font-weight:800;font-size:15px;background:#ffffff22;color:#fff}
+.cx-bt .ok{background:#2f8a57}
+
+/* ===== update 17 ===== */
+.otk{height:auto!important;flex-direction:column;align-items:stretch!important;gap:3px}
+.otk .otl2{align-self:center;font-size:11.5px;font-weight:800;color:#1b7a45;background:var(--card);border-radius:99px;padding:2px 10px;box-shadow:0 1px 6px #0002;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+[data-theme="dark"] .otk .otl2{color:#7fe0a8}
+.otk .stp3{height:54px}
+.phd .pnm{display:inline!important;line-height:1.25}
+.phd .pnm .vb{display:inline-block!important;width:.71em!important;height:.71em!important;vertical-align:baseline!important;position:static!important;top:auto!important;margin-inline-start:.16em}
 </style>
 <script>try{var m=localStorage.getItem("nw_theme")||"auto";if(m==="dark"||(m==="auto"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.dataset.theme="dark"}catch(_){}</script>
 <link rel="manifest" href="/manifest.json">
@@ -477,7 +503,7 @@ let view="home",fav=[],tm;
 let lang="ar";try{lang=localStorage.getItem("nw_lang")==="en"?"en":"ar"}catch(_){}
 let PEN=["Roasted Almonds (Salted)","Roasted Almonds (Unsalted)","Smoked Almonds","Khazayni Almonds","Raw Almonds","Blanched Almonds","Large Cashews","Smoked Cashews","American Pistachios","Smoked Pistachios","Macadamia","Roasted Cardamom","Mixed Nuts","Smoked Mixed Nuts","Seasoned Mixed Nuts","BBQ Mixed Nuts","Black Sunflower Seeds","White Sunflower Seeds (Lightly Salted)","White Sunflower Seeds (Unsalted)","Shelled Sunflower Seeds (Seasoned)","Yellow Sunflower Seeds","Pumpkin Seeds","Grilled Chickpeas","Roasted Chickpeas","Chickpeas with Sesame","Seasoned Chickpeas","Salted Chickpeas","Peanuts","Peanuts with Sauce","Peanuts with Sesame","Sugar-Coated Peanuts","Peanuts with Sesame & Honey","Toffee Peanuts","Balila","Brazilian Coffee","Brazilian Coffee (Crushed)","Brazilian Coffee with Cardamom","Black Raisins","Golden Raisins","Chips","Jelly Candy","Viva Biscuits","Crunchy Biscuits","Old Biscuits","Sharshour Chocolate"];
 let CEN=["Almonds","Premium Nuts","Mixed Nuts","Seeds","Chickpeas & Peanuts","Coffee","Raisins & Sweets","Drinks"];
-const TR={tag:["للتسالي والمكسرات الساخنة","For Snacks & Hot Roasted Nuts"],mn:["أقل قيمة للطلب هي 40 دينار ليبي","Minimum order value is 40 LYD"],zp:["اختر منطقتك","Choose your area"],srch:["ابحث عن صنف…","Search for an item…"],adrh:["عنوان المحل","Store address"],adr:["مصراتة، الدائري القوشي","Misrata, Al-Qushi Ring Road"],hrs:["من 11 صباحاً إلى 11 مساءً","11 AM to 11 PM"],map:["افتح الموقع على الخريطة","Open in Maps"],fb:["فيسبوك","Facebook"],ig:["إنستغرام","Instagram"],tt:["تيك توك","TikTok"],fnote:["الأسعار بالدينار الليبي للكيلوغرام الواحد · سعر التوصيل داخل مصراتة حسب المنطقة أو المسافة","Prices in Libyan dinar (LYD) per kilogram · Delivery fee inside Misrata depends on the area or distance"],go:["إتمام الطلب","Checkout"],n1:["الرئيسية","Home"],n2:["الأصناف","Categories"],n3:["المحفظة","Wallet"],cpy:["© 2026 عالم المكسرات. جميع الحقوق محفوظة.","© 2026 Nuts World. All rights reserved."],n4:["السلة","Cart"],n5:["عروض","Offers"],ct:["سلتك","Your cart"],l_n:["الاسم","Name"],l_p:["رقم الهاتف","Phone number"],l_z:["أو اختر منطقتك","Or choose your area"],gp:["📍 حدد موقعي لحساب سعر التوصيل","📍 Use my location to calculate delivery"],gn:["نستخدم موقعك لحساب التوصيل فقط، ويُرسل مع طلبك.","We use your location only to calculate delivery, and it is sent with your order."],zm:["داخل مصراتة (20 د.ل)","Inside Misrata (20 LYD)"],zo:["خارج مصراتة (يُحدَّد عند التأكيد)","Outside Misrata (set on confirmation)"],l_c:["المدينة أو الحي","City or neighborhood"],l_a:["العنوان","Address"],l_k:["كود الخصم (إن وجد)","Discount code (if any)"],l_pay:["طريقة الدفع","Payment method"],cod:["كاش عند الاستلام","Cash on delivery"],pos:["بطاقة مصرفية عند الاستلام","Card on delivery"],card:["بطاقة مصرفية أونلاين (قريباً)","Online card (coming soon)"],cf:["تأكيد الطلب","Place order"],d1:["وصل طلبك ✅","Your order was received ✅"],d2:["سنتواصل معك قريباً لتأكيد الطلب والتوصيل.","We will contact you soon to confirm your order and delivery."],d3:["رجوع للمتجر","Back to store"],snd:["جاري الإرسال…","Sending…"],err:["تعذر إرسال الطلب، حاول مرة ثانية.","Could not send the order, please try again."],empty:["السلة فارغة","Your cart is empty"],n6:["حسابي","Account"],bank:["تحويل مصرفي","Bank transfer"],bnote:["حوّل المبلغ ثم أرسل صورة الإيصال عبر واتساب ليتم تأكيد طلبك.","Transfer the amount, then send the receipt photo on WhatsApp to confirm your order."],bsend:["أرسل الإيصال عبر واتساب","Send receipt on WhatsApp"]};
+const TR={tag:["للتسالي والمكسرات الساخنة","For Snacks & Hot Roasted Nuts"],mn:["أقل قيمة للطلب هي 40 دينار ليبي","Minimum order value is 40 LYD"],zp:["اختر منطقتك","Choose your area"],srch:["ابحث عن صنف…","Search for an item…"],adrh:["عنوان المحل","Store address"],adr:["مصراتة، الدائري القوشي","Misrata, Al-Qushi Ring Road"],hrs:["من 11 صباحاً إلى 11 مساءً","11 AM to 11 PM"],map:["افتح الموقع على الخريطة","Open in Maps"],fb:["فيسبوك","Facebook"],ig:["إنستغرام","Instagram"],tt:["تيك توك","TikTok"],fnote:["الأسعار بالدينار الليبي للكيلوغرام الواحد · سعر التوصيل داخل مصراتة حسب المنطقة أو المسافة","Prices in Libyan dinar (LYD) per kilogram · Delivery fee inside Misrata depends on the area or distance"],go:["إتمام الطلب","Checkout"],n1:["الرئيسية","Home"],n2:["الأصناف","Categories"],n3:["المحفظة","Wallet"],cpy:["© 2026 عالم المكسرات. جميع الحقوق محفوظة.","© 2026 Nuts World. All rights reserved."],n4:["السلة","Cart"],n5:["عروض","Offers"],ct:["سلتك","Your cart"],l_n:["الاسم","Name"],l_p:["رقم الهاتف","Phone number"],l_z:["أو اختر منطقتك","Or choose your area"],gp:["📍 حدد موقعي لحساب سعر التوصيل","📍 Use my location to calculate delivery"],gn:["نستخدم موقعك لحساب التوصيل فقط، ويُرسل مع طلبك.","We use your location only to calculate delivery, and it is sent with your order."],zm:["داخل مصراتة (20 د.ل)","Inside Misrata (20 LYD)"],zo:["خارج مصراتة (يُحدَّد عند التأكيد)","Outside Misrata (set on confirmation)"],l_c:["المدينة أو الحي","City or neighborhood"],l_a:["العنوان","Address"],l_k:["كود الخصم (إن وجد)","Discount code (if any)"],l_pay:["طريقة الدفع","Payment method"],cod:["كاش عند الاستلام","Cash on delivery"],pos:["بطاقة مصرفية عند الاستلام","Card on delivery"],card:["بطاقة مصرفية أونلاين (قريباً)","Online card (coming soon)"],cf:["تأكيد الطلب","Place order"],d1:["تم إرسال طلبك ✅","Your order was sent ✅"],d2:["سنتواصل معك قريباً لتأكيد الطلب والتوصيل.","We will contact you soon to confirm your order and delivery."],d3:["رجوع للمتجر","Back to store"],snd:["جاري الإرسال…","Sending…"],err:["تعذر إرسال الطلب، حاول مرة ثانية.","Could not send the order, please try again."],empty:["السلة فارغة","Your cart is empty"],n6:["حسابي","Account"],bank:["تحويل مصرفي","Bank transfer"],bnote:["حوّل المبلغ ثم أرسل صورة الإيصال عبر واتساب ليتم تأكيد طلبك.","Transfer the amount, then send the receipt photo on WhatsApp to confirm your order."],bsend:["أرسل الإيصال عبر واتساب","Send receipt on WhatsApp"]};
 const L=k=>TR[k][lang=="en"?1:0],CU=()=>lang=="en"?"LYD":"د.ل";
 const cn=c=>lang!="en"?c:c=="الكل"?"All":CEN[Object.keys(E).indexOf(c)];
 const nmOf=i=>lang=="en"?PEN[i]:P[i][1];
@@ -568,7 +594,7 @@ $("#f").onsubmit=async e=>{e.preventDefault();if(tot()<MIN)return;if(!gps){gst="
 const t=calc(),items=Object.entries(cart).map(([i,k])=>({name:P[i][1],qty:qla(k),sum:fmt(P[i][2]*k)}));if(t.d)items.push({name:"خصم كود "+t.d.c,qty:"-",sum:"-"+fmt(t.ds)});
 const body={name:f.get("n")+(edId==null&&f.get("pay")=="bank"?" 💳 تحويل مصرفي":""),phone:f.get("p"),city:t.ar?"مصراتة - "+t.ar[0]:t.gf?"مصراتة - حسب الموقع":"خارج مصراتة - "+f.get("c"),address:(gps?"📍 https://maps.google.com/?q="+gps.lat.toFixed(6)+","+gps.lon.toFixed(6)+" | ":"")+(t.known?"توصيل "+fmt(t.fe)+" د.ل"+(t.gf?" (~"+gps.d.toFixed(1)+" كم)":"")+"، الإجمالي "+fmt(t.g)+" د.ل":"التوصيل يُحدَّد عند التأكيد")+" | "+f.get("a"),total:fmt(t.sub),items};const isEd=edId!=null,payv=isEd?edPay:(["bank","wallet","pos"].includes(f.get("pay"))?f.get("pay"):"cod"),bank=payv=="bank"&&!isEd;body.pay={bank:"تحويل مصرفي (بانتظار الإيصال على واتساب)",wallet:"المحفظة",pos:"بطاقة مصرفية عند الاستلام",cod:"كاش عند الاستلام"}[payv];body.meta={cn:f.get("n"),sub:t.s,disc:t.ds,del:t.known?t.fe:null,tot:t.g,loc:gps?{lat:gps.lat,lon:gps.lon}:null,lang,pay:payv,n:f.get("n"),c:f.get("c"),a:f.get("a"),v:2,lines:Object.entries(cart).map(([i,k])=>[PID[i],k]),zone:t.ar?{t:"area",i:AREAS.indexOf(t.ar)}:t.gf?{t:"gps",lat:gps.lat,lon:gps.lon}:{t:"out"},code:t.d?t.d.c:"",...(isEd?{edit:edId}:{})};
 try{const t0=await tok(),r=await fetch("/api/order",{method:"POST",headers:{"Content-Type":"application/json",...(t0?{Authorization:"Bearer "+t0}:{})},body:JSON.stringify(body)});const rj=await r.json().catch(()=>({}));if(!r.ok){if(rj.error=="soldout"||rj.error=="price")catLoad();if(String(rj.error||"").startsWith("code_")){kcFor="";kc=null;kChk()}throw {code:rj.error,name:rj.name}}$("#dn b[data-t=d1]").textContent=isEd?T2("تم حفظ التعديل ✅","Your changes were saved ✅"):L("d1");$("#on").textContent=isEd?T2("طلب رقم #"+rj.id+(payv=="wallet"&&rj.balance!=null?" - رصيدك الآن "+fm(rj.balance)+" د.ل":""),"Order #"+rj.id+(payv=="wallet"&&rj.balance!=null?" - balance now "+fm(rj.balance)+" LYD":"")):rj.id?(payv=="wallet"&&rj.balance!=null?T2("رقم طلبك: #"+rj.id+" - تم الدفع من محفظتك، رصيدك الآن "+fm(rj.balance)+" د.ل","Order #"+rj.id+" - paid from your wallet, balance now "+fm(rj.balance)+" LYD"):T2("رقم طلبك: #"+rj.id,"Your order number: #"+rj.id)):"";if(payv=="wallet")loadWallet();
-$("#f").hidden=true;$("#cl").hidden=true;$("#dn").hidden=false;$("#bi").hidden=!bank;if(bank){const m="السلام عليكم، هذا إيصال تحويل طلبي.\nالاسم: "+f.get("n")+"\nالهاتف: "+f.get("p")+"\nالمبلغ: "+fmt(t.g)+" د.ل"+(t.known?"":" (بدون التوصيل)");$("#bw").href="https://wa.me/218912909007?text="+encodeURIComponent(m)}if(isEd){cart=edBk||{};edEnd()}else cart={};R();setTimeout(otkLoad,800);e.target.reset();kUI();gps=null;gst="";$("#bk").hidden=true;zu();gpsUI()}
+$("#f").hidden=true;$("#cl").hidden=true;$("#dn").hidden=false;$("#bi").hidden=!bank;$("#ok").hidden=!bank;clearTimeout(window.okT);if(!bank)window.okT=setTimeout(()=>{if(!$("#dn").hidden&&$("#ov").classList.contains("on"))$("#ok").click()},5000);if(bank){const m="السلام عليكم، هذا إيصال تحويل طلبي.\nالاسم: "+f.get("n")+"\nالهاتف: "+f.get("p")+"\nالمبلغ: "+fmt(t.g)+" د.ل"+(t.known?"":" (بدون التوصيل)");$("#bw").href="https://wa.me/218912909007?text="+encodeURIComponent(m)}if(isEd){cart=edBk||{};edEnd()}else cart={};R();setTimeout(otkLoad,800);e.target.reset();kUI();gps=null;gst="";$("#bk").hidden=true;zu();gpsUI()}
 catch(x){alert(WE(x));if(x&&(x.code=="locked"||x.code=="noorder")){edCancel();$("#ov").classList.remove("on")}}
 btn.disabled=false;btn.textContent=edId!=null?T2("حفظ التعديل","Save changes"):L("cf")};
 $("#ok").onclick=()=>{$("#ov").classList.remove("on");N()};
@@ -681,8 +707,8 @@ const nmB=(n,own,gold)=>`<b class="pnm${own?" own":""}" dir="auto">${esc(n||"")}
 const CS={new:["وصل طلبك","Order received",0],preparing:["قيد التجهيز","Preparing",1],handed:["سُلّم للمندوب","Handed to the courier",2],out:["المندوب في الطريق إليك","The courier is on the way",3],delivered:["تم التسليم","Delivered",4],cancelled:["ملغي","Cancelled",-1]};
 const STPL=[["قيد القبول","Awaiting acceptance"],["تم قبول طلبك","Order accepted"],["المندوب في الطريق للمحل، والطلبية قيد التجهيز","Courier heading to the shop, order being prepared"],["المندوب في الطريق إليك","Courier on the way to you"],["تم التسليم","Delivered"]];
 const STPI=['<svg viewBox="0 0 24 24"><circle cx="12" cy="14" r="7"/><path d="M12 10.5V14l2 1.5M10 3h4M12 3v4M18.5 7.5l1.2-1.2"/></svg>','<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.5"/></svg>','<svg viewBox="0 0 24 24"><path d="M4 10v10h16V10"/><path d="M3 10l1.5-5h15L21 10a2.5 2.5 0 01-4.5 1.5 2.5 2.5 0 01-4.5 0 2.5 2.5 0 01-4.5 0A2.5 2.5 0 013 10z"/><path d="M10 20v-5h4v5"/></svg>','<svg viewBox="0 0 24 24"><circle cx="5.5" cy="16.5" r="3"/><circle cx="18.5" cy="16.5" r="3"/><path d="M8.5 16.5h5l3-6h-4M14 6h3l1.5 4.5M5.5 16.5l2.5-5h5"/></svg>','<svg viewBox="0 0 24 24"><path d="M6 21V4a1 1 0 011-1h10a1 1 0 011 1v17M4 21h16"/><circle cx="14.5" cy="12.5" r=".8"/></svg>'];
-const STK=["new","assigned","accepted","handed","delivered"];
-const stI=o=>{const s0=o.status;if(s0=="cancelled")return -1;if(s0=="delivered")return 4;if(s0=="handed"||s0=="out")return 3;return o.courier_ok_at?2:o.courier_id?1:0};
+const STK=["new","assigned","accepted","out","delivered"];
+const stI=o=>{const s0=o.status;if(s0=="cancelled")return -1;if(s0=="delivered")return 4;if(s0=="out")return 3;if(s0=="handed")return 2;return o.courier_ok_at?2:o.courier_id?1:0};
 const stL=o=>{const i=stI(o);return i<0?T2("ملغي","Cancelled"):T2(STPL[i][0],STPL[i][1])};
 const tmF=x=>{if(!x)return "";const d=new Date(x),t=d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});return lang=="en"?t:t.replace("AM","ص").replace("PM","م")};
 var OT={};
@@ -741,7 +767,52 @@ try{const r=await au("/rest/v1/orders?select=*&order=created_at.desc&limit=15",{
 try{const ids=a.filter(o=>o.status!="cancelled").map(o=>+o.id);if(ids.length){const r2=await au("/rest/v1/rpc/my_order_times",{method:"POST",body:JSON.stringify({p_ids:ids})},t);const d2=await r2.json();if(r2.ok&&d2&&typeof d2=="object")OT=d2}}catch(_){}
 e.innerHTML=a.length?a.map(o=>{const st=stI(o),left=edLeft(o);return `<div class="r" style="display:block"><div style="display:flex;justify-content:space-between;gap:8px"><span>#${esc(o.id)} · ${new Date(o.created_at).toLocaleDateString("en-GB")}</span><b>${fmt(+o.total)} ${CU()}</b></div><div class="os${st<0?" x":""}">${esc(stL(o))}</div>${left>0?`<button type="button" class="lk" style="padding:4px 0" data-ed="${esc(o.id)}">✏️ ${T2("تعديل الطلب","Edit order")} (${T2("باقي","left")} ${Math.ceil(left/60000)} ${T2("د","min")})</button>`:""}</div>`}).join(""):`<p class="m">${T2("لا توجد طلبات سابقة","No previous orders")}</p>`}catch(_){}}
 setInterval(()=>{if(ses&&pg=="acct"&&$("#ac").classList.contains("on")&&$("#ol")&&!document.hidden)loadOrd()},20000);
-async function avUp(file){if(!file||!ses)return;const L2=$("#avl");if(L2)L2.classList.add("busy");
+// ---------- image crop ----------
+// ---------- image crop: pinch/drag the photo, drag the frame's sides and corners ----------
+function cropImg(file,ratio,outW,round){return new Promise(done=>{const en=document.documentElement.lang==="en",L=(a,e)=>en?e:a;
+const u=URL.createObjectURL(file),im=new Image();im.onerror=()=>{URL.revokeObjectURL(u);done(null)};im.onload=()=>{
+const W0=im.naturalWidth,H0=im.naturalHeight;let ar=ratio||null;
+const o=document.createElement("div");o.className="cx";o.setAttribute("role","dialog");o.setAttribute("aria-modal","true");
+o.innerHTML=`<div class="cx-top"><b>${L("قص الصورة","Crop photo")}</b><span>${L("حرّك الصورة وكبّرها بصباعين، واسحب جوانب الإطار","Move and pinch the photo, drag the frame edges")}</span></div>
+<div class="cx-st"><img alt="" draggable="false"><div class="cx-f${round?" rd":""}">${["nw","n","ne","e","se","s","sw","w"].map(h=>`<i data-h="${h}" class="h-${h}"></i>`).join("")}</div></div>
+<div class="cx-ar">${[[0,L("حر","Free")],[1,"1:1"],[4/3,"4:3"],[16/9,"16:9"]].map(([v,t])=>`<button type="button" data-ar="${v}">${t}</button>`).join("")}</div>
+<div class="cx-bt"><button type="button" data-cx="no">${L("إلغاء","Cancel")}</button><button type="button" data-cx="ok" class="ok">${L("حفظ","Save")}</button></div>`;
+document.body.appendChild(o);document.body.style.overflow="hidden";
+const st=o.querySelector(".cx-st"),img=o.querySelector("img"),fr=o.querySelector(".cx-f");img.src=u;
+let SW=0,SH=0,s=1,tx=0,ty=0,f={x:0,y:0,w:0,h:0};
+const paint=()=>{img.style.transform=`translate(${tx}px,${ty}px) scale(${s})`;fr.style.left=f.x+"px";fr.style.top=f.y+"px";fr.style.width=f.w+"px";fr.style.height=f.h+"px";
+o.querySelectorAll("[data-ar]").forEach(b=>b.classList.toggle("on",(+b.dataset.ar||null)===ar||(+b.dataset.ar&&ar&&Math.abs(+b.dataset.ar-ar)<.001)))};
+const fitFrame=()=>{const iw=W0*s,ih=H0*s;let w=iw*.9,h=ih*.9;if(ar){if(w/h>ar)w=h*ar;else h=w/ar}f={w,h,x:tx+(iw-w)/2,y:ty+(ih-h)/2}};
+const init=()=>{const r=st.getBoundingClientRect();SW=r.width;SH=r.height;s=Math.min((SW-24)/W0,(SH-24)/H0);tx=(SW-W0*s)/2;ty=(SH-H0*s)/2;fitFrame();paint()};
+img.style.width=W0+"px";img.style.height=H0+"px";requestAnimationFrame(init);
+const clampF=()=>{f.w=Math.min(f.w,SW);f.h=Math.min(f.h,SH);f.x=Math.max(0,Math.min(SW-f.w,f.x));f.y=Math.max(0,Math.min(SH-f.h,f.y))};
+const zoom=(k,cx,cy)=>{const ns=Math.max(Math.min((SW*.2)/W0,(SH*.2)/H0),Math.min(s*k,8*Math.max(SW/W0,SH/H0)));tx=cx-(cx-tx)*ns/s;ty=cy-(cy-ty)*ns/s;s=ns};
+const P=new Map();let mode=null,h0=null,f0=null,p0=null,pinch=null;
+const pos=e=>{const r=st.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top}};
+st.addEventListener("pointerdown",e=>{st.setPointerCapture(e.pointerId);P.set(e.pointerId,pos(e));
+if(P.size==2){const [a,b]=[...P.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y),mx:(a.x+b.x)/2,my:(a.y+b.y)/2};mode="pinch";return}
+const hd=e.target.closest("[data-h]");p0=pos(e);f0={...f};if(hd){mode="rs";h0=hd.dataset.h}else if(e.target.closest(".cx-f"))mode="mv";else mode="pan";e.preventDefault()});
+st.addEventListener("pointermove",e=>{if(!P.has(e.pointerId))return;const p=pos(e);P.set(e.pointerId,p);
+if(mode=="pinch"&&P.size>=2){const [a,b]=[...P.values()],d=Math.hypot(a.x-b.x,a.y-b.y),mx=(a.x+b.x)/2,my=(a.y+b.y)/2;zoom(d/pinch.d,mx,my);tx+=mx-pinch.mx;ty+=my-pinch.my;pinch={d,mx,my};paint();return}
+const dx=p.x-p0.x,dy=p.y-p0.y;
+if(mode=="pan"){tx+=dx;ty+=dy;p0=p}
+else if(mode=="mv"){f.x=f0.x+dx;f.y=f0.y+dy;clampF()}
+else if(mode=="rs"){let {x,y,w,h}=f0;const m=30;
+if(h0.includes("w")){const nx=Math.min(x+w-m,Math.max(0,x+dx));w+=x-nx;x=nx}if(h0.includes("e"))w=Math.max(m,Math.min(SW-x,w+dx));
+if(h0.includes("n")){const ny=Math.min(y+h-m,Math.max(0,y+dy));h+=y-ny;y=ny}if(h0.includes("s"))h=Math.max(m,Math.min(SH-y,h+dy));
+if(ar){if(h0=="n"||h0=="s"){const nw=h*ar;x+=(w-nw)/2;w=nw}else if(h0=="e"||h0=="w"){const nh=w/ar;y+=(h-nh)/2;h=nh}else{if(w/h>ar)w=h*ar;else h=w/ar;if(h0.includes("w"))x=f0.x+f0.w-w;if(h0.includes("n"))y=f0.y+f0.h-h}}
+f={x,y,w,h};clampF()}paint()});
+const up=e=>{P.delete(e.pointerId);if(P.size<2&&mode=="pinch"){mode=P.size?"pan":null;if(P.size){p0=[...P.values()][0]}}else if(!P.size)mode=null};
+st.addEventListener("pointerup",up);st.addEventListener("pointercancel",up);
+st.addEventListener("wheel",e=>{e.preventDefault();const p=pos(e);zoom(e.deltaY<0?1.1:1/1.1,p.x,p.y);paint()},{passive:false});
+const close=v=>{o.remove();document.body.style.overflow="";URL.revokeObjectURL(u);done(v)};
+o.addEventListener("click",e=>{const a=e.target.closest("[data-ar]");if(a){ar=+a.dataset.ar||null;if(ar){const c={x:f.x+f.w/2,y:f.y+f.h/2};let w=f.w,h=f.h;if(w/h>ar)w=h*ar;else h=w/ar;f={w,h,x:c.x-w/2,y:c.y-h/2};clampF()}paint();return}
+const b=e.target.closest("[data-cx]");if(!b)return;if(b.dataset.cx=="no")return close(null);
+const ix=(f.x-tx)/s,iy=(f.y-ty)/s,iw=f.w/s,ih=f.h/s,ow=Math.round(Math.min(outW||1200,iw)),oh=Math.max(1,Math.round(ow*ih/iw)),c=document.createElement("canvas");c.width=ow;c.height=oh;
+const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,ow,oh);g.imageSmoothingQuality="high";g.drawImage(im,ix,iy,iw,ih,0,0,ow,oh);c.toBlob(bl=>close(bl),"image/jpeg",.88)});
+addEventListener("resize",()=>{if(document.body.contains(o))init()},{once:true})};im.src=u})}
+
+async function avUp(file){if(!file||!ses)return;file=await cropImg(file,1,640,true);if(!file)return;const L2=$("#avl");if(L2)L2.classList.add("busy");
 try{const url=URL.createObjectURL(file),img=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=url});
 const n=320,sz=Math.min(img.naturalWidth,img.naturalHeight),c=document.createElement("canvas");c.width=c.height=n;
 c.getContext("2d").drawImage(img,(img.naturalWidth-sz)/2,(img.naturalHeight-sz)/2,sz,sz,0,0,n,n);URL.revokeObjectURL(url);
@@ -756,19 +827,23 @@ let cpOn=false;try{cpOn=localStorage.getItem("nw_cpush")==="1"}catch(_){}
 const u8=k=>{const p="=".repeat((4-k.length%4)%4),r=atob((k+p).replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from([...r].map(c=>c.charCodeAt(0)))};
 const TO=(pr,ms,n)=>Promise.race([pr,new Promise((_,no)=>setTimeout(()=>no(new Error(n)),ms))]);
 const inApp=()=>(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
+let cpPrep=null;const cpPrepare=()=>cpPrep=cpPrep||Promise.all([TO(fetch("/api/push").then(r=>r.json()),12000,"key").then(k=>k&&k.key||null).catch(()=>null),("serviceWorker" in navigator)?TO(navigator.serviceWorker.register("/sw.js"),12000,"sw").then(async reg=>{if(!reg.active){const w=reg.installing||reg.waiting;if(w)await TO(new Promise(ok=>{w.addEventListener("statechange",()=>{if(w.state==="activated")ok()});if(w.state==="activated")ok()}),20000,"sw-start")}return reg}).catch(e=>{cpPrep=null;throw e}):Promise.resolve(null)]);
+async function cpSave(sb,quiet){const t=await tok();return TO(fetch("/api/push",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+t},body:JSON.stringify({action:"save",quiet:!!quiet,sub:sb.toJSON()})}),15000,"save")}
+async function cpCheck(){if(!ses||!cpOn||!("serviceWorker" in navigator)||!("PushManager" in window))return;try{const reg=await navigator.serviceWorker.getRegistration("/"),sb=reg&&await reg.pushManager.getSubscription();if(sb&&Notification.permission==="granted")cpSave(sb,true).catch(()=>{});else{cpOn=false;try{localStorage.setItem("nw_cpush","0")}catch(_){}}}catch(_){}}
+setTimeout(()=>{if(ses){cpPrepare().catch(()=>{});cpCheck()}},2500);
 async function cpushTog(){const iOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 if(cpOn){cpOn=false;try{localStorage.setItem("nw_cpush","0")}catch(_){}try{const reg=await navigator.serviceWorker.getRegistration("/"),sb=reg&&await reg.pushManager.getSubscription();if(sb){const ep=sb.endpoint;await sb.unsubscribe();const t=await tok();fetch("/api/push",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+t},body:JSON.stringify({action:"del",endpoint:ep})}).catch(()=>{})}}catch(_){}return}
 if(!("serviceWorker" in navigator)||!("PushManager" in window)||!("Notification" in window)){T(iOS&&!inApp()?T2("ضيف المتجر للشاشة الرئيسية من زر المشاركة، وافتحه من الأيقونة وفعّل التنبيهات","Add the shop to your home screen, open it from the icon, then turn alerts on"):T2("جهازك ما يدعمش التنبيهات","Your device does not support alerts"));return}
-let perm;try{perm=await Notification.requestPermission()}catch(_){perm="default"}if(perm!=="granted"){T(T2("لازم تسمح بالتنبيهات","Please allow notifications"));return}
-try{const k=await TO(fetch("/api/push").then(r=>r.json()),12000,"key");if(!k.key)throw 0;const reg=await TO(navigator.serviceWorker.register("/sw.js"),12000,"sw");
-if(!reg.active){const w=reg.installing||reg.waiting;if(w)await TO(new Promise(ok=>{w.addEventListener("statechange",()=>{if(w.state==="activated")ok()});if(w.state==="activated")ok()}),20000,"sw")}
-let sb=await TO(reg.pushManager.getSubscription(),10000,"sub");if(!sb)sb=await TO(reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:u8(k.key)}),20000,"sub");
-const t=await tok(),r=await TO(fetch("/api/push",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+t},body:JSON.stringify({action:"save",sub:sb.toJSON()})}),15000,"save");if(!r.ok)throw 0;
-cpOn=true;try{localStorage.setItem("nw_cpush","1")}catch(_){}T(T2("تم تفعيل تنبيهات طلباتك 🔔","Order alerts are on 🔔"))}catch(_){T(T2("ما قدرناش نفعّل التنبيهات، حاول مرة ثانية","Could not turn alerts on, try again"))}}
+let step="perm";try{const permP=Notification.requestPermission(),[key,reg]=await cpPrepare(),perm=await permP;if(perm!=="granted"){T(T2("لازم تسمح بالتنبيهات","Please allow notifications"));return}
+step="key";if(!key)throw new Error("keys");step="sw";if(!reg)throw new Error("noworker");
+step="sub";let sb=await TO(reg.pushManager.getSubscription(),10000,"timeout");if(!sb)sb=await TO(reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:u8(key)}),20000,"timeout");
+step="save";const r=await cpSave(sb,false);if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.error||String(r.status))}
+cpOn=true;try{localStorage.setItem("nw_cpush","1")}catch(_){}T(T2("تم تفعيل تنبيهات طلباتك 🔔","Order alerts are on 🔔"))}
+catch(e){T(T2("ما قدرناش نفعّل التنبيهات","Could not turn alerts on")+" ("+step+": "+String((e&&e.name&&e.name!=="Error"?e.name+" ":"")+((e&&e.message)||"")).slice(0,80)+")")}}
 const OACT=["new","preparing","handed","out"];let otkO=null;
 const otkHide=()=>{$("#otk").hidden=true;otkO=null;document.body.classList.remove("hasotk")};
 function otkPaint(){const b=$("#otk"),o=otkO;if(!o){otkHide();return}const st=stI(o);
-b.innerHTML=`<div class="stp3">${STPI.map((ic,i)=>`${i?`<span class="ln${i<=st?" on":""}"></span>`:""}<span class="s${i<st?" dn":i==st?" cur":""}" title="${esc(T2(STPL[i][0],STPL[i][1]))}">${ic}</span>`).join("")}</div>`;
+b.innerHTML=`<div class="otl2">${esc(stL(o))}</div><div class="stp3">${STPI.map((ic,i)=>`${i?`<span class="ln${i<=st?" on":""}"></span>`:""}<span class="s${i<st?" dn":i==st?" cur":""}" title="${esc(T2(STPL[i][0],STPL[i][1]))}">${ic}</span>`).join("")}</div>`;
 b.setAttribute("aria-label",T2("طلبك #","Your order #")+o.id+": "+stL(o));b.hidden=false;document.body.classList.add("hasotk")}
 async function otkLoad(){if(!ses){otkHide();return}const t=await tok();if(!t){otkHide();return}
 try{const r=await au("/rest/v1/orders?select=*&order=created_at.desc&limit=8",{},t),a=await r.json();if(!Array.isArray(a))return;
