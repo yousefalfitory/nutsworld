@@ -37,6 +37,7 @@ module.exports = async (req, res) => {
       const row = { endpoint: s.endpoint.slice(0, 1000), user_id: me.id, role: me.role, sub: { endpoint: s.endpoint, keys: { p256dh: String(s.keys.p256dh), auth: String(s.keys.auth) } } };
       const r = await fetch(SB + "/rest/v1/push_subs?on_conflict=endpoint", { method: "POST", headers: { ...H(), Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify(row) });
       if (!r.ok) return res.status(500).json({ ok: false, error: "db" });
+      if (b.quiet) return res.status(200).json({ ok: true, sent: 0 });
       const sent = await P.sendTo("endpoint=eq." + encodeURIComponent(row.endpoint), team
         ? { title: "🔔 الإشعارات شغّالة", body: "من توا يوصلك تنبيه على كل طلب جديد، حتى والتطبيق مسكّر.", url: "/staff.html", tag: "nw-test" }
         : { title: "🔔 تنبيهات طلباتك شغّالة", body: "نبّهوك بكل خطوة في طلبك من عالم المكسرات.", url: "/", tag: "nw-test", icon: "/icons/icon-192.png" });
@@ -49,7 +50,7 @@ module.exports = async (req, res) => {
     // a step in the order: tell the right people (courier, staff, customer)
     if (b.action === "ev") {
       const id = Number(b.order_id), k = String(b.kind || "");
-      if (!Number.isInteger(id) || !["assign", "accept", "hand", "done"].includes(k)) return res.status(400).json({ ok: false });
+      if (!Number.isInteger(id) || !["assign", "accept", "hand", "recv", "done"].includes(k)) return res.status(400).json({ ok: false });
       const r = await fetch(SB + "/rest/v1/orders?select=id,courier_id,user_id,city,customer_name,status&id=eq." + id, { headers: H() });
       const a = await r.json();
       const o = Array.isArray(a) && a[0];
@@ -65,7 +66,8 @@ module.exports = async (req, res) => {
       } else if (k === "accept") {
         jobs.push(P.sendTo("role=in.(staff,admin)", { title: "✅ المندوب قبل الطلب #" + o.id, body: (me.full_name || "المندوب") + " في الطريق للمحل", url: "/staff.html", tag: "nw-acc-" + o.id }));
         if (o.user_id) jobs.push(P.sendTo("user_id=eq." + o.user_id, C("🛵 المندوب في الطريق للمحل", "طلبك #" + o.id + " قيد التجهيز.")));
-      } else if (k === "hand") {
+      } else if (k === "recv") {
+        // the courier pressed «استلمت الطلبية»: only now the customer sees "on the way to you"
         if (o.user_id) jobs.push(P.sendTo("user_id=eq." + o.user_id, C("🛵 المندوب في الطريق إليك", "طلبك #" + o.id + " طلع من المحل.")));
       } else if (k === "done") {
         if (o.user_id) jobs.push(P.sendTo("user_id=eq." + o.user_id, C("🎉 تم تسليم طلبك #" + o.id, "بالهناء والشفاء من عالم المكسرات 🌰")));
