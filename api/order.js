@@ -156,14 +156,16 @@ async function catalog() {
   if (catCache && Date.now() - catAt < 30000) return catCache;
   if (SB && SK) {
     try {
-      const r = await fetch(SB + "/rest/v1/products?select=id,name,price,sale_price,sale_until,available,categories(hidden)", { headers: { apikey: SK } });
+      // "unit" (kg / pack) comes with setup_18; fall back to the old columns if it is not there yet
+      let r = await fetch(SB + "/rest/v1/products?select=id,name,price,sale_price,sale_until,available,unit,categories(hidden)", { headers: { apikey: SK } });
+      if (!r.ok) r = await fetch(SB + "/rest/v1/products?select=id,name,price,sale_price,sale_until,available,categories(hidden)", { headers: { apikey: SK } });
       if (r.ok) {
         const a = await r.json();
         if (Array.isArray(a) && a.length) {
           const today = libyaToday(), m = new Map();
           for (const p of a) {
             const sale = p.sale_price != null && Number(p.sale_price) > 0 && Number(p.sale_price) < Number(p.price) && (!p.sale_until || String(p.sale_until).slice(0, 10) >= today);
-            m.set(Number(p.id), { name: p.name, price: Number(sale ? p.sale_price : p.price), ok: p.available !== false && !(p.categories && p.categories.hidden) });
+            m.set(Number(p.id), { name: p.name, price: Number(sale ? p.sale_price : p.price), pack: p.unit === "pack", ok: p.available !== false && !(p.categories && p.categories.hidden) });
           }
           catCache = m; catAt = Date.now();
           return m;
@@ -222,11 +224,13 @@ function price(m, cd, cat) {
     const p = cat && cat.get(i);
     if (!p || seen.has(i)) return { err: "bad" };
     if (!p.ok) return { err: "soldout", name: p.name };
-    if (!(k >= 0.1 - 1e-9 && k <= 50) || Math.abs(k * 20 - Math.round(k * 20)) > 1e-6) return { err: "bad" };
+    // bundles are sold by the pack (1, 2, 3...); everything else by weight (100 g, then 50 g steps)
+    if (p.pack) { if (!(Number.isInteger(k) && k >= 1 && k <= 20)) return { err: "bad" }; }
+    else if (!(k >= 0.1 - 1e-9 && k <= 50) || Math.abs(k * 20 - Math.round(k * 20)) > 1e-6) return { err: "bad" };
     seen.add(i);
     const line = r2(p.price * k);
     sub += line;
-    items.push({ name: p.name, qty: qtyAr(k), sum: fmt(line) });
+    items.push({ name: p.name, qty: p.pack ? k + (k >= 3 && k <= 10 ? " باقات" : " باقة") : qtyAr(k), sum: fmt(line) });
   }
   sub = r2(sub);
   if (sub < D.MIN) return { err: "min" };
