@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
       if (typeof s.endpoint !== "string" || !/^https:\/\//.test(s.endpoint) || !s.keys || !s.keys.p256dh || !s.keys.auth) return res.status(400).json({ ok: false, error: "bad" });
       const row = { endpoint: s.endpoint.slice(0, 1000), user_id: me.id, role: me.role, sub: { endpoint: s.endpoint, keys: { p256dh: String(s.keys.p256dh), auth: String(s.keys.auth) } } };
       const r = await fetch(SB + "/rest/v1/push_subs?on_conflict=endpoint", { method: "POST", headers: { ...H(), Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify(row) });
-      if (!r.ok) return res.status(500).json({ ok: false, error: "db" });
+      if (!r.ok) { const t = (await r.text().catch(() => "")).slice(0, 160); console.error("push save db", r.status, t); let m = ""; try { const j = JSON.parse(t); m = j.code || j.message || ""; } catch (_) { m = t.slice(0, 60); } return res.status(500).json({ ok: false, error: "db " + r.status + (m ? " " + m : "") }); }
       if (b.quiet) return res.status(200).json({ ok: true, sent: 0 });
       const sent = await P.sendTo("endpoint=eq." + encodeURIComponent(row.endpoint), team
         ? { title: "🔔 الإشعارات شغّالة", body: "من توا يوصلك تنبيه على كل طلب جديد، حتى والتطبيق مسكّر.", url: "/staff.html", tag: "nw-test" }
