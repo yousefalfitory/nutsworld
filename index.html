@@ -75,7 +75,7 @@ body{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
 .fv{position:absolute;top:8px;inset-inline-end:8px;background:none;border:0;font-size:24px;line-height:1;color:#e0443e;padding:0}
 #cg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 #cg button{font:inherit;font-weight:700;padding:16px 10px;border-radius:16px;border:1px solid #b9e0c6;background:#e4f5ea;color:#1b7a45;display:flex;flex-direction:column;align-items:center;gap:6px}
-#ts{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nh) + 90px + env(safe-area-inset-bottom,0px));background:#1d2b22;color:#fff;padding:10px 18px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:10}
+#ts{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nh) + 90px + env(safe-area-inset-bottom,0px));background:#1d2b22;color:#fff;padding:10px 18px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:99990;max-width:88vw;text-align:center}
 #ts.on{opacity:1}
 main.w{min-height:calc(100vh - 330px)}
 footer{margin-top:30px}
@@ -425,7 +425,19 @@ body.hasotk #acb{padding-bottom:84px}
 <style>#spl{display:none}html.spl #spl{display:flex;position:fixed;inset:0;z-index:99999;background:#fff;align-items:center;justify-content:center;transition:opacity .45s ease}
 #spl img{width:min(56vw,240px);height:auto;animation:splIn .7s cubic-bezier(.2,.9,.3,1.2) both}
 #spl.go{opacity:0;pointer-events:none}@keyframes splIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){#spl img{animation:none}}</style>
+@media (prefers-reduced-motion:reduce){#spl img{animation:none}}#rvw{margin:22px 0 6px}#rvw h2{font-size:18px;margin:0 0 4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}#rvw h2 small{font-size:13px;font-weight:600;color:var(--mut)}
+.rvl{display:flex;gap:10px;overflow-x:auto;padding:6px 2px 10px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.rvk{flex:0 0 78%;max-width:300px;scroll-snap-align:start;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.rvk b{display:block;font-size:14.5px}.rvk p{margin:6px 0 0;font-size:14px;line-height:1.55}.rvk small{color:var(--mut);font-size:12px}
+.rst{color:#e0a100;letter-spacing:1px;font-size:15px;white-space:nowrap}.rst i{color:#cbd5d0;font-style:normal}
+#rvm{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center}
+#rvm>div{background:var(--card);color:var(--tx);width:100%;max-width:520px;border-radius:22px 22px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px))}
+#rvm h3{margin:0 0 4px;font-size:17px}.rvp{display:flex;justify-content:center;gap:6px;margin:12px 0}
+.rvp button{border:0;background:none;font-size:38px;line-height:1;color:#cbd5d0;padding:2px;cursor:pointer}.rvp button.on{color:#e0a100}
+#rvm textarea{width:100%;box-sizing:border-box;min-height:84px;border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit;background:var(--in,#fff);color:var(--tx)}
+.rvb{display:flex;gap:8px;margin-top:12px}.rvb button{flex:1;border:0;border-radius:12px;padding:12px;font:inherit;font-weight:800}.rvb .ok{background:#2f8a57;color:#fff}.rvb .no{background:var(--line);color:var(--tx)}
+.rvd{display:inline-block;margin-top:6px;border:1.5px solid #e0a100;color:#a06f00;background:#fff8e1;border-radius:99px;padding:5px 12px;font:inherit;font-weight:800;font-size:13px}
+</style>
 </head>
 <body>
 <div id="spl" aria-hidden="true"><img src="/icons/icon-512.png" alt=""></div>
@@ -438,6 +450,7 @@ body.hasotk #acb{padding-bottom:84px}
 <input id="q" type="search" data-ph="srch" placeholder="ابحث عن صنف…">
 <div class="ch" id="ch"></div>
 <div id="g"></div>
+<section id="rvw" hidden></section>
 <footer><div class="ad"><b>📍 <span data-t="adrh">عنوان المحل</span></b><div data-t="adr">مصراتة، الدائري القوشي</div><div>🕚 <span data-t="hrs">من 11 صباحاً إلى 11 مساءً</span></div><a href="https://maps.app.goo.gl/QfqbLvyY4yXwAkHX7" target="_blank" rel="noopener" data-t="map">افتح الموقع على الخريطة</a></div><div class="sc"><a href="https://www.facebook.com/share/1KAyu7fVXD/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M14 8.5V6.8c0-.8.5-1.3 1.4-1.3H17V2.2a20 20 0 00-2.5-.2C11.9 2 10.3 3.6 10.3 6.4v2.1H7.5v3.7h2.8V22H14v-9.8h2.8l.5-3.7z"/></svg></a><a href="https://www.instagram.com/nutsworld2024" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="3" width="18" height="18" rx="5.2"/><circle cx="12" cy="12" r="4.1"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg></a><a href="https://www.tiktok.com/@nutsworld2024" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.6 2h-3.4v13.4a2.9 2.9 0 11-2.9-2.9c.3 0 .6 0 .9.1V9.1a6.4 6.4 0 106 6.3V8.7a7.9 7.9 0 004.4 1.3V6.6a4.5 4.5 0 01-4.5-4.6z"/></svg></a></div><span class="cp" data-t="cpy">© 2026 عالم المكسرات. جميع الحقوق محفوظة.</span><span class="cr" dir="ltr">CREATED BY YOUSEF ALFITORY</span></footer>
 </main>
 <div id="bar"><div><b id="bn"></b><div id="bt"></div></div><button id="go" data-t="go">إتمام الطلب</button></div>
@@ -517,7 +530,7 @@ function svpUI(){const w=$("#svp");if(!w)return;if(!ses||!prof){w.hidden=true;re
 let h=L.map((x,i)=>`<button type="button" class="${near(x)?"on":""}" data-pl="${i}">${PIN}${esc(x.n)}</button>`).join("");
 if(gps&&!L.some(near)&&L.length<10)h+=`<button type="button" class="sv" data-plsave>💾 ${T2("احفظ الموقع هذا","Save this place")}</button>`;
 w.innerHTML=h;w.hidden=!h}
-async function plSave(L){const t=await tok();if(!t)return false;try{const r=await au("/rest/v1/profiles?id=eq."+ses.uid,{method:"PATCH",body:JSON.stringify({places:L})},t);if(!r.ok)throw 0;prof.places=L;return true}catch(_){T(T2("ما قدرناش نحفظ الموقع","Could not save the place"));return false}}
+async function plSave(L){const t=await tok();if(!t)return false;try{const r=await au("/rest/v1/profiles?id=eq."+ses.uid,{method:"PATCH",body:JSON.stringify({places:L})},t);if(!r.ok){let m="";try{const j=await r.json();m=j.code||j.message||""}catch(_){}throw new Error(r.status+(m?" "+m:""))}prof.places=L;return true}catch(e){T(T2("ما قدرناش نحفظ الموقع","Could not save the place")+" ("+((e&&e.message)||"net")+")");return false}}
 document.addEventListener("click",async e=>{const b=e.target.closest("[data-pl],[data-plsave],[data-pldel]");if(!b)return;e.preventDefault();
 if(b.dataset.pl!=null){const x=myPl()[+b.dataset.pl];if(x)setLoc(x.lat,x.lon,x.n);return}
 if(b.hasAttribute("data-plsave")){if(!gps)return;const n=(prompt(T2("اسم الموقع (مثلاً: المنزل، العمل)","Place name (e.g. Home, Work)"),T2(myPl().length?"العمل":"المنزل",myPl().length?"Work":"Home"))||"").trim().slice(0,30);if(!n)return;
@@ -533,7 +546,8 @@ document.body.appendChild(w);document.body.classList.add("noscr");
 w.addEventListener("click",async e=>{if(e.target.closest("[data-pmx]")){plMapClose();return}
 if(e.target.closest("[data-pmme]")){if(!navigator.geolocation)return;navigator.geolocation.getCurrentPosition(p=>{pmPos=[p.coords.latitude,p.coords.longitude];if(pmMap)pmMap.setView(pmPos,17);else T(T2("تم تحديد موقعك الحالي، اكتب الاسم واحفظ","Current location set, type a name and save"))},()=>T(T2("تعذر تحديد موقعك، افتح صلاحية الموقع","Could not get your location")),{enableHighAccuracy:true,timeout:15000,maximumAge:60000});return}
 if(e.target.closest("[data-pmsave]")){const n=($("#pmn").value||"").trim();if(!n){$("#pmn").focus();T(T2("اكتب اسم الموقع","Type a name for the place"));return}const c=pmMap?pmMap.getCenter():pmPos?{lat:pmPos[0],lng:pmPos[1]}:null;if(!c){T(T2("اضغط «موقعي الحالي» أولاً","Tap “My current location” first"));return}
-if(await plSave(myPl().concat([{n,lat:+c.lat.toFixed(6),lon:+c.lng.toFixed(6)}]))){T(T2("تم حفظ «"+n+"»","Saved “"+n+"”"));plMapClose();svpUI();AC()}}});
+const sb=e.target.closest("[data-pmsave]");if(sb.disabled)return;sb.disabled=true;const o0=sb.textContent;sb.textContent=T2("جاري الحفظ…","Saving…");
+const ok=await plSave(myPl().concat([{n,lat:+c.lat.toFixed(6),lon:+c.lng.toFixed(6)}]));sb.disabled=false;sb.textContent=o0;if(ok){plMapClose();T(T2("تم حفظ «"+n+"»","Saved “"+n+"”"));svpUI();AC()}}});
 try{const L=await lfLoad();const c0=gps?[gps.lat,gps.lon]:SHOP;pmMap=L.map("pmap",{zoomControl:true,attributionControl:true}).setView(c0,gps?17:14);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(pmMap);setTimeout(()=>pmMap&&pmMap.invalidateSize(),200)}
 catch(_){$("#pmap").innerHTML=`<p class="m" style="padding:20px;text-align:center">${T2("تعذر تحميل الخريطة. اضغط «موقعي الحالي» وانت في المكان.","Map could not load.")}</p>`}}
@@ -762,10 +776,28 @@ function doOut(){chM=[];chU=0;chSig="";chBadge();$("#otk").hidden=true;try{local
 async function loadWalletUI(){await loadWallet();const e=$("#wl");if(!e)return;const en=lang=="en",K={topup:["شحن","Top-up"],gift:["هدية","Gift"],refund:["استرجاع","Refund"],purchase:["شراء","Purchase"],adjust:["تعديل","Adjustment"]},S2={pending:["بانتظار الموافقة","Pending approval"],rejected:["مرفوض","Rejected"],approved:["","" ]};
 const bal=$("#wamt");if(bal)bal.textContent=fm(wal.b)+" "+CU();
 e.innerHTML=wal.tx.length?wal.tx.map(x=>{const a=+x.amount,st=(S2[x.status]||["",""])[en?1:0];return `<div class="r"><span>${esc((K[x.kind]||[x.kind,x.kind])[en?1:0])}${x.note?" · "+esc(x.note):""}<br><small class="m">${new Date(x.created_at).toLocaleDateString("en-GB")}${st?" · "+st:""}</small></span><b style="color:${a<0?"#b3261e":x.status=="pending"?"var(--mut)":"#15803d"}">${a>0?"+":""}${fm(a)} ${CU()}</b></div>`}).join(""):`<p class="m">${T2("لا توجد حركات بعد","No activity yet")}</p>`}
+let MR={};const rStars=n=>`<span class="rst" aria-label="${n}/5">${"★".repeat(n)}<i>${"★".repeat(5-n)}</i></span>`;
+function rvOpen(id){if($("#rvm"))return;let n=0;const w=document.createElement("div");w.id="rvm";w.setAttribute("role","dialog");w.setAttribute("aria-modal","true");
+w.innerHTML=`<div><h3>${T2("قيّم طلبك #","Rate order #")}${esc(id)}</h3><p class="m" style="margin:0">${T2("رأيك في المكسرات وجودتها والخدمة. يظهر في المتجر باسمك الأول بس.","Your opinion of the nuts and the service. Shown with your first name only.")}</p>
+<div class="rvp">${[1,2,3,4,5].map(i=>`<button type="button" data-st="${i}" aria-label="${i}">★</button>`).join("")}</div>
+<textarea id="rvt" maxlength="300" placeholder="${T2("اكتب رأيك (اختياري)","Write your opinion (optional)")}"></textarea>
+<div class="rvb"><button type="button" class="ok" data-rvok>${T2("إرسال التقييم","Send rating")}</button><button type="button" class="no" data-rvx>${T2("إلغاء","Cancel")}</button></div></div>`;
+document.body.appendChild(w);
+w.addEventListener("click",async e=>{if(e.target===w||e.target.closest("[data-rvx]")){w.remove();return}
+const sb=e.target.closest("[data-st]");if(sb){n=+sb.dataset.st;w.querySelectorAll("[data-st]").forEach(x=>x.classList.toggle("on",+x.dataset.st<=n));return}
+const ok=e.target.closest("[data-rvok]");if(ok){if(!n){T(T2("اختار عدد النجوم","Pick the stars"));return}if(ok.disabled)return;ok.disabled=true;ok.textContent=T2("جاري الإرسال…","Sending…");
+try{const t=await tok(),r=await au("/rest/v1/rpc/submit_review",{method:"POST",body:JSON.stringify({p_order:+id,p_stars:n,p_body:$("#rvt").value||""})},t);if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error((d&&d.message)||String(r.status))}
+w.remove();T(T2("شكراً على تقييمك 🌰 بيظهر بعد المراجعة","Thanks! Shown after review"));loadOrd()}catch(er){ok.disabled=false;ok.textContent=T2("إرسال التقييم","Send rating");T(/already/.test(er.message)?T2("قيّمت الطلب هذا قبل","Already rated"):T2("تعذر إرسال التقييم","Could not send")+" ("+er.message.slice(0,40)+")")}}})}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-rvo]");if(b){e.preventDefault();rvOpen(b.dataset.rvo)}});
+async function loadRvw(){const w=$("#rvw");if(!w)return;try{const r=await au("/rest/v1/rpc/public_reviews",{method:"POST",body:JSON.stringify({p_limit:30})}),a=await r.json();if(!r.ok||!Array.isArray(a)||!a.length){w.hidden=true;return}
+const avg=(a.reduce((x,y)=>x+y.stars,0)/a.length).toFixed(1);
+w.innerHTML=`<h2>⭐ ${T2("آراء عملائنا","What our customers say")} <small>${avg} ${T2("من 5","of 5")} · ${a.length} ${T2("تقييم","reviews")}</small></h2><div class="rvl">${a.map(x=>`<div class="rvk"><b>${esc(x.name)}</b>${rStars(x.stars)} <small>${new Date(x.created_at).toLocaleDateString("en-GB")}</small>${x.body?`<p>${esc(x.body)}</p>`:""}</div>`).join("")}</div>`;w.hidden=false}catch(_){w.hidden=true}}
+setTimeout(loadRvw,1500);
 async function loadOrd(){const t=await tok(),e=$("#ol");if(!t||!e)return;
 try{const r=await au("/rest/v1/orders?select=*&order=created_at.desc&limit=15",{},t);const a=await r.json(),en=lang=="en";if(!Array.isArray(a))return;myOrd=a;
 try{const ids=a.filter(o=>o.status!="cancelled").map(o=>+o.id);if(ids.length){const r2=await au("/rest/v1/rpc/my_order_times",{method:"POST",body:JSON.stringify({p_ids:ids})},t);const d2=await r2.json();if(r2.ok&&d2&&typeof d2=="object")OT=d2}}catch(_){}
-e.innerHTML=a.length?a.map(o=>{const st=stI(o),left=edLeft(o);return `<div class="r" style="display:block"><div style="display:flex;justify-content:space-between;gap:8px"><span>#${esc(o.id)} · ${new Date(o.created_at).toLocaleDateString("en-GB")}</span><b>${fmt(+o.total)} ${CU()}</b></div><div class="os${st<0?" x":""}">${esc(stL(o))}</div>${left>0?`<button type="button" class="lk" style="padding:4px 0" data-ed="${esc(o.id)}">✏️ ${T2("تعديل الطلب","Edit order")} (${T2("باقي","left")} ${Math.ceil(left/60000)} ${T2("د","min")})</button>`:""}</div>`}).join(""):`<p class="m">${T2("لا توجد طلبات سابقة","No previous orders")}</p>`}catch(_){}}
+try{if(a.some(o=>o.status=="delivered")){const r3=await au("/rest/v1/rpc/my_reviews",{method:"POST",body:"{}"},t),d3=await r3.json();if(r3.ok&&Array.isArray(d3)){MR={};d3.forEach(x=>MR[x.order_id]=x)}}}catch(_){}
+e.innerHTML=a.length?a.map(o=>{const st=stI(o),left=edLeft(o);return `<div class="r" style="display:block"><div style="display:flex;justify-content:space-between;gap:8px"><span>#${esc(o.id)} · ${new Date(o.created_at).toLocaleDateString("en-GB")}</span><b>${fmt(+o.total)} ${CU()}</b></div><div class="os${st<0?" x":""}">${esc(stL(o))}</div>${o.status=="delivered"?(MR[o.id]?`<div class="m" style="font-size:13px;margin-top:4px">${T2("تقييمك","Your rating")}: ${rStars(MR[o.id].stars)}${MR[o.id].status=="pending"?" · "+T2("بيظهر بعد المراجعة","shown after review"):""}</div>`:`<button type="button" class="rvd" data-rvo="${esc(o.id)}">⭐ ${T2("قيّم طلبك","Rate your order")}</button>`):""}${left>0?`<button type="button" class="lk" style="padding:4px 0" data-ed="${esc(o.id)}">✏️ ${T2("تعديل الطلب","Edit order")} (${T2("باقي","left")} ${Math.ceil(left/60000)} ${T2("د","min")})</button>`:""}</div>`}).join(""):`<p class="m">${T2("لا توجد طلبات سابقة","No previous orders")}</p>`}catch(_){}}
 setInterval(()=>{if(ses&&pg=="acct"&&$("#ac").classList.contains("on")&&$("#ol")&&!document.hidden)loadOrd()},20000);
 // ---------- image crop ----------
 // ---------- image crop: pinch/drag the photo, drag the frame's sides and corners ----------
