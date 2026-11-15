@@ -353,6 +353,10 @@ body.kb #nv,body.kb .nav,body.kb nav{display:none!important}
 #snd.ok{background:#2f8a57;color:#fff;border-color:#2f8a57}
 .cgo{font-weight:900;font-size:16px;color:#1b7a45;margin:4px 2px 8px}[data-theme="dark"] .cgo{color:#7fe0a8}
 .ringt{width:100%;margin-top:8px}
+.ssb{display:flex;align-items:center;gap:10px;background:#1e293b;color:#fff;border-radius:14px;padding:10px 12px;margin-bottom:10px;font-size:14px}.ssb span{flex:1}.ssb button{border:0;background:#fff;color:#1e293b;border-radius:10px;padding:8px 12px;font:inherit;font-weight:800}
+.ssh{display:flex;align-items:center;gap:8px}.ssh input{width:90px;text-align:center}form[data-f="store"] textarea{display:block;width:100%;box-sizing:border-box;min-height:80px;height:auto}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.crate{display:flex;align-items:center;gap:8px;background:var(--card);border-radius:14px;padding:10px 12px;margin-bottom:10px;box-shadow:var(--sh)}.crate b{font-size:17px}
+.mtres{display:flex;align-items:center;gap:6px;margin:6px 0}.mtres input{width:64px;text-align:center}.mtres button{flex:1}.mtk.off{opacity:.6}.dww{border:2px solid #e0a100}
 .rgu{width:100%;border:0;font:inherit;font-weight:800;justify-content:center;background:#b45309;color:#fff;margin-bottom:8px}
 .rvn{border:0;background:none;padding:0;font:inherit;font-weight:800;font-size:15.5px;color:#1b7a45;text-decoration:underline;text-underline-offset:3px;text-align:start}[data-theme="dark"] .rvn{color:#7fe0a8}
 .rvt{display:flex;justify-content:space-between;align-items:center;gap:8px}.rvc{margin-top:10px}.pmt span{font-size:11.5px;color:var(--mut)}
@@ -497,6 +501,7 @@ const PMT=[["code","كود خصم جديد","نسبة أو مبلغ، بتاري
 ["offers","العروض على الأصناف","العروض الشغّالة توا",'<svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>'],
 ["codes","أكواد الخصم","كل الأكواد واستعمالها",'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg>'],
 ["bundles","الباقات","خليط أصناف بسعر واحد",'<svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M12 8c-1.5-3-5.5-4-5.5-1.5S10 8 12 8zm0 0c1.5-3 5.5-4 5.5-1.5S14 8 12 8z"/></svg>'],
+["store","حالة المحل","مفتوح ولا مسكّر، والدوام",'<svg viewBox="0 0 24 24"><path d="M3 9l1.5-5h15L21 9M4 9v11h16V9M3 9h18M9 20v-6h6v6"/></svg>'],
 ["ref","دعوة صديق","مكافأة الزبون اللي يجيب صاحبه",'<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0113 0M19 8v6M16 11h6"/></svg>']];
 function asgH(o){if(!cour.length)return `<div class="m" style="margin-top:6px">لاختيار مندوب، أضف مندوب من تبويب الموظفون.</div>`;
 const sel=`<select data-cs="${o.id}">${cour.map(c=>`<option value="${esc(c.id)}" ${c.id===o.courier_id?"selected":""}>${esc(c.full_name)}</option>`).join("")}</select>`;
@@ -579,7 +584,8 @@ let rgSil=new Set();
 const rgPend=()=>isCourier()?mine.filter(o=>(o.status=="new"||o.status=="preparing")&&!o.courier_ok_at).map(o=>String(o.id)):isStaff()?orders.filter(o=>(o.status=="new"||o.status=="preparing")&&!o.courier_id).map(o=>String(o.id)):[];
 setInterval(()=>{if(!bell||!actx||!me||document.hidden&&!isApp())return;if(rgPend().some(id=>!rgSil.has(id)))beep()},4000);
 let lastBadge=-1;function appBadge(){const n=rgPend().length;if(n===lastBadge)return;lastBadge=n;try{if(n>0&&navigator.setAppBadge)navigator.setAppBadge(n).catch(()=>{});else if(navigator.clearAppBadge)navigator.clearAppBadge().catch(()=>{})}catch(_){}}
-function pushH(){appBadge();const pend=rgPend().filter(id=>!rgSil.has(id));let h="";
+function pushH(){return ssBanner()+pushH0()}
+function pushH0(){appBadge();const pend=rgPend().filter(id=>!rgSil.has(id));let h="";
 if(bell&&pend.length&&!audOk())h+=`<button type="button" class="rgb rgu" data-aud>🔊 اضغط هنا باش يشتغل صوت الرنين</button>`;
 if(bell&&pend.length)h+=`<div class="rgb"><span>🔔 ${isCourier()?"عندك طلب جديد، اقبله باش يوقف الرنين":"طلب جديد، اختار المندوب باش يوقف الرنين"}</span><button type="button" data-sil>🔕 إسكات</button></div>`;
 if(pushSt!="on"&&pushSt!="?")h+=`<div class="pst bad">🔕 الإشعارات مش مفعّلة${pushErr?" ("+esc(pushErr)+")":""}. ${pushErr=="install"?"افتح «إدارة المتجر» من الأيقونة على الشاشة الرئيسية.":pushErr=="denied"?"افتحها من الإعدادات ← الإشعارات ← إدارة المتجر.":"اضغط الزر باش تفعّلها."}${pushErr=="install"||pushErr=="denied"||pushSt=="no"?"":`<button type="button" class="pri" data-push style="display:block;margin-top:8px;width:100%">🔔 تفعيل الإشعارات</button>`}</div>`;
@@ -587,7 +593,7 @@ return h}
 
 // ===== courier dashboard =====
 const PAYS={cod:"كاش",pos:"بطاقة عند الاستلام",bank:"تحويل مصرفي",wallet:"المحفظة",card:"بطاقة أونلاين"};
-async function loadCDash(id){try{const d=await rpc("courier_dash",id?{p_user:id}:{});cdErr="";return d}catch(e){cdErr=/function|not find|Could not/i.test(String(e.message))?"setup":"err";return null}}
+async function loadCDash(id){try{const d=await rpc("courier_dash",id?{p_user:id}:{});cdErr="";try{d.rating=await rpc("courier_rating",id?{p_user:id}:{})}catch(_){}return d}catch(e){cdErr=/function|not find|Could not/i.test(String(e.message))?"setup":"err";return null}}
 const CI={coin:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14.8 9a3 3 0 00-2.8-1.5c-1.7 0-2.8.9-2.8 2.1 0 2.9 5.8 1.5 5.8 4.5 0 1.2-1.2 2.2-3 2.2a3.2 3.2 0 01-3-1.7M12 6v1.5M12 16.8v1.5"/></svg>',
 wk:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
 mo:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M8 14h.01M12 14h.01M16 14h.01M8 17.5h.01M12 17.5h.01"/></svg>',
@@ -597,6 +603,7 @@ due:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 
 box:'<svg viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>',
 bank:'<svg viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/></svg>'};
 const sech=(ic,t,x)=>`<div class="sech"><i>${CI[ic]}</i>${t}${x!=null?`<small>${x}</small>`:""}</div>`;
+function cdRate(d){const r=d&&d.rating;if(!r||!r.n)return "";return `<div class="crate"><span class="rvs">${"★".repeat(Math.round(r.avg))}<i>${"★".repeat(5-Math.round(r.avg))}</i></span><b>${r.avg}</b><span class="m">تقييم الزبائن للتوصيل · ${r.n} تقييم</span></div>`}
 function cdTiles(d){const g=k=>d[k]||{},T=(ic,k,l)=>`<div class="cdt"><i>${CI[ic]}</i><span>${l}<b>${money(g(k).earn||0)}</b>${g(k).n||0} طلبية</span></div>`;
 return `<div class="cdx"><div class="cdtop"><i>${CI.coin}</i><span>أرباح اليوم<b>${money(g("today").earn||0)}</b></span><em>${g("today").n||0} طلبية</em></div>
 <div class="cdg">${T("wk","week","آخر 7 أيام")}${T("mo","month","هذا الشهر")}${T("all","all","من أول يوم")}<div class="cdt"><i>${CI.bike}</i><span>معاك توا<b>${d.on_way||0}</b>طلبية</span></div></div></div>`}
@@ -614,14 +621,14 @@ return h}
 const go=mine.filter(o=>o.status=="handed"||o.status=="out");if(go.length)h+=`<div class="cgo">🛵 ${go.length>1?"طلبيات معاك توّا":"طلبية معاك توّا"}</div>`+go.map(ccard).join("");
 if(pend.length)h+=pend.map(ccard).join("");
 const acc=mine.filter(o=>(o.status=="new"||o.status=="preparing")&&o.courier_ok_at);if(acc.length)h+=acc.map(ccard).join("");
-if(d){h+=cdTiles(d)+cdDues(d,false)}else if(cdErr=="setup")h+=`<div class="box m" style="margin-bottom:10px">الإحصائيات تشتغل بعد ما المدير يشغّل setup_13.sql</div>`;
+if(d){h+=cdRate(d)+cdTiles(d)+cdDues(d,false)}else if(cdErr=="setup")h+=`<div class="box m" style="margin-bottom:10px">الإحصائيات تشتغل بعد ما المدير يشغّل setup_13.sql</div>`;
 h+=`<div style="margin-top:10px">${tiles([["cd:now","طلباتي توا","اللي عندك الآن",CI.bike,mine.length],["cd:done","الطلبيات اللي وصّلتها","كل التوصيلات",CI.box,d?(d.all||{}).n||0:null],["cd:pays","سجل التحويلات","الفلوس اللي وصلتك",CI.bank,d?(d.payouts||[]).length:null],["cd:bank","حسابي المصرفي","المصرف والآيبان",CI.coin]])}</div>`;
 return h}
 function bankH(b,id){b=b||{};const R=(l,v)=>`<div class="row"><span>${l}</span><span>${v?`<b dir="ltr">${esc(v)}</b><button type="button" class="cpb" data-copy="${esc(v)}">نسخ</button>`:`<b>—</b>`}</span></div>`;
 return `<div class="csec bnk">${sech("bank","الحساب المصرفي")}${R("المصرف",b.name)}${R("رقم الحساب",b.account)}${R("الآيبان",b.iban)}
 <details style="margin-top:8px"><summary class="m" style="cursor:pointer">✏️ تعديل بيانات الحساب</summary><form data-f="bank" data-uid="${esc(id)}"><label>اسم المصرف</label><input name="bn" value="${esc(b.name||"")}" placeholder="مثلاً: مصرف الوحدة"><label>رقم الحساب</label><input name="ba" value="${esc(b.account||"")}" dir="ltr" inputmode="numeric"><label>الآيبان (IBAN)</label><input name="bi" value="${esc(b.iban||"")}" dir="ltr" autocapitalize="characters" placeholder="LY.."><button class="sub" type="submit">حفظ</button></form></details></div>`}
 function sfCourier(){const d=sfDash;if(!d)return cdErr=="setup"?`<div class="box m" style="margin-top:10px">شغّل setup_13.sql في Supabase باش تطلع أرباح المندوب وحسابه المصرفي.</div>`:`<div class="box m" style="margin-top:10px">جاري تحميل أرباح المندوب…</div>`;
-const fst=(d.all||{}).first;return `<div style="margin-top:10px">${cdTiles(d)}</div>${fst?`<p class="m" style="margin:0 4px 6px">أول توصيلة: ${tm2(fst).split(",")[0]}</p>`:""}${cdDues(d,true)}${bankH(d.bank,sfile.id)}${cdPays(d)}${cdOrders(d)}`}
+const fst=(d.all||{}).first;return `<div style="margin-top:10px">${cdRate(d)}${cdTiles(d)}</div>${fst?`<p class="m" style="margin:0 4px 6px">أول توصيلة: ${tm2(fst).split(",")[0]}</p>`:""}${cdDues(d,true)}${bankH(d.bank,sfile.id)}${cdPays(d)}${cdOrders(d)}`}
 async function payCourier(id){const d=sfDash;if(!d)return;const v=prompt("المبلغ اللي حوّلته للمندوب (د.ل):",String(+(+d.dues).toFixed(2)));if(v==null)return;const am=Number(String(v).replace(",","."));if(!(am>0)){toast("المبلغ غير صحيح");return}
 const note=prompt("ملاحظة (اختياري)، مثلاً رقم الحوالة:","")||"";try{await rpc("admin_courier_payout",{p_user:id,p_amount:am,p_note:note});toast("تم تسجيل التحويل ✅");sfDash=await loadCDash(id)}catch(e){toast("تعذر التسجيل")}V()}
 
@@ -636,7 +643,9 @@ if(dw.mode=="person"){const seen=new Set();L=L.filter(c=>seen.has(c.key)?false:(
 const dwTotal=()=>dw.src=="manual"?dwParse().length:(dw.comments||[]).length;
 const dwCnt=()=>{const p=dwPool().length,t=dwTotal();return t?`${t} تعليق · <b>${p}</b> ${dw.mode=="person"?"شخص":"فرصة"} يدخلوا السحب`:"ما فيش تعليقات بعد"};
 function drawHtml(){const posts=dw.posts||[];let h=`<div class="box"><h3 style="margin-top:0">🎁 السحب على الجوائز</h3><p class="m" style="margin-top:0">اختار المنشور، حدّد الشروط، واسحب. الاختيار عشوائي بالكامل.</p>
-`;if(!SV.dw)return h+`</div><div style="margin-top:10px">`+tiles([["dw:meta","فيسبوك وإنستغرام","تعليقات منشوراتك تتجاب وحدها",TI3.meta],["dw:manual","تيك توك أو قائمة","تلصق الأسماء والتعليقات",TI3.man]])+`</div>`;
+`;if(!SV.dw)return h+`</div><div style="margin-top:10px">`+tiles([["dw:meta","فيسبوك وإنستغرام","تعليقات منشوراتك تتجاب وحدها",TI3.meta],["dw:manual","تيك توك أو قائمة","تلصق الأسماء والتعليقات",TI3.man],["dw:cust","عملاء المتجر","الأكثر طلباً، عشوائي، وغيرها",'<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0113 0"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16 14.2a5 5 0 016 4.8"/></svg>'],["dw:match","مسابقة التوقّع","توقّع نتيجة مباراة",'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7l4 3-1.5 4.5h-5L8 10z"/><path d="M12 3v4M21 10l-5 0M3 10h5M7 20l2.5-5.5M17 20l-2.5-5.5"/></svg>']])+`</div>`;
+if(SV.dw=="cust")return back("dw:","رجوع لسحب الجوائز")+custHtml();
+if(SV.dw=="match")return back("dw:","رجوع لسحب الجوائز")+mtHtml();
 h=back("dw:","رجوع لسحب الجوائز")+h+`<div class="dwc" style="margin:0 0 8px;font-weight:800">${dw.src=="meta"?"فيسبوك وإنستغرام":"تيك توك أو قائمة"}</div>`;
 if(dw.err)h+=`<div class="er">${esc(dw.err)}</div>`;
 if(dw.src=="meta"){if(!dw.posts)h+=`<button type="button" class="sub" data-dwposts ${dw.loading?"disabled":""}>${dw.loading?"جاري التحميل…":"جيب آخر المنشورات"}</button>`;
@@ -696,7 +705,8 @@ else if(pmv=="poffer")h+=`<form class="box" data-f="poffer"><h3 style="margin-to
 else if(pmv=="offers")h+=`<div class="box"><h3 style="margin-top:0">العروض على الأصناف</h3>${offersHtml()}</div>`;
 else if(pmv=="codes")h+=`<div class="box"><div class="btns" style="margin:0 0 6px"><button type="button" data-rf="promo">تحديث</button></div><h3 style="margin-top:0">أكواد الخصم</h3>${codesHtml()}</div>`;
 else if(pmv=="bundles")h+=bv?bForm():bList();
-else if(pmv=="ref")h+=refHtml()}}
+else if(pmv=="ref")h+=refHtml();
+else if(pmv=="store")h+=storeHtml()}}
 else if(tab=="slides"){h+=`${msg?`<div class="er">${esc(msg)}</div>`:""}<div class="box"><h3 style="margin-top:0">🖼️ صور الموقع</h3><p class="m">الصور تتقلّب وحدها في أعلى المتجر بنفس الترتيب اللي هنا.</p><label class="upb">${upl?"⏳ جاري رفع الصورة…":"＋ إضافة صورة"}<input type="file" accept="image/*" id="sfile" hidden ${upl?"disabled":""}></label>${slidesHtml()}</div>`}
 else if(tab=="draw"){h+=drawHtml()}
 else if(tab=="staff"&&sfile){h+=sfHtml()}
@@ -811,7 +821,72 @@ return `<form class="box" data-f="pprod"><h3 style="margin-top:0">${pv.id?"تع�
 <label>صورة المنتج</label>${pfile?`<img class="pimg" id="pprev" src="${esc(pfile.u)}" alt="">`:p.image_url?`<img class="pimg" src="${esc(p.image_url)}" alt="">`:""}<label class="upb" style="margin:6px 0">📷 ${p.image_url||pfile?"تغيير الصورة":"اختار صورة"}<input type="file" accept="image/*" id="pimg" hidden></label>${p.image_url&&!pfile?`<label class="ck"><input type="checkbox" name="rmi"> شيل الصورة</label>`:""}
 <label class="ck"><input type="checkbox" name="av" ${p.available!==false?"checked":""}> متوفر</label><button class="sub" type="submit">حفظ</button><div class="btns" style="justify-content:space-between"><button type="button" data-px>إلغاء</button>${pv.id?`<button type="button" data-pdel="${pv.id}" style="color:#b91c1c">مسح المنتج</button>`:""}</div></form>`}
 // ===== update 19: bundles =====
-let bv=null,bimg=null,rst=null,rstErr="";
+let bv=null,bimg=null,rst=null,rstErr="",SS=null,cdw={per:"month",how:"orders",n:5,min:1,excl:true,amt:"",prize:"",label:"",pool:null,win:null,err:"",busy:false},mts=null,mtEd=null,mtErr="";
+// ===== update 22: opening hours and closing the shop for now =====
+async function loadSS(){try{SS=await rpc("public_store_status",{})}catch(_){SS=null}}
+function ssBanner(){if(!SS||SS.open!==false||!isAdmin())return "";return `<div class="ssb"><span>🌙 ${SS.temp?"المحل مسكّر مؤقتاً للزبائن":"المحل برّا الدوام توّا ("+esc(SS.from)+" – "+esc(SS.to)+")"}، الطلبات الجديدة واقفة.</span>${SS.temp?`<button type="button" data-ssopen>فتح المحل</button>`:""}</div>`}
+function storeHtml(){if(!SS)return `<div class="box"><p class="er">شغّل setup_20.sql في Supabase أولاً</p></div>`;
+return `<form class="box" data-f="store" novalidate><h3 style="margin-top:0">🏪 حالة المحل</h3><p class="m" style="margin-top:0">توّا: <b style="color:${SS.open?"#15803d":"#b91c1c"}">${SS.open?"مفتوح ويستقبل طلبات":"مسكّر"}</b>. برّا الدوام الزبون يتسوّق عادي، لكن لما يبعت الطلب تطلعله رسالة إن المحل مسكّر وسلته محفوظة.</p>
+<label>الدوام (بتوقيت ليبيا)</label><div class="ssh"><span>من</span><input name="from" dir="ltr" inputmode="numeric" value="${esc(SS.from)}" placeholder="11:00"><span>لين</span><input name="to" dir="ltr" inputmode="numeric" value="${esc(SS.to)}" placeholder="23:00"></div>
+<label class="ck" style="margin-top:14px"><input type="checkbox" name="closed" ${SS.temp?"checked":""}> <b>إقفال المحل مؤقتاً</b> (عيد، ضغط، أي سبب)</label>
+<label>الرسالة اللي تطلع للزبائن</label><textarea name="msg" maxlength="200" rows="3" dir="auto" placeholder="مثلاً: عيدكم مبارك 🌙 نرجعوا يوم الأحد الساعة 11">${esc(SS.msg||"")}</textarea>
+<button class="sub" type="submit" style="width:100%">حفظ</button></form>`}
+// ===== update 22: draw among the shop's own customers =====
+const PERS={month:["الشهر هذا",()=>{const d=new Date(Date.now()+2*3600e3);return new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),1)-2*3600e3).toISOString()}],m3:["آخر 3 شهور",()=>new Date(Date.now()-90*864e5).toISOString()],all:["من البداية",()=>null]};
+const HOWS={orders:"أكثر عدد طلبات",spent:"أكثر مبلغ صرفوه",reviews:"أكثر تقييمات",random:"سحب عشوائي"};
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=crypto.getRandomValues(new Uint32Array(1))[0]%(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const chips=(k,o,cur)=>`<div class="rjc">${Object.entries(o).map(([v,l])=>`<button type="button" data-cdw="${k}:${v}" class="${cur==v?"on":""}">${Array.isArray(l)?l[0]:l}</button>`).join("")}</div>`;
+function custHtml(){const c=cdw;let h=`<div class="box"><h3 style="margin-top:0">👥 مسابقة بين عملاء المتجر</h3><p class="m" style="margin-top:0">الزبائن اللي عندهم حساب وطلبوا من المتجر.</p>
+<label>طريقة الاختيار</label>${chips("how",HOWS,c.how)}<label>الفترة</label>${chips("per",PERS,c.per)}
+<div class="g2"><div><label>عدد الفايزين</label><input data-cdf="n" inputmode="numeric" dir="ltr" value="${esc(c.n)}"></div><div><label>طلبوا على الأقل</label><input data-cdf="min" inputmode="numeric" dir="ltr" value="${esc(c.min)}"></div></div>
+<label class="ck"><input type="checkbox" data-cdf="excl" ${c.excl?"checked":""}> استبعاد اللي فازوا قبل</label>
+<label>اسم المسابقة</label><input data-cdf="label" maxlength="60" value="${esc(c.label)}" placeholder="مثلاً: مسابقة نوفمبر">
+<div class="g2"><div><label>جائزة في المحفظة (د.ل)</label><input data-cdf="amt" inputmode="decimal" dir="ltr" value="${esc(c.amt)}" placeholder="اختياري"></div><div><label>أو جائزة ثانية</label><input data-cdf="prize" maxlength="60" value="${esc(c.prize)}" placeholder="مثلاً: علبة كاجو"></div></div>
+<button type="button" class="sub" data-cdgo style="width:100%" ${c.busy?"disabled":""}>${c.busy?"جاري…":"🎲 اسحب"}</button>${c.err?`<p class="er">${esc(c.err)}</p>`:""}</div>`;
+if(c.win)h+=winHtml(c.win,c.pool?c.pool.length:0,"cd");return h}
+function winHtml(w,pool,src){return `<div class="box dww"><h3 style="margin-top:0">🏆 الفايزين ${pool?`<small class="m">من ${pool} مشارك</small>`:""}</h3>${w.length?w.map((x,i)=>`<div class="row"><span><b>${i+1}. ${esc(x.name||"زبون")}</b>${x.phone?` · <span dir="ltr">${esc(x.phone)}</span>`:""}${x.k!=null?`<br><span class="m">${esc(x.k)}</span>`:""}</span><button type="button" class="rvn" data-cfu="${esc(x.user_id)}">ملفه ‹</button></div>`).join(""):`<p class="m">ما فيش حد ينطبق عليه الشرط</p>`}
+${w.length?`<div class="btns"><button type="button" class="pri" data-wsave="${src}">✅ اعتماد وإبلاغ الفايزين</button><button type="button" data-wimg="${src}">🖼 صورة الفايزين</button><button type="button" data-wre="${src}">🔁 سحب من جديد</button></div>`:""}</div>`}
+async function cdDraw(){const c=cdw;c.err="";c.busy=true;V();try{const pool=await rpc("admin_draw_pool",{p_from:PERS[c.per][1]()})||[];
+let L=pool.filter(x=>+x.orders>=Math.max(1,+numIn(c.min)||1)&&(!c.excl||!+x.won));const n=Math.max(1,Math.min(50,+numIn(c.n)||1));c.pool=L;
+const key={orders:x=>+x.orders,spent:x=>+x.spent,reviews:x=>+x.reviews}[c.how];
+L=c.how=="random"?shuf(L):shuf(L).sort((a,b)=>key(b)-key(a));
+c.win=L.slice(0,n).map(x=>({user_id:x.user_id,name:x.name,phone:x.phone,k:c.how=="random"?x.orders+" طلب":c.how=="spent"?money(x.spent):c.how=="reviews"?x.reviews+" تقييم":x.orders+" طلب"}))}
+catch(e){c.err=/function|find|PGRST202/i.test(e.raw||"")?"شغّل setup_20.sql في Supabase أولاً":"تعذر السحب: "+e.message}c.busy=false;V()}
+async function winSave(src){const isM=src.startsWith("m");const m=isM?(mts||[]).find(x=>"m"+x.id==src):null;const w=isM?(m&&m.win)||[]:cdw.win||[];if(!w.length)return;
+const label=isM?`توقّع: ${m.a} × ${m.b} #${m.id}`:(cdw.label||"مسابقة عملاء المتجر "+new Date().toLocaleDateString("en-GB"));const amt=numIn(isM?m.amt:cdw.amt),prize=isM?(m.prize||m.note||""):cdw.prize;
+if(!confirm("نعتمدوا "+w.length+" فايز"+(amt>0?" وننزّلوا "+amt+" د.ل في محفظة كل واحد":"")+"؟"))return;
+try{await rpc("admin_draw_save",{p_label:label,p_ids:w.map(x=>x.user_id),p_prize:amt>0?amt+" د.ل في المحفظة":prize,p_amount:amt>0?amt:null});const t=await tok();
+fetch("/api/push",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+t},body:JSON.stringify({action:"prize",ids:w.map(x=>x.user_id),label:isM?"توقّع "+m.a+" × "+m.b:label,prize:amt>0?amt+" د.ل في محفظتك":prize})}).catch(()=>{});
+toast("تم اعتماد الفايزين ووصلهم إشعار 🎉");if(isM){m.win=null;await loadMts()}else cdw.win=null}catch(e){toast("تعذر الحفظ: "+e.message)}V()}
+function winImg(src){const isM=src.startsWith("m");const m=isM?(mts||[]).find(x=>"m"+x.id==src):null;const w=isM?(m&&m.win)||[]:cdw.win||[];const title=isM?`توقّع ${m.a} × ${m.b}`:(cdw.label||"مسابقة عملاء المتجر");
+const cv=document.createElement("canvas"),W=1080,Hh=1350;cv.width=W;cv.height=Hh;const x=cv.getContext("2d"),ff=getComputedStyle(document.body).fontFamily;
+const g=x.createLinearGradient(0,0,W,Hh);g.addColorStop(0,"#0d6b3a");g.addColorStop(1,"#2f8a57");x.fillStyle=g;x.fillRect(0,0,W,Hh);x.direction="rtl";x.textAlign="center";x.fillStyle="#fff";
+x.font=`900 64px ${ff}`;x.fillText("🎉 مبروك للفايزين",W/2,190);x.font=`700 44px ${ff}`;x.fillStyle="#d9f2e3";x.fillText(title,W/2,270);
+if(isM&&m.score_a!=null){x.font=`900 52px ${ff}`;x.fillStyle="#fff";x.fillText(`${m.a} ${m.score_a} - ${m.score_b} ${m.b}`,W/2,350)}
+const first=n=>String(n||"زبون").trim().split(/\s+/)[0];x.fillStyle="#fff";const top=isM?450:400,step=Math.min(110,(Hh-top-260)/Math.max(1,w.length));
+w.forEach((p,i)=>{x.font=`800 ${Math.min(64,step*.6)}px ${ff}`;x.fillText(`${i+1}. ${first(p.name)}`,W/2,top+i*step+step*.6)});
+x.font=`800 40px ${ff}`;x.fillStyle="#f2c94c";x.fillText("عالم المكسرات 🌰",W/2,Hh-110);x.font=`500 30px ${ff}`;x.fillStyle="#d9f2e3";x.fillText("nutsworld",W/2,Hh-60);
+cv.toBlob(async b=>{const f=new File([b],"winners.png",{type:"image/png"});try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});return}}catch(_){}
+const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="winners.png";document.body.appendChild(a);a.click();a.remove()},"image/png")}
+function mtDraw(id){const m=(mts||[]).find(x=>x.id==id);if(!m)return;const n=Math.max(1,Math.min(50,+numIn(m.n)||Math.min(3,m.right.length)));m.win=shuf(m.right).slice(0,n);V()}
+document.addEventListener("input",e=>{const t=e.target;if(!t||!t.dataset)return;if(t.dataset.cdf){cdw[t.dataset.cdf]=t.type=="checkbox"?t.checked:t.value}if(t.dataset.mw){const[id,k]=t.dataset.mw.split(":");const m=(mts||[]).find(x=>x.id==id);if(m)m[k]=t.value}});
+document.addEventListener("change",e=>{const t=e.target;if(t&&t.dataset&&t.dataset.cdf&&t.type=="checkbox")cdw[t.dataset.cdf]=t.checked});
+// ===== update 22: score prediction contest =====
+async function loadMts(){mtErr="";try{mts=await rpc("admin_matches",{})||[]}catch(e){mts=null;mtErr=/function|find|PGRST202/i.test(e.raw||"")?"شغّل setup_20.sql في Supabase أولاً":"تعذر التحميل"}}
+const lyLocal=iso=>{const d=new Date(new Date(iso).getTime()+2*3600e3);return d.toISOString().slice(0,16)};
+function mtHtml(){if(mtErr)return `<div class="box"><p class="er">${esc(mtErr)}</p></div>`;if(!mts)return `<div class="box m">جاري التحميل…</div>`;
+const e=mtEd;let h=`<div class="box"><h3 style="margin-top:0">⚽ مسابقة التوقّع</h3><p class="m" style="margin-top:0">تطلع في الصفحة الرئيسية للمتجر. اللي عنده حساب يتوقّع مرة وحدة قبل وقت الإقفال. بعد المباراة تكتب النتيجة، وتسحب من اللي توقّعوا صح.</p>
+${e?`<form data-f="match" novalidate><div class="g2"><div><label>الفريق الأول</label><input name="a" maxlength="40" value="${esc(e.a||"")}" placeholder="ليبيا"></div><div><label>الفريق الثاني</label><input name="b" maxlength="40" value="${esc(e.b||"")}" placeholder="تونس"></div></div>
+<label>آخر وقت للتوقّع (بتوقيت ليبيا)</label><input name="c" type="datetime-local" dir="ltr" value="${e.closes_at?lyLocal(e.closes_at):""}">
+<label>الجائزة / ملاحظة للزبائن</label><input name="note" maxlength="200" value="${esc(e.note||"")}" placeholder="مثلاً: 3 فايزين ياخذوا 20 د.ل في المحفظة">
+<label class="ck"><input type="checkbox" name="shown" ${e.shown!==false?"checked":""}> تطلع في المتجر</label>
+<div class="btns"><button class="pri" type="submit">${e.id?"حفظ":"إضافة المباراة"}</button><button type="button" data-mtx>إلغاء</button></div></form>`:`<button type="button" class="sub" data-mtnew style="width:100%">＋ مباراة جديدة</button>`}</div>`;
+h+=mts.map(m=>`<div class="box mtk${m.shown?"":" off"}"><div class="rvt"><b>${esc(m.a)} × ${esc(m.b)}</b><span class="chip" style="background:${m.score_a!=null?"#15803d":new Date(m.closes_at)>new Date()?"#b45309":"#475569"}">${m.score_a!=null?"انتهت":new Date(m.closes_at)>new Date()?"التوقّع مفتوح":"التوقّع مقفول"}</span></div>
+<p class="m" style="margin:4px 0">يتقفّل: <span dir="ltr">${tm2(m.closes_at)}</span> · شاركوا: <b>${m.count}</b>${m.shown?"":" · مخفية"}</p>${m.note?`<p style="margin:4px 0">🎁 ${esc(m.note)}</p>`:""}
+${m.score_a==null?`<div class="mtres"><input data-mr="${m.id}:a" inputmode="numeric" dir="ltr" placeholder="${esc(m.a)}"><b>-</b><input data-mr="${m.id}:b" inputmode="numeric" dir="ltr" placeholder="${esc(m.b)}"><button type="button" class="pri" data-mres="${m.id}">حفظ النتيجة</button></div>`
+:`<p style="margin:6px 0">النتيجة: <b dir="rtl">${esc(m.a)} ${m.score_a} - ${m.score_b} ${esc(m.b)}</b> · توقّعوا صح: <b>${m.right.length}</b></p>${m.won.length?`<p>🏆 الفايزين: <b>${m.won.map(esc).join("، ")}</b></p>`:m.right.length?`<div class="g2"><div><label>عدد الفايزين</label><input data-mw="${m.id}:n" inputmode="numeric" dir="ltr" value="${esc(m.n||Math.min(3,m.right.length))}"></div><div><label>في المحفظة (د.ل)</label><input data-mw="${m.id}:amt" inputmode="decimal" dir="ltr" value="${esc(m.amt||"")}" placeholder="اختياري"></div></div><button type="button" class="sub" data-mdraw="${m.id}" style="width:100%">🎲 اسحب من اللي توقّعوا صح</button>`:""}`}
+${m.win?winHtml(m.win,m.right.length,"m"+m.id):""}
+<div class="btns" style="margin-top:8px"><button type="button" data-mted="${m.id}">تعديل</button><button type="button" data-mtdel="${m.id}">مسح</button></div></div>`).join("");return h}
 // numbers typed with Arabic digits or a comma («٥»، «٢٫٥»، «2,5») still count
 const numIn=v=>{const t=String(v==null?"":v).trim().replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/[٫,]/g,".").replace(/[^\d.]/g,"");return t===""?NaN:+t};
 const gTxt=g=>g>=1000?(+(g/1000).toFixed(2))+" كغ":g+" غ";
@@ -920,7 +995,7 @@ async function goTab(t){tab=t;msg="";SV.wl="";SV.dw="";sst();if(t=="stats"){stat
 function pr(id){const c=document.querySelector(`[data-id="${id}"]`);if(!c)return;c.setAttribute("data-print","1");window.print();setTimeout(()=>c.removeAttribute("data-print"),600)}
 // ===== pull down to refresh =====
 async function refreshAll(){if(isCourier()){await loadMine();cdash=await loadCDash()||cdash;return V()}
-if(!isStaff())return;await Promise.all([loadOrders(),loadChats(),loadVM()]);
+if(!isStaff())return;await Promise.all([loadOrders(),loadChats(),loadVM(),isAdmin()?loadSS():null]);
 if(tab=="wallet")await loadWtx();if(tab=="log")await loadLog();if(tab=="promo"||tab=="slides")await loadPromo();if(tab=="prod")await loadCat();if(tab=="stats"&&!cfile)await loadStats();
 if(tab=="staff"){await loadStaff();if(sfile&&sfile.id&&!sfile.loading)return openSF(sfile.id)}
 if(tab=="chat"&&cvU){await loadConv();V();return cvPaint()}V()}
@@ -977,13 +1052,13 @@ addEventListener("resize",()=>{if(document.body.contains(o))init()},{once:true})
 
 async function start(){await loadMe();if(me){prepPush().catch(()=>{});await loadVM()}bellPaint();if(isCourier()){await loadMine();cdash=await loadCDash()}if(me)await pushCheck();let st0=null;try{st0=JSON.parse(sessionStorage.getItem("nw_stab")||"null")}catch(_){}
 if(st0&&["active","new","delivered","cancelled","all"].includes(st0.flt))flt=st0.flt;
-if(isStaff()){await loadCour();await loadOrders();await loadChats()}if(isAdmin())await loadWtx();
+if(isStaff()){if(isAdmin())loadSS().then(()=>{if(tab=="orders")V()});await loadCour();await loadOrders();await loadChats()}if(isAdmin())await loadWtx();
 if(st0&&((isAdmin()&&["stats","log","staff","wallet","promo","chat","prod","draw","slides"].includes(st0.tab))||(isStaff()&&st0.tab=="chat"))){await goTab(st0.tab);return}V()}
 document.addEventListener("click",async e=>{const q=s=>e.target.closest(s);let b;
 if(b=q("[data-pk]")){try{await pkLogin()}catch(x){msg=(x&&x.name=="NotAllowedError")?"تم إلغاء العملية، أو البصمة مش مفعّلة على هذا الجهاز. ادخل بكلمة المرور وفعّلها من المتجر (حسابي)":"تعذر الدخول بالبصمة، استخدم كلمة المرور";V()}return}
 if(b=q("[data-eye]")){const i=b.parentElement.querySelector("input"),on=i.type==="password";i.type=on?"text":"password";b.innerHTML=on?EYE1:EYE0;return}
 if(b=q("[data-push]"))return pushOn();
-if(b=q("[data-pmk]")){pmv=b.dataset.pmk;msg="";bv=null;bimg=null;if(pmv=="ref"){rst=null;V();await loadRst()}else if(pmv=="bundles"&&!prods)await loadCat();V();window.scrollTo(0,0);return}
+if(b=q("[data-pmk]")){pmv=b.dataset.pmk;msg="";bv=null;bimg=null;if(pmv=="store"){await loadSS()}if(pmv=="ref"){rst=null;V();await loadRst()}else if(pmv=="bundles"&&!prods)await loadCat();V();window.scrollTo(0,0);return}
 if(b=q("[data-bnew]")){bv={items:[{id:"",g:250}],available:true};bimg=null;V();window.scrollTo(0,0);return}
 if(b=q("[data-bed]")){const p=(prods||[]).find(x=>x.id==b.dataset.bed);if(!p)return;bv={id:p.id,name:p.name,price:+p.price,available:p.available!==false,image_url:p.image_url,image_path:p.image_path,items:(Array.isArray(p.bundle)?p.bundle:[]).map(x=>({id:x.id,g:x.g}))};if(!bv.items.length)bv.items.push({id:"",g:250});bimg=null;V();window.scrollTo(0,0);return}
 if(b=q("[data-bx]")){bv=null;bimg=null;V();return}
@@ -991,10 +1066,23 @@ if(b=q("[data-badd]")){bv.items.push({id:"",g:250});V();return}
 if(b=q("[data-bdel]")){bv.items.splice(+b.dataset.bdel,1);if(!bv.items.length)bv.items.push({id:"",g:250});V();return}
 if(b=q("[data-bav]")){const p=(prods||[]).find(x=>x.id==b.dataset.bav);if(!p)return;b.disabled=true;try{await rest("/rest/v1/products?id=eq."+p.id,"PATCH",{available:p.available===false});await loadCat()}catch(e){toast("تعذر الحفظ: "+e.message)}V();return}
 if(b=q("[data-bdl]")){if(!confirm("مسح الباقة نهائياً؟"))return;const p=(prods||[]).find(x=>x.id==b.dataset.bdl);try{await rest("/rest/v1/products?id=eq."+b.dataset.bdl,"DELETE");if(p&&p.image_path)rmImg("products",p.image_path);bv=null;await loadCat();toast("تم مسح الباقة")}catch(e){toast(/foreign|violat/i.test(e.message)?"الباقة فيها طلبات، خبّيها بدل ما تمسحها":"تعذر المسح: "+e.message)}V();return}
+if(b=q("[data-cdw]")){const[k,v]=b.dataset.cdw.split(":");cdw[k]=v;cdw.win=null;V();return}
+if(b=q("[data-cdgo]")){cdDraw();return}
+if(b=q("[data-wsave]")){winSave(b.dataset.wsave);return}
+if(b=q("[data-wimg]")){winImg(b.dataset.wimg);return}
+if(b=q("[data-wre]")){const s0=b.dataset.wre;if(s0=="cd")cdDraw();else mtDraw(+s0.slice(1));return}
+if(b=q("[data-ssopen]")){try{await rpc("admin_set_store",{p_closed:false,p_msg:SS.msg||"",p_open:SS.from,p_close:SS.to});await loadSS();toast("المحل مفتوح ✅")}catch(e){toast("تعذر: "+e.message)}V();return}
+if(b=q("[data-mtnew]")){mtEd={};V();return}
+if(b=q("[data-mtx]")){mtEd=null;V();return}
+if(b=q("[data-mted]")){mtEd=(mts||[]).find(x=>x.id==b.dataset.mted)||null;V();window.scrollTo(0,0);return}
+if(b=q("[data-mtdel]")){if(!confirm("مسح المباراة وكل التوقّعات؟"))return;try{await rpc("admin_match_delete",{p_id:+b.dataset.mtdel});await loadMts()}catch(e){toast("تعذر: "+e.message)}V();return}
+if(b=q("[data-mres]")){const id=b.dataset.mres,a=numIn((document.querySelector(`[data-mr="${id}:a"]`)||{}).value),c=numIn((document.querySelector(`[data-mr="${id}:b"]`)||{}).value);if(!(a>=0)||!(c>=0)){toast("اكتب النتيجة للفريقين");return}
+if(!confirm("النتيجة "+a+" - "+c+"؟ بعدها يتقفّل التوقّع."))return;try{await rpc("admin_match_result",{p_id:+id,p_a:a,p_b:c});await loadMts()}catch(e){toast("تعذر: "+e.message)}V();return}
+if(b=q("[data-mdraw]")){mtDraw(+b.dataset.mdraw);return}
 if(b=q("[data-rej]")){rejOpen(b.dataset.rej);return}
 if(b=q("[data-aud]")){audUnlock();setTimeout(()=>{beep();V()},150);return}
 if(b=q("[data-rv]")){const st=b.dataset.rvs;if(st=="delete"&&!confirm("مسح التقييم نهائياً؟"))return;b.disabled=true;try{await rpc("admin_review_set",{p_id:+b.dataset.rv,p_status:st});await loadRv()}catch(e){toast("تعذر الحفظ: "+e.message)}V();return}
-if(b=q("[data-sv]")){const[k,v]=b.dataset.sv.split(":");SV[k]=v==null?"":v;if(k=="pc")SV.pc=v?+v:null;if(k=="st"&&v)cmode=v;if(k=="dw"&&v){dw.src=v;dw.winners=[];dw.err=""}msg="";V();window.scrollTo(0,0);return}
+if(b=q("[data-sv]")){const[k,v]=b.dataset.sv.split(":");SV[k]=v==null?"":v;if(k=="pc")SV.pc=v?+v:null;if(k=="st"&&v)cmode=v;if(k=="dw"&&v=="match"){mts=null;V();loadMts().then(V);return}if(k=="dw"&&v&&v!="cust"){dw.src=v;dw.winners=[];dw.err=""}msg="";V();window.scrollTo(0,0);return}
 if(b=q("[data-sil]")){rgPend().forEach(id=>rgSil.add(id));return V()}
 if(b=q("[data-copy]")){const v=b.dataset.copy;try{await navigator.clipboard.writeText(v);toast("تم النسخ")}catch(_){prompt("انسخ:",v)}return}
 if(b=q("[data-pay]"))return payCourier(sfile&&sfile.id);
@@ -1042,6 +1130,11 @@ if(b=q("[data-wd]")){const ap=b.dataset.wd==="1",x=wtx.find(y=>String(y.id)===b.
 if(b=q("[data-rm]")){if(confirm("إزالة صلاحية هذا الحساب؟")){try{await setRole(b.dataset.rm,"customer");await loadCour();msg=""}catch(x){msg=x.message}V()}}});
 document.addEventListener("submit",async e=>{const f=e.target.closest("[data-f]");if(!f)return;e.preventDefault();const fd=new FormData(f),k=f.dataset.f;
 if(k=="bundle"){const sb=f.querySelector('[type="submit"]');sb.disabled=true;try{await bSave();bv=null;bimg=null;await loadCat();toast("تم حفظ الباقة ✅")}catch(x){toast(x.message||"تعذر الحفظ")}V();window.scrollTo(0,0);return}
+if(k=="store"){const hm=v=>{const t=String(v||"").trim().replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[.٫]/g,":");const m=t.match(/^(\d{1,2})(?::(\d{2}))?$/);return m&&+m[1]<24&&+(m[2]||0)<60?String(+m[1]).padStart(2,"0")+":"+(m[2]||"00"):null};
+const o=hm(fd.get("from")),c=hm(fd.get("to"));if(!o||!c){toast("اكتب الوقت هكي: 11:00");return}const sb=f.querySelector('[type="submit"]');sb.disabled=true;
+try{await rpc("admin_set_store",{p_closed:!!fd.get("closed"),p_msg:String(fd.get("msg")||"").trim(),p_open:o,p_close:c});await loadSS();toast("تم الحفظ ✅")}catch(x){toast("تعذر الحفظ: "+(x.raw||x.message))}V();return}
+if(k=="match"){const a=String(fd.get("a")||"").trim(),b2=String(fd.get("b")||"").trim(),c=String(fd.get("c")||"");if(!a||!b2||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(c)){toast("اكتب الفريقين ووقت الإقفال");return}
+try{await rpc("admin_match_save",{p_id:mtEd&&mtEd.id||null,p_a:a,p_b:b2,p_note:String(fd.get("note")||""),p_closes:c.slice(0,16)+":00+02:00",p_shown:!!fd.get("shown")});mtEd=null;await loadMts();toast("تم الحفظ ✅")}catch(x){toast("تعذر الحفظ: "+(x.raw||x.message))}V();return}
 if(k=="rvnote"){const sb=f.querySelector('[type="submit"]');sb.disabled=true;try{await rpc("admin_set_review_note",{p_text:String(fd.get("t")||"").trim()});await loadRv();toast("تم الحفظ ✅")}catch(x){toast(/function|find|PGRST202/i.test(x.raw||x.message)?"شغّل setup_19.sql في Supabase أولاً":"تعذر الحفظ: "+x.message)}V();return}
 if(k=="refamt"){const v=numIn(fd.get("amt"));if(!(v>=0&&v<=100)){toast("اكتب مبلغ بين 0 و100");return}const sb=f.querySelector('[type="submit"]');sb.disabled=true;sb.textContent="جاري الحفظ…";try{await rpc("admin_set_ref_amount",{p_amount:v});await loadRst();toast("تم الحفظ ✅")}catch(x){toast(/function|find|PGRST202/i.test(x.raw||"")?"شغّل setup_18.sql في Supabase أولاً":"تعذر الحفظ ("+(x.raw||x.message)+")")}V();return}
 if(k=="login"){msg="";try{const r=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({login:fd.get("l"),password:fd.get("pw")})});const d=await r.json().catch(()=>({}));if(!r.ok||!d.access_token)throw new Error("بيانات الدخول غير صحيحة");setS(d);await start()}catch(x){msg=x.message||"حصل خطأ";V()}}
