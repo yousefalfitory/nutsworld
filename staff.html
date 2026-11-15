@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>إدارة المتجر - عالم المكسرات</title>
 <style>
@@ -349,6 +349,10 @@ form[data-f="rvnote"] textarea{display:block;width:100%;box-sizing:border-box;he
 .rjc{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}.rjc button{border:1.5px solid var(--line);background:var(--card);color:var(--tx);border-radius:99px;padding:7px 12px;font:inherit;font-size:13.5px}.rjc button.on{border-color:#b91c1c;color:#b91c1c;background:#fdecec}
 .rjb textarea{font:inherit;font-size:15px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--in,#fff);color:var(--tx);display:block;width:100%;box-sizing:border-box;height:auto;min-height:80px;margin:8px 0}.rja{display:flex;gap:8px}.rja button{flex:1;border:0;border-radius:12px;padding:12px;font:inherit;font-weight:800}.rja .dng{background:#b91c1c;color:#fff}.rja [data-rjx]{background:var(--line);color:var(--tx)}
 .rej{color:#b91c1c!important}.cnote{background:#fdecec;color:#991b1b;border-radius:12px;padding:8px 10px;margin:8px 0;font-size:14px}[data-theme="dark"] .cnote{background:#3b1616;color:#fca5a5}
+body.kb #nv,body.kb .nav,body.kb nav{display:none!important}
+#snd.ok{background:#2f8a57;color:#fff;border-color:#2f8a57}
+.cgo{font-weight:900;font-size:16px;color:#1b7a45;margin:4px 2px 8px}[data-theme="dark"] .cgo{color:#7fe0a8}
+.ringt{width:100%;margin-top:8px}
 .rgu{width:100%;border:0;font:inherit;font-weight:800;justify-content:center;background:#b45309;color:#fff;margin-bottom:8px}
 .rvn{border:0;background:none;padding:0;font:inherit;font-weight:800;font-size:15.5px;color:#1b7a45;text-decoration:underline;text-underline-offset:3px;text-align:start}[data-theme="dark"] .rvn{color:#7fe0a8}
 .rvt{display:flex;justify-content:space-between;align-items:center;gap:8px}.rvc{margin-top:10px}.pmt span{font-size:11.5px;color:var(--mut)}
@@ -456,9 +460,23 @@ ses=null;me=null;svs();return null}
 const isStaff=()=>!!me&&(me.role==="staff"||me.role==="admin"),isAdmin=()=>!!me&&me.role==="admin",isCourier=()=>!!me&&me.role==="courier";
 const cname=id=>{const c=cour.find(x=>x.id===id);return c?c.full_name:"مندوب"};
 function toast(m){const t=$("#ts");t.textContent=m;t.classList.add("on");clearTimeout(tm);tm=setTimeout(()=>t.classList.remove("on"),2200)}
+// ===== update 21: the ring plays through an <audio> element (iPhone treats it like music, so it is not lost) =====
+function wavURL(sec,fill){const sr=22050,n=Math.floor(sr*sec),b=new ArrayBuffer(44+n*2),v=new DataView(b),w=(o,t)=>{for(let i=0;i<t.length;i++)v.setUint8(o+i,t.charCodeAt(i))};
+w(0,"RIFF");v.setUint32(4,36+n*2,true);w(8,"WAVE");w(12,"fmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,"data");v.setUint32(40,n*2,true);
+for(let i=0;i<n;i++)v.setInt16(44+i*2,Math.max(-1,Math.min(1,fill(i/sr)))*32767,true);return URL.createObjectURL(new Blob([b],{type:"audio/wav"}))}
+let rgA=null,rgOK=false,RG_RING=null,RG_SIL=null;
+function rgInit(){if(rgA)return;try{RG_SIL=wavURL(.05,()=>0);RG_RING=wavURL(2.4,t=>{const k=t>=1.5?1:0,u=t-k*1.5;if(u<0||u>=.8)return 0;const j=Math.floor(u/.08),f=j%2?480:440,ph=(u*f)%1;const env=Math.min(1,(u%.08)/.004,(.08-(u%.08))/.004);return (ph<.5?.42:-.42)*env});
+rgA=new Audio();rgA.preload="auto";rgA.setAttribute("playsinline","");try{if(navigator.audioSession)navigator.audioSession.type="playback"}catch(_){}}catch(_){}}
+function rgUnlock(){if(!bell||rgOK)return;rgInit();if(!rgA)return;try{rgA.src=RG_SIL;const pr=rgA.play();if(pr&&pr.then)pr.then(()=>{rgOK=true;rgA.pause();rgA.src=RG_RING;rgA.load()}).catch(()=>{})}catch(_){}}
+function rgPlay(){if(!rgA||!rgOK)return false;try{if(!rgA.src||rgA.src!==RG_RING)rgA.src=RG_RING;rgA.currentTime=0;const pr=rgA.play();if(pr&&pr.catch)pr.catch(()=>{rgOK=false});return true}catch(_){return false}}
+function bellMenu(){if(document.getElementById("rjm"))return;const w=document.createElement("div");w.id="rjm";w.setAttribute("role","dialog");w.setAttribute("aria-modal","true");
+w.innerHTML=`<div class="rjb"><h3>🔔 التنبيهات شغّالة</h3><p class="m" style="margin:0 0 10px">الإشعارات توصلك والتطبيق مسكّر. والرنين الطويل يشتغل لما «إدارة المتجر» تكون مفتوحة على الشاشة.</p>
+<div class="rja" style="flex-direction:column"><button type="button" class="dng" style="background:#2f8a57" data-bt="test">🔊 تجربة الرنّة</button><button type="button" data-bt="off">🔕 إيقاف التنبيهات</button><button type="button" data-bt="x">رجوع</button></div></div>`;
+document.body.appendChild(w);w.addEventListener("click",e=>{if(e.target===w){w.remove();return}const b=e.target.closest("[data-bt]");if(!b)return;const k=b.dataset.bt;
+if(k=="test"){audUnlock();rgUnlock();setTimeout(()=>{beep();toast(audOk()||rgOK?"لو ما سمعتش شي، علّي صوت التلفون":"اضغط مرة ثانية")},200);return}w.remove();if(k=="off")bellOff()})}
 const SNDS={ring:{n:"رنين هاتف",w:"square",g:.12,d:0,t:(()=>{const t=[];for(let k=0;k<2;k++)for(let j=0;j<10;j++)t.push([j%2?480:440,k*1.5+j*.08,.08]);return t})()}};
 let snd="ring",bell=false;try{bell=localStorage.getItem("nw_bell")==="1"}catch(_){}
-function beep(){if(!actx||!bell)return;if(actx.state!=="running"){try{actx.resume()}catch(_){}}const s=SNDS[snd]||SNDS.ring;
+function beep(){if(!bell)return;if(rgPlay())return;if(!actx)return;if(actx.state!=="running"){try{actx.resume()}catch(_){}}const s=SNDS[snd]||SNDS.ring;
 try{s.t.forEach(([f,d,l])=>{const g=actx.createGain(),t0=actx.currentTime+d,fs=Array.isArray(f)?f:[f],gv=s.g/fs.length*(fs.length>1?1.4:1);g.gain.setValueAtTime(gv,t0);if(s.d)g.gain.exponentialRampToValueAtTime(.001,t0+l);else g.gain.setValueAtTime(gv,t0+l-.02);g.connect(actx.destination);
 fs.forEach((fr,i)=>{const o=actx.createOscillator();o.type=i?"sine":s.w;o.frequency.value=fr;o.connect(g);o.start(t0);o.stop(t0+l)})})}catch(_){}}
 const tm2=s=>new Date(s).toLocaleString("en-GB",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
@@ -593,7 +611,9 @@ else if(SV.cd=="done")h+=cdOrders(d).replace('<details class="csec cdl">','<deta
 else if(SV.cd=="pays")h+=cdPays(d);
 else if(SV.cd=="bank"){const b=d.bank||{},R=(l,v)=>`<div class="row"><span>${l}</span><b dir="ltr">${esc(v||"—")}</b></div>`;h+=`<div class="csec">${sech("bank","حسابي المصرفي")}${R("المصرف",b.name)}${R("رقم الحساب",b.account)}${R("الآيبان",b.iban)}<p class="m" style="margin:8px 0 0;font-size:12.5px">لتعديل الحساب كلّم المدير.</p></div>`}
 return h}
+const go=mine.filter(o=>o.status=="handed"||o.status=="out");if(go.length)h+=`<div class="cgo">🛵 ${go.length>1?"طلبيات معاك توّا":"طلبية معاك توّا"}</div>`+go.map(ccard).join("");
 if(pend.length)h+=pend.map(ccard).join("");
+const acc=mine.filter(o=>(o.status=="new"||o.status=="preparing")&&o.courier_ok_at);if(acc.length)h+=acc.map(ccard).join("");
 if(d){h+=cdTiles(d)+cdDues(d,false)}else if(cdErr=="setup")h+=`<div class="box m" style="margin-bottom:10px">الإحصائيات تشتغل بعد ما المدير يشغّل setup_13.sql</div>`;
 h+=`<div style="margin-top:10px">${tiles([["cd:now","طلباتي توا","اللي عندك الآن",CI.bike,mine.length],["cd:done","الطلبيات اللي وصّلتها","كل التوصيلات",CI.box,d?(d.all||{}).n||0:null],["cd:pays","سجل التحويلات","الفلوس اللي وصلتك",CI.bank,d?(d.payouts||[]).length:null],["cd:bank","حسابي المصرفي","المصرف والآيبان",CI.coin]])}</div>`;
 return h}
@@ -879,11 +899,12 @@ async function openCF(u,ph){cfile={loading:true};V();window.scrollTo(0,0);try{co
 async function openConv(uid){tab="chat";sst();cvU=null;await loadChats();cvU=uid;cvM=[];cvSig="";chErr="";if(!(chl||[]).find(x=>x.user_id===uid)){const c=(clist&&clist.registered||[]).find(x=>x.id===uid)||{};(chl=chl||[]).push({user_id:uid,full_name:c.full_name,phone:c.phone,unread:0})}V();await loadConv();cvPaint()}
 
 function sndOn(){bellPaint()}
-function bellPaint(){const b=$("#snd");if(!b)return;b.hidden=pushSt=="on";b.classList.toggle("bon",bell);b.classList.add("on");const l=bell?"التنبيهات شغّالة":"التنبيهات موقوفة";b.title=l;b.setAttribute("aria-label",l);b.setAttribute("aria-pressed",bell)}
-async function bellTap(){if(!bell||pushSt!="on"){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume()}catch(_){}
-bell=true;try{localStorage.setItem("nw_bell","1")}catch(_){}bellPaint();beep();if(navigator.wakeLock)navigator.wakeLock.request("screen").catch(()=>{});await pushOn();return}
-bell=false;try{localStorage.setItem("nw_bell","0")}catch(_){}bellPaint();toast("وقّفت التنبيهات 🔕");
-try{const reg=await navigator.serviceWorker.getRegistration("/"),sb=reg&&await reg.pushManager.getSubscription();if(sb){const ep=sb.endpoint;await sb.unsubscribe();const t=await tok();fetch("/api/push",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+t},body:JSON.stringify({action:"del",endpoint:ep})}).catch(()=>{})}}catch(_){}pushSt="off"}
+function bellPaint(){const b=$("#snd");if(!b)return;b.hidden=false;b.classList.toggle("ok",bell&&pushSt=="on");b.classList.toggle("bon",bell);b.classList.add("on");const l=bell?"التنبيهات شغّالة":"التنبيهات موقوفة";b.title=l;b.setAttribute("aria-label",l);b.setAttribute("aria-pressed",bell)}
+async function bellTap(){if(bell&&pushSt=="on"){bellMenu();return}if(!bell||pushSt!="on"){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume()}catch(_){}
+bell=true;try{localStorage.setItem("nw_bell","1")}catch(_){}rgUnlock();bellPaint();beep();if(navigator.wakeLock)navigator.wakeLock.request("screen").catch(()=>{});await pushOn();return}
+}
+async function bellOff(){bell=false;try{localStorage.setItem("nw_bell","0")}catch(_){}bellPaint();toast("وقّفت التنبيهات 🔕");
+try{const reg=await navigator.serviceWorker.getRegistration(location.href),sb=reg&&await reg.pushManager.getSubscription();if(sb){const ep=sb.endpoint;await sb.unsubscribe();const t=await tok();fetch("/api/push",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+t},body:JSON.stringify({action:"del",endpoint:ep})}).catch(()=>{})}}catch(_){}pushSt="off";bellPaint();V()}
 const MI='<svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>';
 function NV(){const nv=$("#snv"),on=!!(ses&&me&&isStaff());nv.hidden=!on;document.body.classList.toggle("hasnv",on);if(!on)return;
 const cnt=k=>k=="orders"?orders.filter(o=>o.status=="new").length:k=="wallet"?(wpend||0):k=="stats"?rvPend():k=="chat"?(chUn||0):0,bd=n=>n?`<span class="nb">${n>99?"99+":n}</span>`:"";
@@ -1049,12 +1070,15 @@ if(rl=="courier"&&(fd.get("bn")||fd.get("ba")||fd.get("bi"))){try{await rpc("adm
 await loadCour();msg="";toast("تم الحفظ")}catch(x){msg=x.message}V()}
 else if(k=="bank"){const id=f.dataset.uid;try{await rpc("admin_set_bank",{p_user:id,p_email:null,p_bank:String(fd.get("bn")||""),p_account:String(fd.get("ba")||""),p_iban:String(fd.get("bi")||"")});toast("تم حفظ الحساب المصرفي");sfDash=await loadCDash(id)}catch(_){toast("تعذر الحفظ، تأكد إنك شغّلت setup_13.sql")}V()}});
 $("#snd").onclick=bellTap;
+document.addEventListener("gesturestart",e=>{if(!e.target.closest||!e.target.closest(".cx,.cx-st,.cropo,#dwo"))e.preventDefault()});document.documentElement.style.touchAction="manipulation";
+const kbIn=t=>t&&t.matches&&t.matches("input:not([type=checkbox]):not([type=radio]):not([type=file]),textarea,select");
+document.addEventListener("focusin",e=>{if(kbIn(e.target))document.body.classList.add("kb")});document.addEventListener("focusout",()=>setTimeout(()=>{if(!kbIn(document.activeElement))document.body.classList.remove("kb")},120));
 // iPhone stops the sound engine whenever the app goes to the background; any touch wakes it up again
 function audUnlock(){if(!bell)return;try{if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();if(actx.state!=="running"&&actx.resume)actx.resume().then(()=>{if(rgPend().length&&!document.querySelector("input:focus,textarea:focus"))V()}).catch(()=>{});
 if(!audUnlock.ok){const b=actx.createBuffer(1,1,22050),src=actx.createBufferSource();src.buffer=b;src.connect(actx.destination);src.start(0);audUnlock.ok=1}}catch(_){}}
-["pointerdown","touchend","keydown"].forEach(ev=>document.addEventListener(ev,audUnlock,{capture:true,passive:true}));
+["pointerdown","touchend","keydown"].forEach(ev=>document.addEventListener(ev,()=>{audUnlock();rgUnlock()},{capture:true,passive:true}));
 document.addEventListener("visibilitychange",()=>{if(!document.hidden){audUnlock.ok=0;audUnlock()}});
-const audOk=()=>!!(actx&&actx.state==="running");
+const audOk=()=>rgOK||!!(actx&&actx.state==="running");
 $("#out").onclick=()=>{const t=ses&&ses.access_token;ses=null;me=null;orders=[];known=null;svs();if(t)au("/auth/v1/logout",{method:"POST"},t).catch(()=>{});V()};
 $("#hlg").src=LOGO;
 if("serviceWorker" in navigator&&location.protocol=="https:")window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));

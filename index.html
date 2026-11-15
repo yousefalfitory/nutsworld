@@ -438,6 +438,8 @@ body.hasotk #acb{padding-bottom:84px}
 .rvpin{background:#fff8e1;border:1.5px solid #e0a100}.rvph{display:flex;justify-content:space-between;align-items:center;gap:8px}.rvph small{color:#a06f00;font-weight:800}
 [data-theme="dark"] .rvpin{background:#3a2f10;border-color:#a77c06}[data-theme="dark"] .rvph small{color:#f2c94c}
 .rvls{overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:6px}.rvls .rvk{max-width:none}
+.mi.mdel{background:#fdecec;border-color:#c62828}[data-theme="dark"] .mi.mdel{background:#3b1616;border-color:#e57373}
+body.kb #nv{display:none!important}
 .cnote{background:#fdecec;color:#991b1b;border-radius:12px;padding:8px 10px;margin:6px 0;font-size:14px}[data-theme="dark"] .cnote{background:#3b1616;color:#fca5a5}
 .rvd.reo{border-color:#2f8a57;color:#1b7a45;background:#e4f5ea}
 .bdl{display:block;font-size:12px;color:var(--mut);line-height:1.45}
@@ -837,6 +839,9 @@ w.innerHTML=`<div class="rva"><div class="rvah"><h3>⭐ ${T2("آراء عملا�
 document.body.appendChild(w);w.addEventListener("click",e=>{if(e.target===w||e.target.closest("[data-rvx]"))w.remove()})}
 document.addEventListener("click",e=>{if(e.target.closest("#rvl"))rvAll()});
 setTimeout(loadRvw,1500);
+// keyboard open: hide the bottom bar so it never covers the buttons
+{const kbIn=t=>t&&t.matches&&t.matches("input:not([type=checkbox]):not([type=radio]):not([type=file]),textarea,select");
+document.addEventListener("focusin",e=>{if(kbIn(e.target))document.body.classList.add("kb")});document.addEventListener("focusout",()=>setTimeout(()=>{if(!kbIn(document.activeElement))document.body.classList.remove("kb")},120))}
 // a rejected order goes back to the cart (without what is not available) so the customer can fix it and send again
 document.addEventListener("click",e=>{const b=e.target.closest("[data-reo]");if(!b)return;e.preventDefault();const o=(myOrd||[]).find(x=>String(x.id)===b.dataset.reo);if(!o)return;
 if(edId!=null)edCancel();let n=0,miss=0;for(const it of Array.isArray(o.items)?o.items:[]){const i=P.findIndex(p=>p[1]==it.name),k=i>=0&&PU[i]?parseInt(it.qty,10)||0:qParse(it.qty);if(i>=0&&PAV[i]&&k>=(PU[i]?1:0.1)){cart[i]=k;n++}else miss++}
