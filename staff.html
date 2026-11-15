@@ -343,6 +343,13 @@ html,body{overscroll-behavior-y:contain}
 .bits{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}.bit{display:grid;grid-template-columns:1fr 92px 40px;gap:6px}.bit button{border:1px solid var(--line);background:var(--card);color:#b91c1c;border-radius:10px}
 .bimgl{display:grid;place-items:center;min-height:120px;overflow:hidden;padding:0}.bimgl img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
 .sub.alt{background:var(--card);color:#1b7a45;border:1.5px solid #2f8a57}.ck{display:flex;align-items:center;gap:8px;margin:10px 0}
+form[data-f="rvnote"] textarea{display:block;width:100%;box-sizing:border-box;height:auto;min-height:88px;resize:vertical;margin-bottom:8px}
+#rjm{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center}
+.rjb{background:var(--card);color:var(--tx);width:100%;max-width:520px;border-radius:22px 22px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));max-height:88vh;overflow-y:auto}.rjb h3{margin:0 0 4px}
+.rjc{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}.rjc button{border:1.5px solid var(--line);background:var(--card);color:var(--tx);border-radius:99px;padding:7px 12px;font:inherit;font-size:13.5px}.rjc button.on{border-color:#b91c1c;color:#b91c1c;background:#fdecec}
+.rjb textarea{font:inherit;font-size:15px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--in,#fff);color:var(--tx);display:block;width:100%;box-sizing:border-box;height:auto;min-height:80px;margin:8px 0}.rja{display:flex;gap:8px}.rja button{flex:1;border:0;border-radius:12px;padding:12px;font:inherit;font-weight:800}.rja .dng{background:#b91c1c;color:#fff}.rja [data-rjx]{background:var(--line);color:var(--tx)}
+.rej{color:#b91c1c!important}.cnote{background:#fdecec;color:#991b1b;border-radius:12px;padding:8px 10px;margin:8px 0;font-size:14px}[data-theme="dark"] .cnote{background:#3b1616;color:#fca5a5}
+.rgu{width:100%;border:0;font:inherit;font-weight:800;justify-content:center;background:#b45309;color:#fff;margin-bottom:8px}
 .rvn{border:0;background:none;padding:0;font:inherit;font-weight:800;font-size:15.5px;color:#1b7a45;text-decoration:underline;text-underline-offset:3px;text-align:start}[data-theme="dark"] .rvn{color:#7fe0a8}
 .rvt{display:flex;justify-content:space-between;align-items:center;gap:8px}.rvc{margin-top:10px}.pmt span{font-size:11.5px;color:var(--mut)}
 .pmb{border:0;background:var(--soft);color:var(--g2);border-radius:12px;padding:9px 14px;font-weight:800;font-family:inherit;margin:0 0 10px}
@@ -451,7 +458,7 @@ const cname=id=>{const c=cour.find(x=>x.id===id);return c?c.full_name:"مندو�
 function toast(m){const t=$("#ts");t.textContent=m;t.classList.add("on");clearTimeout(tm);tm=setTimeout(()=>t.classList.remove("on"),2200)}
 const SNDS={ring:{n:"رنين هاتف",w:"square",g:.12,d:0,t:(()=>{const t=[];for(let k=0;k<2;k++)for(let j=0;j<10;j++)t.push([j%2?480:440,k*1.5+j*.08,.08]);return t})()}};
 let snd="ring",bell=false;try{bell=localStorage.getItem("nw_bell")==="1"}catch(_){}
-function beep(){if(!actx||!bell)return;const s=SNDS[snd]||SNDS.ring;
+function beep(){if(!actx||!bell)return;if(actx.state!=="running"){try{actx.resume()}catch(_){}}const s=SNDS[snd]||SNDS.ring;
 try{s.t.forEach(([f,d,l])=>{const g=actx.createGain(),t0=actx.currentTime+d,fs=Array.isArray(f)?f:[f],gv=s.g/fs.length*(fs.length>1?1.4:1);g.gain.setValueAtTime(gv,t0);if(s.d)g.gain.exponentialRampToValueAtTime(.001,t0+l);else g.gain.setValueAtTime(gv,t0+l-.02);g.connect(actx.destination);
 fs.forEach((fr,i)=>{const o=actx.createOscillator();o.type=i?"sine":s.w;o.frequency.value=fr;o.connect(g);o.start(t0);o.stop(t0+l)})})}catch(_){}}
 const tm2=s=>new Date(s).toLocaleString("en-GB",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
@@ -488,10 +495,29 @@ const tmS=x=>{if(!x)return "";const t=new Date(x).toLocaleTimeString("en-US",{ho
 // the same 5-step strip the customer sees in the store
 function stpH(o){const st=stI(o);if(st<0)return "";const tt=[o.created_at,null,o.courier_ok_at,null,null];
 return `<div class="stn">${esc(STPL[st][0])}</div><div class="stp2">${STPI.map((ic,i)=>`${i?`<span class="ln${i<=st?" on":""}"></span>`:""}<div class="s${i<st?" dn":i==st?" cur":""}" title="${esc(STPL[i][0])}"><span class="ic">${ic}</span><small>${i<=st?tmS(tt[i]):""}</small></div>`).join("")}</div>`}
+// ===== update 20: reject an order with a reason =====
+const REJR=["صنف من الطلب مش متوفر","الموقع خارج منطقة التوصيل","المحل مسكّر توّا","ما قدرناش نتواصلوا معاك"];
+function rejOpen(id){if(document.getElementById("rjm"))return;const o=orders.find(x=>String(x.id)===String(id));const its=(o&&Array.isArray(o.items)?o.items:[]).map(i=>i.name);
+const w=document.createElement("div");w.id="rjm";w.setAttribute("role","dialog");w.setAttribute("aria-modal","true");
+w.innerHTML=`<form class="rjb" novalidate><h3>رفض الطلب #${esc(id)}</h3><p class="m" style="margin:0 0 8px">الزبون يوصله إشعار بالسبب، ويلقاه في «طلباتي»، ويقدر يعاود يرسل الطلب.</p>
+<div class="rjc">${REJR.map(r=>`<button type="button" data-rjr="${esc(r)}">${esc(r)}</button>`).join("")}</div>
+${its.length?`<p class="m" style="margin:6px 0 4px">أو اختار الصنف الناقص:</p><div class="rjc">${its.map(n=>`<button type="button" data-rjr="${esc(n)} مش متوفر توّا">${esc(n)}</button>`).join("")}</div>`:""}
+<textarea id="rjt" dir="auto" maxlength="200" rows="3" placeholder="اكتب السبب للزبون…"></textarea>
+${o&&o.payment=="wallet"?`<p class="m" style="margin:4px 0">المبلغ يرجع لمحفظة الزبون وحده.</p>`:""}
+<div class="rja"><button type="submit" class="dng">رفض الطلب</button><button type="button" data-rjx>رجوع</button></div></form>`;
+document.body.appendChild(w);
+w.addEventListener("click",e=>{if(e.target===w||e.target.closest("[data-rjx]")){w.remove();return}const c=e.target.closest("[data-rjr]");if(c){const t=w.querySelector("#rjt");t.value=c.dataset.rjr;w.querySelectorAll("[data-rjr]").forEach(x=>x.classList.toggle("on",x===c));t.focus()}});
+w.querySelector("form").addEventListener("submit",async e=>{e.preventDefault();const note=w.querySelector("#rjt").value.trim();if(!note){toast("اكتب السبب للزبون");return}const sb=w.querySelector("[type=submit]");sb.disabled=true;sb.textContent="جاري…";
+const ok=await rejOrder(id,note);if(ok)w.remove();else{sb.disabled=false;sb.textContent="رفض الطلب"}})}
+async function rejOrder(id,note){const t=await tok();const go=body=>au("/rest/v1/orders?id=eq."+id,{method:"PATCH",headers:{Prefer:"return=representation"},body:JSON.stringify(body)},t);
+try{let r=await go({status:"cancelled",cancel_note:note});if(!r.ok&&r.status==400)r=await go({status:"cancelled"});const a=await r.json();
+if(r.ok&&Array.isArray(a)&&a.length){const o=orders.find(x=>String(x.id)===String(id));if(o){o.status="cancelled";o.cancel_note=note}sig=JSON.stringify(orders);toast("تم رفض الطلب، ووصل الزبون إشعار");
+fetch("/api/push",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+t},body:JSON.stringify({action:"ev",kind:"cancel",order_id:+id,note})}).catch(()=>{});V();return true}
+toast("تعذر رفض الطلب");return false}catch(_){toast("تعذر رفض الطلب");return false}}
 function card(o){const its=(Array.isArray(o.items)?o.items:[]).map(i=>`<li><span>${esc(i.name)} · ${esc(i.qty)}</span><b>${esc(i.sum)} د.ل</b></li>`).join(""),s=ST[o.status]||[o.status,"#666"];
-const btn=o.status=="cancelled"||o.status=="delivered"?"":`<button type="button" data-st="cancelled" data-id="${o.id}">إلغاء الطلب</button>`;
+const btn=o.status=="cancelled"||o.status=="delivered"?"":`<button type="button" class="rej" data-rej="${o.id}">رفض / إلغاء الطلب</button>`;
 const loc=o.location&&o.location.lat?`<a href="https://maps.google.com/?q=${esc(o.location.lat)},${esc(o.location.lon)}" target="_blank" rel="noopener">📍 موقع العميل على الخريطة</a><br>`:"";
-return `<article class="card ${o.status=="new"?"nw":""}" style="--sc:${s[1]}" data-id="${o.id}"><h3><span>#${o.id} · ${esc(o.customer_name)}</span><span class="chip" style="background:${s[1]}">${s[0]}</span></h3>${stpH(o)}
+return `<article class="card ${o.status=="new"?"nw":""}" style="--sc:${s[1]}" data-id="${o.id}"><h3><span>#${o.id} · ${esc(o.customer_name)}</span><span class="chip" style="background:${s[1]}">${s[0]}</span></h3>${stpH(o)}${o.status=="cancelled"&&o.cancel_note?`<div class="cnote">❌ ${esc(o.cancel_note)}</div>`:""}
 <div class="m">${tm2(o.created_at)} · ${esc(PAY[o.payment]||o.payment)}${o.user_id?" · عميل مسجل":""}</div>${o.edited_at?`<div class="m" style="color:#b45309">✏️ عدّل العميل الطلب ${tm2(o.edited_at)}</div>`:""}${o.courier_id&&(o.status=="handed"||o.status=="out"||o.status=="delivered")?`<div class="m">🛵 المندوب: <b>${nmH(cname(o.courier_id),o.courier_id)}</b></div>`:""}
 <p style="margin:6px 0"><a href="tel:${esc(o.phone)}">📞 ${esc(o.phone)}</a><br>${esc(o.city)}<br>${loc}<span class="m">${link(o.address)}</span></p>
 <ul>${its}</ul>
@@ -536,6 +562,7 @@ const rgPend=()=>isCourier()?mine.filter(o=>(o.status=="new"||o.status=="prepari
 setInterval(()=>{if(!bell||!actx||!me||document.hidden&&!isApp())return;if(rgPend().some(id=>!rgSil.has(id)))beep()},4000);
 let lastBadge=-1;function appBadge(){const n=rgPend().length;if(n===lastBadge)return;lastBadge=n;try{if(n>0&&navigator.setAppBadge)navigator.setAppBadge(n).catch(()=>{});else if(navigator.clearAppBadge)navigator.clearAppBadge().catch(()=>{})}catch(_){}}
 function pushH(){appBadge();const pend=rgPend().filter(id=>!rgSil.has(id));let h="";
+if(bell&&pend.length&&!audOk())h+=`<button type="button" class="rgb rgu" data-aud>🔊 اضغط هنا باش يشتغل صوت الرنين</button>`;
 if(bell&&pend.length)h+=`<div class="rgb"><span>🔔 ${isCourier()?"عندك طلب جديد، اقبله باش يوقف الرنين":"طلب جديد، اختار المندوب باش يوقف الرنين"}</span><button type="button" data-sil>🔕 إسكات</button></div>`;
 if(pushSt!="on"&&pushSt!="?")h+=`<div class="pst bad">🔕 الإشعارات مش مفعّلة${pushErr?" ("+esc(pushErr)+")":""}. ${pushErr=="install"?"افتح «إدارة المتجر» من الأيقونة على الشاشة الرئيسية.":pushErr=="denied"?"افتحها من الإعدادات ← الإشعارات ← إدارة المتجر.":"اضغط الزر باش تفعّلها."}${pushErr=="install"||pushErr=="denied"||pushSt=="no"?"":`<button type="button" class="pri" data-push style="display:block;margin-top:8px;width:100%">🔔 تفعيل الإشعارات</button>`}</div>`;
 return h}
@@ -672,9 +699,11 @@ let rvs=null,rvErr="";const rvPend=()=>(rvs||[]).filter(r=>r.status=="pending").
 const stars=n=>`<span class="rvs" aria-label="${n} من 5">${"★".repeat(n)}<i>${"★".repeat(5-n)}</i></span>`;
 function rvHtml(){if(rvErr)return `<div class="box"><p class="er">${esc(rvErr)}</p></div>`;if(!rvs)return `<div class="box m">جاري التحميل…</div>`;
 const ok=rvs.filter(r=>r.status=="approved"),avg=ok.length?(ok.reduce((a,r)=>a+r.stars,0)/ok.length).toFixed(1):"—";
-return `<div class="box"><h3 style="margin-top:0">⭐ تقييمات العملاء</h3><p class="m" style="margin-top:0">التقييم ما يظهرش في المتجر إلا لما تضغط «إظهار». ويظهر بالاسم الأول بس.</p><div class="stt"><div><b>${avg}</b><span>متوسط النجوم المعروضة</span></div><div><b>${rvPend()}</b><span>تستنّى موافقتك</span></div></div></div>`+
+return `<div class="box"><h3 style="margin-top:0">⭐ تقييمات العملاء</h3><p class="m" style="margin-top:0">التقييم ما يظهرش في المتجر إلا لما تضغط «إظهار». ويظهر بالاسم الأول بس.</p><div class="stt"><div><b>${avg}</b><span>متوسط النجوم المعروضة</span></div><div><b>${rvPend()}</b><span>تستنّى موافقتك</span></div></div></div>
+<form class="box" data-f="rvnote" novalidate><h3 style="margin-top:0">📌 رسالتك المثبّتة</h3><p class="m" style="margin-top:0">تطلع أول وحدة في «آراء عملائنا» باسمك وبالعلامة الزرقاء. خليها فاضية لو ما تبيش رسالة.</p><textarea name="t" maxlength="400" rows="3" placeholder="مثلاً: يسعدنا رأيكم في منتجاتنا 🌰 قيّموا طلباتكم من «طلباتي»">${esc(rvNote||"")}</textarea><button class="sub" type="submit" style="width:100%">حفظ الرسالة</button></form>`+
 (rvs.length?rvs.map(r=>`<div class="box rvc"><div class="rvt">${r.user_id||r.phone?`<button type="button" class="rvn" ${r.user_id?`data-cfu="${esc(r.user_id)}"`:`data-cfp="${esc(r.phone)}"`}>${esc(r.full_name||r.name)} ‹</button>`:`<b>${esc(r.full_name||r.name)}</b>`}${stars(r.stars)}</div><p class="m" style="margin:2px 0 6px">${tm2(r.created_at)}${r.order_id?" · طلب #"+r.order_id:""}${r.phone?` · <span dir="ltr">${esc(r.phone)}</span>`:""} · <b style="color:${r.status=="approved"?"#15803d":r.status=="rejected"?"#b3261e":"#b45309"}">${r.status=="approved"?"معروض":r.status=="rejected"?"مخفي":"جديد"}</b></p>${r.body?`<p style="margin:0 0 8px">${esc(r.body)}</p>`:""}<div class="btns" style="margin:0">${r.status!="approved"?`<button type="button" class="pri" data-rv="${r.id}" data-rvs="approved">إظهار</button>`:""}${r.status!="rejected"?`<button type="button" data-rv="${r.id}" data-rvs="rejected">إخفاء</button>`:""}<button type="button" data-rv="${r.id}" data-rvs="delete">مسح</button></div></div>`).join(""):`<div class="box m">ما فيش تقييمات بعد</div>`)}
-async function loadRv(){rvErr="";try{rvs=await rpc("admin_reviews",{})||[]}catch(e){rvs=null;rvErr=/function|find/i.test(e.message)?"شغّل setup_17.sql في Supabase أولاً":"تعذر تحميل التقييمات"}}
+let rvNote="";
+async function loadRv(){rvErr="";try{const n=await rpc("public_review_note",{});rvNote=n&&n.text||""}catch(_){}try{rvs=await rpc("admin_reviews",{})||[]}catch(e){rvs=null;rvErr=/function|find|PGRST202/i.test(e.raw||e.message)?"شغّل setup_17.sql في Supabase أولاً":"تعذر تحميل التقييمات"}}
 async function loadStats(){loadRv().then(()=>{if(tab=="stats")V()});msg="";try{stats=await rpc("admin_customer_stats",{})}catch(e){stats=null;msg=e.message}try{clist=await rpc("admin_customer_list",{});if(!clist||!Array.isArray(clist.registered)||!Array.isArray(clist.guests))clist=null}catch(_){clist=null}}
 const lph=p=>{p=String(p||"");return p.startsWith("218")?"0"+p.slice(3):p};
 function clRows(){if(!clist)return `<p class="m">القائمة غير متاحة. تأكد إنك شغّلت setup_8.sql في Supabase.</p>`;const q2=cq.trim().toLowerCase(),a=(cmode=="reg"?clist.registered:clist.guests)||[];
@@ -698,7 +727,7 @@ try{const r=await au("/rest/v1/orders?id=eq."+id,{method:"PATCH",headers:{Prefer
 if(r.ok&&Array.isArray(a)&&a.length){const o=orders.find(x=>String(x.id)===String(id));if(o)o.status=s;sig=JSON.stringify(orders);toast("تم تغيير الحالة")}else toast("تعذر تغيير الحالة")}catch(_){toast("تعذر تغيير الحالة")}V()}
 async function loadWtx(){const t=await tok();try{const r=await au("/rest/v1/wallet_tx?select=id,created_at,user_id,amount,kind,status,note,order_id,profiles(full_name,phone,email)&order=created_at.desc&limit=100",{},t);const a=await r.json();wtx=Array.isArray(a)?a:[];wpend=wtx.filter(x=>x.kind=="topup"&&x.status=="pending").length}catch(_){wtx=[]}}
 const WERR=m=>/not pending/.test(m)?"هذا الطلب تمت معالجته من قبل":/user not found/.test(m)?"لم نجد حساباً بهذا الإيميل أو الرقم":/insufficient/.test(m)?"رصيد العميل لا يكفي للخصم":/bad amount/.test(m)?"المبلغ غير صحيح":/not allowed/.test(m)?"ليس لديك صلاحية":"تعذر تنفيذ العملية";
-async function rpc(fn,args){const t=await tok();const r=await au("/rest/v1/rpc/"+fn,{method:"POST",body:JSON.stringify(args)},t);const d=await r.json().catch(()=>null);if(!r.ok)throw new Error(WERR(String((d&&d.message)||"")));return d}
+async function rpc(fn,args){const t=await tok();const r=await au("/rest/v1/rpc/"+fn,{method:"POST",body:JSON.stringify(args)},t);const d=await r.json().catch(()=>null);if(!r.ok){const er=new Error(WERR(String((d&&d.message)||"")));er.raw=String((d&&(d.message||d.code))||r.status);throw er}return d}
 const normLg=v=>{v=String(v||"").trim();if(v.includes("@"))return v.toLowerCase();let d=v.replace(/\D/g,"");if(d.startsWith("00"))d=d.slice(2);if(d.startsWith("0"))d="218"+d.slice(1);else if(/^9\d{8}$/.test(d))d="218"+d;return d};
 async function setRole(em,rl){const t=await tok();const r=await au("/rest/v1/rpc/admin_set_role",{method:"POST",body:JSON.stringify({p_email:em,p_role:rl})},t);const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(/not found/i.test(String(d.message))?"لم نجد حساباً بهذا الإيميل (أو لا يمكنك تغيير صلاحيتك)":"تعذر الحفظ");await loadStaff()}
 
@@ -763,6 +792,8 @@ return `<form class="box" data-f="pprod"><h3 style="margin-top:0">${pv.id?"تع�
 <label class="ck"><input type="checkbox" name="av" ${p.available!==false?"checked":""}> متوفر</label><button class="sub" type="submit">حفظ</button><div class="btns" style="justify-content:space-between"><button type="button" data-px>إلغاء</button>${pv.id?`<button type="button" data-pdel="${pv.id}" style="color:#b91c1c">مسح المنتج</button>`:""}</div></form>`}
 // ===== update 19: bundles =====
 let bv=null,bimg=null,rst=null,rstErr="";
+// numbers typed with Arabic digits or a comma («٥»، «٢٫٥»، «2,5») still count
+const numIn=v=>{const t=String(v==null?"":v).trim().replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[۰-۹]/g,d=>"۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/[٫,]/g,".").replace(/[^\d.]/g,"");return t===""?NaN:+t};
 const gTxt=g=>g>=1000?(+(g/1000).toFixed(2))+" كغ":g+" غ";
 function bList(){if(!cats||!prods)return `<div class="box m">جاري التحميل…</div>`;const bc=bCat();if(!bc)return `<div class="box"><p class="er">شغّل setup_18.sql في Supabase أولاً</p></div>`;
 const L=(prods||[]).filter(p=>p.cat_id===bc.id).sort((a,b)=>(a.sort-b.sort)||(a.id-b.id));
@@ -771,13 +802,13 @@ return `<div class="box"><h3 style="margin-top:0">🎁 الباقات</h3><p cla
 function bForm(){const opts=sCats().map(c=>`<optgroup label="${esc(c.name)}">${sProds(c.id).filter(p=>p.unit!="pack").map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("")}</optgroup>`).join("");
 const gs=[];for(let g=100;g<=3000;g+=50)gs.push(g);
 const sum=bv.items.reduce((a,x)=>{const p=(prods||[]).find(y=>y.id==x.id);return a+(p?+p.price*x.g/1000:0)},0);
-return `<form class="box" data-f="bundle"><button type="button" class="pmb" data-bx style="margin:0 0 10px">→ رجوع للباقات</button><h3 style="margin-top:0">${bv.id?"تعديل الباقة":"باقة جديدة"}</h3>
+return `<form class="box" data-f="bundle" novalidate><button type="button" class="pmb" data-bx style="margin:0 0 10px">→ رجوع للباقات</button><h3 style="margin-top:0">${bv.id?"تعديل الباقة":"باقة جديدة"}</h3>
 <label class="upb bimgl">${bimg?`<img src="${esc(bimg.u)}" alt="">`:bv.image_url?`<img src="${esc(bv.image_url)}" alt="">`:"📷 صورة الباقة"}<input type="file" id="bimg" accept="image/*" hidden></label>
 <label>اسم الباقة</label><input data-bvf="name" maxlength="60" required value="${esc(bv.name||"")}" placeholder="مثلاً: باقة الضيافة">
 <label>محتوى الباقة</label><div class="bits">${bv.items.map((x,i)=>`<div class="bit"><select data-bvi="${i}" data-k="id"><option value="">اختار الصنف</option>${opts.replace(`value="${x.id}"`,`value="${x.id}" selected`)}</select><select data-bvi="${i}" data-k="g">${gs.map(g=>`<option value="${g}" ${g==x.g?"selected":""}>${gTxt(g)}</option>`).join("")}</select><button type="button" data-bdel="${i}" aria-label="مسح">✕</button></div>`).join("")}</div>
 <button type="button" class="sub alt" data-badd style="width:100%">＋ زيد صنف</button>
 ${sum?`<p class="m">سعر الأصناف لو تنباع بالوزن: <b>${money(Math.round(sum*100)/100)}</b></p>`:""}
-<label>سعر الباقة (د.ل)</label><input data-bvf="price" type="number" min="1" step="0.5" inputmode="decimal" required value="${bv.price||""}">
+<label>سعر الباقة (د.ل)</label><input data-bvf="price" type="text" inputmode="decimal" dir="ltr" autocomplete="off" value="${bv.price||""}">
 <label class="ck"><input type="checkbox" data-bvf="available" ${bv.available!==false?"checked":""}> متوفرة في المتجر</label>
 <button class="sub" type="submit" style="width:100%">${bv.id?"حفظ التعديل":"إضافة الباقة"}</button>
 ${bv.id?`<button type="button" data-bdl="${bv.id}" style="width:100%;margin-top:8px;color:#b91c1c;background:none;border:1px solid #b91c1c;border-radius:12px;padding:10px;font:inherit">مسح الباقة</button>`:""}</form>`}
@@ -785,15 +816,15 @@ document.addEventListener("input",e=>{const t=e.target;if(!bv||!t||!t.dataset)re
 document.addEventListener("change",async e=>{const t=e.target;if(!bv||!t||!t.dataset)return;if(t.dataset.bvf)bv[t.dataset.bvf]=t.type=="checkbox"?t.checked:t.value;
 if(t.dataset.bvi!=null){bv.items[+t.dataset.bvi][t.dataset.k]=t.dataset.k=="g"?+t.value:+t.value||"";V()}
 if(t.id=="bimg"&&t.files&&t.files[0]){const f=t.files[0];t.value="";const b=await cropImg(f,4/3,900);if(!b)return;bimg={b,u:URL.createObjectURL(b)};V()}});
-async function bSave(){const bc=bCat();if(!bc)throw new Error("شغّل setup_18.sql أولاً");const its=bv.items.filter(x=>x.id&&x.g);if(!String(bv.name||"").trim())throw new Error("اكتب اسم الباقة");if(its.length<1)throw new Error("زيد صنف واحد على الأقل");if(!(+bv.price>0))throw new Error("اكتب سعر الباقة");
+async function bSave(){const bc=bCat();if(!bc)throw new Error("شغّل setup_18.sql أولاً");const its=bv.items.filter(x=>x.id&&x.g);if(!String(bv.name||"").trim())throw new Error("اكتب اسم الباقة");if(its.length<1)throw new Error("زيد صنف واحد على الأقل");bv.price=numIn(bv.price);if(!(bv.price>0))throw new Error("اكتب سعر الباقة");
 const body={cat_id:bc.id,name:String(bv.name).trim().slice(0,60),price:+bv.price,unit:"pack",available:bv.available!==false,bundle:its.map(x=>{const p=(prods||[]).find(y=>y.id==x.id)||{};return {id:+x.id,name:p.name||"",g:+x.g}})};
 let old=null;if(bimg){const u=await upImg(bimg.b,"products");body.image_url=u.url;body.image_path=u.path;old=bv.image_path}
 if(bv.id)await rest("/rest/v1/products?id=eq."+bv.id,"PATCH",body);else await rest("/rest/v1/products","POST",body);if(old)rmImg("products",old)}
 // ===== update 19: invite a friend =====
-async function loadRst(){rstErr="";try{rst=await rpc("admin_ref_stats",{})}catch(e){rst=null;rstErr=/function|find/i.test(e.message)?"شغّل setup_18.sql في Supabase أولاً":"تعذر التحميل"}}
+async function loadRst(){rstErr="";try{rst=await rpc("admin_ref_stats",{})}catch(e){rst=null;rstErr=/function|find|PGRST202/i.test(e.raw||e.message)?"شغّل setup_18.sql في Supabase أولاً":"تعذر التحميل"}}
 function refHtml(){if(rstErr)return `<div class="box"><p class="er">${esc(rstErr)}</p></div>`;if(!rst)return `<div class="box m">جاري التحميل…</div>`;
-return `<form class="box" data-f="refamt"><h3 style="margin-top:0">🎁 دعوة صديق</h3><p class="m" style="margin-top:0">كل زبون عنده كود في «حسابي ← ادعُ صديق». لما صاحبه يسجّل بالكود ويوصله أول طلب، الاثنين ياخذوا المبلغ هذا في المحفظة. لو خليته 0، الخانة ما تطلعش للزبائن.</p>
-<label>المكافأة لكل واحد (د.ل)</label><input name="amt" type="number" min="0" max="100" step="0.5" inputmode="decimal" value="${+rst.amount||0}" required><button class="sub" type="submit" style="width:100%">حفظ</button></form>
+return `<form class="box" data-f="refamt" novalidate><h3 style="margin-top:0">🎁 دعوة صديق</h3><p class="m" style="margin-top:0">كل زبون عنده كود في «حسابي ← ادعُ صديق». لما صاحبه يسجّل بالكود ويوصله أول طلب، الاثنين ياخذوا المبلغ هذا في المحفظة. لو خليته 0، الخانة ما تطلعش للزبائن.</p>
+<label>المكافأة لكل واحد (د.ل)</label><input name="amt" type="text" inputmode="decimal" dir="ltr" autocomplete="off" value="${+rst.amount||0}"><button class="sub" type="submit" style="width:100%">حفظ</button></form>
 <div class="box"><div class="stt"><div><b>${rst.joined||0}</b><span>سجّلوا بكود صديق</span></div><div><b>${rst.rewarded||0}</b><span>خذوا المكافأة</span></div><div><b>${money(rst.paid||0)}</b><span>إجمالي المكافآت</span></div></div>
 ${(rst.top||[]).length?`<h3>أكثر الزبائن دعوة</h3>${rst.top.map(x=>`<div class="row"><button type="button" class="rvn" data-cfu="${esc(x.id)}">${esc(x.full_name||x.phone||"زبون")} ‹</button><b>${x.n}</b></div>`).join("")}`:""}</div>`}
 async function upImg(blob,bucket){const t=await tok(),path=Date.now()+"_"+Math.random().toString(36).slice(2,7)+".jpg";const r=await fetch(SBU+"/storage/v1/object/"+bucket+"/"+path,{method:"POST",headers:{apikey:SBK,Authorization:"Bearer "+t,"Content-Type":"image/jpeg","cache-control":"31536000"},body:blob});if(!r.ok)throw new Error("تعذر رفع الصورة");return {url:SBU+"/storage/v1/object/public/"+bucket+"/"+path,path}}
@@ -939,6 +970,8 @@ if(b=q("[data-badd]")){bv.items.push({id:"",g:250});V();return}
 if(b=q("[data-bdel]")){bv.items.splice(+b.dataset.bdel,1);if(!bv.items.length)bv.items.push({id:"",g:250});V();return}
 if(b=q("[data-bav]")){const p=(prods||[]).find(x=>x.id==b.dataset.bav);if(!p)return;b.disabled=true;try{await rest("/rest/v1/products?id=eq."+p.id,"PATCH",{available:p.available===false});await loadCat()}catch(e){toast("تعذر الحفظ: "+e.message)}V();return}
 if(b=q("[data-bdl]")){if(!confirm("مسح الباقة نهائياً؟"))return;const p=(prods||[]).find(x=>x.id==b.dataset.bdl);try{await rest("/rest/v1/products?id=eq."+b.dataset.bdl,"DELETE");if(p&&p.image_path)rmImg("products",p.image_path);bv=null;await loadCat();toast("تم مسح الباقة")}catch(e){toast(/foreign|violat/i.test(e.message)?"الباقة فيها طلبات، خبّيها بدل ما تمسحها":"تعذر المسح: "+e.message)}V();return}
+if(b=q("[data-rej]")){rejOpen(b.dataset.rej);return}
+if(b=q("[data-aud]")){audUnlock();setTimeout(()=>{beep();V()},150);return}
 if(b=q("[data-rv]")){const st=b.dataset.rvs;if(st=="delete"&&!confirm("مسح التقييم نهائياً؟"))return;b.disabled=true;try{await rpc("admin_review_set",{p_id:+b.dataset.rv,p_status:st});await loadRv()}catch(e){toast("تعذر الحفظ: "+e.message)}V();return}
 if(b=q("[data-sv]")){const[k,v]=b.dataset.sv.split(":");SV[k]=v==null?"":v;if(k=="pc")SV.pc=v?+v:null;if(k=="st"&&v)cmode=v;if(k=="dw"&&v){dw.src=v;dw.winners=[];dw.err=""}msg="";V();window.scrollTo(0,0);return}
 if(b=q("[data-sil]")){rgPend().forEach(id=>rgSil.add(id));return V()}
@@ -988,7 +1021,8 @@ if(b=q("[data-wd]")){const ap=b.dataset.wd==="1",x=wtx.find(y=>String(y.id)===b.
 if(b=q("[data-rm]")){if(confirm("إزالة صلاحية هذا الحساب؟")){try{await setRole(b.dataset.rm,"customer");await loadCour();msg=""}catch(x){msg=x.message}V()}}});
 document.addEventListener("submit",async e=>{const f=e.target.closest("[data-f]");if(!f)return;e.preventDefault();const fd=new FormData(f),k=f.dataset.f;
 if(k=="bundle"){const sb=f.querySelector('[type="submit"]');sb.disabled=true;try{await bSave();bv=null;bimg=null;await loadCat();toast("تم حفظ الباقة ✅")}catch(x){toast(x.message||"تعذر الحفظ")}V();window.scrollTo(0,0);return}
-if(k=="refamt"){try{await rpc("admin_set_ref_amount",{p_amount:+fd.get("amt")});await loadRst();toast("تم الحفظ ✅")}catch(x){toast("تعذر الحفظ: "+x.message)}V();return}
+if(k=="rvnote"){const sb=f.querySelector('[type="submit"]');sb.disabled=true;try{await rpc("admin_set_review_note",{p_text:String(fd.get("t")||"").trim()});await loadRv();toast("تم الحفظ ✅")}catch(x){toast(/function|find|PGRST202/i.test(x.raw||x.message)?"شغّل setup_19.sql في Supabase أولاً":"تعذر الحفظ: "+x.message)}V();return}
+if(k=="refamt"){const v=numIn(fd.get("amt"));if(!(v>=0&&v<=100)){toast("اكتب مبلغ بين 0 و100");return}const sb=f.querySelector('[type="submit"]');sb.disabled=true;sb.textContent="جاري الحفظ…";try{await rpc("admin_set_ref_amount",{p_amount:v});await loadRst();toast("تم الحفظ ✅")}catch(x){toast(/function|find|PGRST202/i.test(x.raw||"")?"شغّل setup_18.sql في Supabase أولاً":"تعذر الحفظ ("+(x.raw||x.message)+")")}V();return}
 if(k=="login"){msg="";try{const r=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({login:fd.get("l"),password:fd.get("pw")})});const d=await r.json().catch(()=>({}));if(!r.ok||!d.access_token)throw new Error("بيانات الدخول غير صحيحة");setS(d);await start()}catch(x){msg=x.message||"حصل خطأ";V()}}
 else if(k=="credit"){try{const n=Number(fd.get("am"));if(!Number.isFinite(n)||n===0)throw new Error("المبلغ غير صحيح");const nb=await rpc("admin_add_credit",{p_login:normLg(fd.get("lg")),p_amount:n,p_kind:String(fd.get("kd")||"gift"),p_note:String(fd.get("nt")||"")||null});msg="";toast("تم. رصيد العميل الآن "+money(nb));await loadWtx()}catch(e){msg=e.message}V()}
 else if(k=="code"){try{const cd=String(fd.get("cd")||"").trim().toUpperCase().replace(/\s+/g,""),kd=fd.get("kd")=="fix"?"fix":"pct",vl=Number(fd.get("vl")),ex=String(fd.get("ex")||"")||null;
@@ -1015,7 +1049,12 @@ if(rl=="courier"&&(fd.get("bn")||fd.get("ba")||fd.get("bi"))){try{await rpc("adm
 await loadCour();msg="";toast("تم الحفظ")}catch(x){msg=x.message}V()}
 else if(k=="bank"){const id=f.dataset.uid;try{await rpc("admin_set_bank",{p_user:id,p_email:null,p_bank:String(fd.get("bn")||""),p_account:String(fd.get("ba")||""),p_iban:String(fd.get("bi")||"")});toast("تم حفظ الحساب المصرفي");sfDash=await loadCDash(id)}catch(_){toast("تعذر الحفظ، تأكد إنك شغّلت setup_13.sql")}V()}});
 $("#snd").onclick=bellTap;
-document.addEventListener("pointerdown",()=>{if(bell&&!actx){try{actx=new (window.AudioContext||window.webkitAudioContext)();actx.resume&&actx.resume()}catch(_){}}},{once:true,capture:true});
+// iPhone stops the sound engine whenever the app goes to the background; any touch wakes it up again
+function audUnlock(){if(!bell)return;try{if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();if(actx.state!=="running"&&actx.resume)actx.resume().then(()=>{if(rgPend().length&&!document.querySelector("input:focus,textarea:focus"))V()}).catch(()=>{});
+if(!audUnlock.ok){const b=actx.createBuffer(1,1,22050),src=actx.createBufferSource();src.buffer=b;src.connect(actx.destination);src.start(0);audUnlock.ok=1}}catch(_){}}
+["pointerdown","touchend","keydown"].forEach(ev=>document.addEventListener(ev,audUnlock,{capture:true,passive:true}));
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){audUnlock.ok=0;audUnlock()}});
+const audOk=()=>!!(actx&&actx.state==="running");
 $("#out").onclick=()=>{const t=ses&&ses.access_token;ses=null;me=null;orders=[];known=null;svs();if(t)au("/auth/v1/logout",{method:"POST"},t).catch(()=>{});V()};
 $("#hlg").src=LOGO;
 if("serviceWorker" in navigator&&location.protocol=="https:")window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));
