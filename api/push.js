@@ -31,6 +31,16 @@ module.exports = async (req, res) => {
     const team = ["staff", "admin", "courier"].includes(me.role);
     if (!P.ready()) return res.status(503).json({ ok: false, error: "keys" });
 
+    // the admin tells the winners of a draw / prediction contest
+    if (b.action === "prize") {
+      if (me.role !== "admin") return res.status(403).json({ ok: false });
+      const ids = (Array.isArray(b.ids) ? b.ids : []).filter((x) => /^[0-9a-f-]{36}$/i.test(String(x))).slice(0, 50);
+      const label = String(b.label || "المسابقة").slice(0, 80), prize = String(b.prize || "").slice(0, 120);
+      let sent = 0;
+      for (const id of ids) sent += (await P.sendTo("user_id=eq." + id, { title: "🎉 مبروك! فزت في " + label, body: prize ? "جائزتك: " + prize : "تواصل معانا باش تستلم جائزتك 🌰", url: "/", tag: "nw-prize", icon: "/icons/icon-192.png" }).catch(() => 0)) || 0;
+      return res.status(200).json({ ok: true, sent });
+    }
+
     if (b.action === "save") {
       const s = b.sub || {};
       if (typeof s.endpoint !== "string" || !/^https:\/\//.test(s.endpoint) || !s.keys || !s.keys.p256dh || !s.keys.auth) return res.status(400).json({ ok: false, error: "bad" });

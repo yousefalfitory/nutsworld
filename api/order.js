@@ -310,6 +310,8 @@ async function main(req, res) {
 
   const name = s(m.n || b.name, 80), phone = s(b.phone, 30);
   if (!name || !phone) return res.status(400).json({ ok: false, error: "bad" });
+  // the shop is closed (outside opening hours, or closed for now from «إدارة المتجر»): new orders wait for tomorrow
+  if (m.edit == null) { const st = await shopStatus(); if (st && st.open === false) return res.status(423).json({ ok: false, error: "closed", st }); }
   const eid0 = m.edit != null ? Number(m.edit) : null;
   const cd = await lookupCode(m.code, phone, Number.isInteger(eid0) ? eid0 : null);
   if (cd && cd.err) return res.status(409).json({ ok: false, error: "code_" + cd.err });
@@ -402,6 +404,16 @@ async function main(req, res) {
   ]);
   if (!sent && !id) return res.status(502).json({ ok: false });
   return res.status(200).json({ ok: true, id, total: p.total, balance });
+}
+
+async function shopStatus() {
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SECRET_KEY) return null;
+  try {
+    const r = await fetch(process.env.SUPABASE_URL + "/rest/v1/rpc/public_store_status", { method: "POST", headers: { apikey: process.env.SUPABASE_SECRET_KEY, "Content-Type": "application/json" }, body: "{}" });
+    if (!r.ok) return null;   // setup_20 not run yet: never block orders because of it
+    const d = await r.json();
+    return d && typeof d === "object" ? d : null;
+  } catch (_) { return null; }
 }
 
 module.exports = async (req, res) => {

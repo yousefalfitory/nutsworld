@@ -23,6 +23,22 @@ module.exports = async (req, res) => {
   if (secret ? auth !== "Bearer " + secret : !/vercel-cron/i.test(ua)) return res.status(401).json({ ok: false });
   if (!SB || !SK || !PUSH.ready()) return res.status(500).json({ ok: false, error: "env" });
 
+  // 6 PM job: remind customers who left items in the cart (once per cart)
+  const job = String((req.query && req.query.job) || new URL(req.url || "/", "http://x").searchParams.get("job") || "");
+  if (job === "cart") {
+    let list = [];
+    try {
+      const r = await fetch(SB + "/rest/v1/rpc/cart_nudge_list", { method: "POST", headers: { apikey: SK, "Content-Type": "application/json" }, body: "{}" });
+      list = r.ok ? await r.json() : [];
+      if (!Array.isArray(list)) list = [];
+    } catch (_) { list = []; }
+    let sent = 0;
+    for (const u of list.slice(0, 300)) {
+      sent += await PUSH.sendTo("user_id=eq." + u.id, { title: "🛒 سلتك تستنّى فيك", body: "عندك " + (u.n || "") + " صنف في السلة 🌰 كمّل طلبك من عالم المكسرات.", url: "/?cart=1", tag: "nw-cart", icon: "/icons/icon-192.png" }).catch(() => 0) || 0;
+    }
+    return res.status(200).json({ ok: true, job, people: list.length, sent });
+  }
+
   // the Libyan day that just ended (UTC+2): runs at 22:00 UTC = 00:00 in Libya
   const now = Date.now() + 2 * 3600 * 1000;
   const end = new Date(Math.floor(now / 86400000) * 86400000 - 2 * 3600 * 1000);
