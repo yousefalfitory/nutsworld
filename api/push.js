@@ -77,7 +77,7 @@ module.exports = async (req, res) => {
         if (o.user_id) jobs.push(P.sendTo("user_id=eq." + o.user_id, C("❌ ما قدرناش ننفّذوا طلبك #" + o.id, (why ? why + ". " : "") + "تقدر تعدّل الطلب وتعاود ترسله من «طلباتي».")));
         if (o.courier_id) jobs.push(P.sendTo("user_id=eq." + o.courier_id, { title: "❌ تم إلغاء الطلب #" + o.id, body: why || "الطلب تلغى من المحل", url: "/staff.html", tag: "nw-asg-" + o.id }));
       } else if (k === "done") {
-        if (o.user_id) jobs.push(P.sendTo("user_id=eq." + o.user_id, C("🎉 تم تسليم طلبك #" + o.id, "بالهناء والشفاء من عالم المكسرات 🌰")));
+        if (o.user_id) jobs.push(P.sendTo("user_id=eq." + o.user_id, C("🎉 تم تسليم طلبك رقم " + o.id, "صحتين عليكم 🌰")));
       }
       const sent = (await Promise.all(jobs)).reduce((x, y) => x + y, 0);
       return res.status(200).json({ ok: true, sent });
