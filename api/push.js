@@ -50,12 +50,13 @@ module.exports = async (req, res) => {
     // a step in the order: tell the right people (courier, staff, customer)
     if (b.action === "ev") {
       const id = Number(b.order_id), k = String(b.kind || "");
-      if (!Number.isInteger(id) || !["assign", "accept", "hand", "recv", "done"].includes(k)) return res.status(400).json({ ok: false });
-      const r = await fetch(SB + "/rest/v1/orders?select=id,courier_id,user_id,city,customer_name,status&id=eq." + id, { headers: H() });
+      if (!Number.isInteger(id) || !["assign", "accept", "hand", "recv", "done", "cancel"].includes(k)) return res.status(400).json({ ok: false });
+      let r = await fetch(SB + "/rest/v1/orders?select=id,courier_id,user_id,city,customer_name,status,cancel_note&id=eq." + id, { headers: H() });
+      if (!r.ok) r = await fetch(SB + "/rest/v1/orders?select=id,courier_id,user_id,city,customer_name,status&id=eq." + id, { headers: H() });
       const a = await r.json();
       const o = Array.isArray(a) && a[0];
       if (!o) return res.status(404).json({ ok: false });
-      const staffOnly = k === "assign" || k === "hand";
+      const staffOnly = k === "assign" || k === "hand" || k === "cancel";
       if (staffOnly ? !["staff", "admin"].includes(me.role) : o.courier_id !== me.id) return res.status(403).json({ ok: false });
       const C = (title, body) => ({ title, body, url: "/", tag: "nw-ord-" + o.id, icon: "/icons/icon-192.png" });
       const jobs = [];
@@ -69,6 +70,12 @@ module.exports = async (req, res) => {
       } else if (k === "recv") {
         // the courier pressed «استلمت الطلبية»: only now the customer sees "on the way to you"
         if (o.user_id) jobs.push(P.sendTo("user_id=eq." + o.user_id, C("🛵 المندوب في الطريق إليك", "طلبك #" + o.id + " طلع من المحل.")));
+      } else if (k === "cancel") {
+        // the shop rejected the order: the customer reads why and can send it again
+        if (o.status !== "cancelled") return res.status(409).json({ ok: false });
+        const why = String(o.cancel_note || b.note || "").slice(0, 200);
+        if (o.user_id) jobs.push(P.sendTo("user_id=eq." + o.user_id, C("❌ ما قدرناش ننفّذوا طلبك #" + o.id, (why ? why + ". " : "") + "تقدر تعدّل الطلب وتعاود ترسله من «طلباتي».")));
+        if (o.courier_id) jobs.push(P.sendTo("user_id=eq." + o.courier_id, { title: "❌ تم إلغاء الطلب #" + o.id, body: why || "الطلب تلغى من المحل", url: "/staff.html", tag: "nw-asg-" + o.id }));
       } else if (k === "done") {
         if (o.user_id) jobs.push(P.sendTo("user_id=eq." + o.user_id, C("🎉 تم تسليم طلبك #" + o.id, "بالهناء والشفاء من عالم المكسرات 🌰")));
       }
