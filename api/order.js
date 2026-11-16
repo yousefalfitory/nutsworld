@@ -191,7 +191,7 @@ async function lookupCode(raw, phone, excl) {
       });
       if (r.ok) {
         const d = await r.json();
-        if (d && d.ok) return { code: d.code, kind: d.kind === "fix" ? "fix" : "pct", value: Number(d.value) };
+        if (d && d.ok) return { code: d.code, kind: d.kind === "fix" || d.kind === "ship" ? d.kind : "pct", value: Number(d.value) };
         return { err: (d && d.err) || "bad" };
       }
       console.error("code_check failed", r.status);
@@ -208,7 +208,19 @@ const PAYTXT = {
 };
 
 // Authoritative price calculation: nothing the browser sends about prices is trusted.
-function price(m, cd, cat) {
+// delivery formula + running offer from «إدارة المتجر» (setup_22); falls back to the numbers in D
+let dlCache = null, dlAt = 0;
+async function delivery() {
+  if (dlCache && Date.now() - dlAt < 60000) return dlCache;
+  try {
+    const r = await fetch(SB + "/rest/v1/rpc/public_delivery", { method: "POST", headers: { apikey: SK, "Content-Type": "application/json" }, body: "{}" });
+    if (r.ok) { const d = await r.json(); if (d && typeof d === "object") { dlCache = d; dlAt = Date.now(); return d; } }
+  } catch (_) {}
+  return null;
+}
+
+function price(m, cd, cat, dl) {
+  const PR = Object.assign({}, D.PR, (dl && dl.pr) || {}), promo = dl && dl.promo;
   const lines = m.lines;
   if (!Array.isArray(lines) || !lines.length || lines.length > 60) return { err: "bad" };
   const seen = new Set();
@@ -235,7 +247,7 @@ function price(m, cd, cat) {
   sub = r2(sub);
   if (sub < D.MIN) return { err: "min" };
   // cd = the discount code checked on the server ({code, kind: "pct"|"fix", value}) or null
-  const disc = !cd ? 0 : cd.kind === "fix" ? r2(Math.min(Number(cd.value), sub)) : Math.round(sub * Number(cd.value)) / 100;
+  const disc = !cd || cd.kind === "ship" ? 0 : cd.kind === "fix" ? r2(Math.min(Number(cd.value), sub)) : Math.round(sub * Number(cd.value)) / 100;
   const z = m.zone && typeof m.zone === "object" ? m.zone : {};
   let delivery = null, where = "out", area = "", km = null, loc = null;
   if (z.t === "area") {
@@ -247,12 +259,15 @@ function price(m, cd, cat) {
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) return { err: "bad" };
     loc = { lat: Number(lat.toFixed(6)), lon: Number(lon.toFixed(6)) };
     const d = hav(D.SHOP[0], D.SHOP[1], lat, lon);
-    if (d <= D.PR.out) {
-      const rd = d * D.PR.f;
-      delivery = Math.min(D.PR.max, Math.max(D.PR.min, Math.round(D.PR.base + D.PR.km * rd)));
+    if (d <= PR.out) {
+      const rd = d * PR.f;
+      delivery = Math.min(PR.max, Math.max(PR.min, Math.round(PR.base + PR.km * rd)));
       where = "gps"; km = rd;
     }
   }
+  // a running delivery offer, then a free-delivery code
+  if (delivery != null && promo) delivery = promo.kind === "free" ? 0 : Math.max(0, Number(promo.value) || 0);
+  if (delivery != null && cd && cd.kind === "ship") delivery = 0;
   const total = r2(sub - disc + (delivery || 0));
   return { sub, disc, code: disc ? cd.code : "", delivery, where, area, km, loc, total, items };
 }
@@ -315,7 +330,7 @@ async function main(req, res) {
   const eid0 = m.edit != null ? Number(m.edit) : null;
   const cd = await lookupCode(m.code, phone, Number.isInteger(eid0) ? eid0 : null);
   if (cd && cd.err) return res.status(409).json({ ok: false, error: "code_" + cd.err });
-  const p = price(m, cd, await catalog());
+  const p = price(m, cd, await catalog(), await delivery());
   if (p.err) return res.status(p.err === "soldout" ? 409 : 400).json({ ok: false, error: p.err, name: p.name || undefined });
   if (Math.abs(num(m.tot) - p.total) > 0.01) return res.status(409).json({ ok: false, error: "price" });
 
