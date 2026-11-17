@@ -756,7 +756,7 @@ const d=await pkPost({a:"login-verify",id:c.id,response:{clientDataJSON:B64.enc(
 try{localStorage.setItem("nw_pk",c.id)}catch(_){}setS(d);await loadProf()}
 async function pkRemove(){let cid="";try{cid=localStorage.getItem("nw_pk")||""}catch(_){}const t=await tok();if(t&&cid){try{await pkPost({a:"remove",cid},t)}catch(_){}}try{localStorage.removeItem("nw_pk")}catch(_){}}
 const pkMsg=x=>{const n=x&&x.name,m=x&&x.message;return errMsg(new Error(n=="NotAllowedError"||n=="AbortError"?"pkcancel":(m=="unknown"||m=="invalid"||m=="sig"||m=="replay")?"pkunknown":n=="InvalidStateError"?"pkdup":(n=="NotSupportedError"||n=="SecurityError")?"pkfail":"err"))};
-const WA_ON=false; // تأكيد الرقم عبر واتساب: اجعلها true بعد ربط رقم حقيقي في Meta
+const WA_ON=true; // تأكيد الرقم عبر واتساب: اجعلها true بعد ربط رقم حقيقي في Meta
 let wv=null,wvT=0,wvE="";
 function wvStop(){if(wvT){clearInterval(wvT);wvT=0}}
 function wvStart(){wvStop();wvT=setInterval(wvCheck,3000)}
