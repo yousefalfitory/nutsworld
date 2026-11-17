@@ -21,10 +21,22 @@ module.exports = async (req, res) => {
   try {
     let email = login.includes("@") ? login.toLowerCase() : null;
     if (!email) {
+      // 1) Libyan rules (091… / 91… / 218…), or a full number typed with + / 00
+      const q = "/rest/v1/profiles?select=email,phone&order=phone_verified.desc,created_at.asc&limit=1&phone=eq.";
       const ph = norm(login);
-      const r = await fetch(SB + "/rest/v1/profiles?select=email&order=phone_verified.desc,created_at.asc&limit=1&phone=eq." + encodeURIComponent(ph), { headers: { apikey: SK } });
-      const a = r.ok ? await r.json() : [];
+      let r = await fetch(SB + q + encodeURIComponent(ph), { headers: { apikey: SK } });
+      let a = r.ok ? await r.json() : [];
       email = a[0] && a[0].email;
+      // 2) someone from another country types the number the way he writes it at home (010…): match the end of it
+      const local = String(login).replace(/\D/g, "").replace(/^0+/, "");
+      if (!email && /^\d{7,13}$/.test(local) && !/^\+|^00/.test(String(login).trim())) {
+        r = await fetch(SB + "/rest/v1/profiles?select=email,phone&order=phone_verified.desc,created_at.asc&limit=5&phone=like.*" + encodeURIComponent(local), { headers: { apikey: SK } });
+        a = r.ok ? await r.json() : [];
+        // the rest in front of it must be a country code (1–3 digits)
+        a = (Array.isArray(a) ? a : []).filter(x => { const pre = String(x.phone || "").slice(0, -local.length); return /^\d{1,3}$/.test(pre); });
+        const phones = [...new Set(a.map(x => x.phone))];
+        if (phones.length === 1) email = a[0].email;
+      }
     }
     if (!email) return res.status(401).json({ error: "invalid" });
     const t = await fetch(SB + "/auth/v1/token?grant_type=password", {
