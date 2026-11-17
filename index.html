@@ -795,7 +795,7 @@ wvE=wvMsg(d,T2("حصل خطأ، حاول مرة ثانية","Something went wron
 let wvBusy=false;
 async function wvOk(){if(wvBusy)return;const i=$("#wvc");const c=String(i&&i.value||"").replace(/[٠-٩]/g,x=>"٠١٢٣٤٥٦٧٨٩".indexOf(x)).replace(/[۰-۹]/g,x=>"۰۱۲۳۴۵۶۷۸۹".indexOf(x)).replace(/\D/g,"");
 if(c.length!=6){wvE=wvMsg({error:"code"});wvUpd();return}
-wvBusy=true;wvE="";try{const t=await tok();const r=await fetch("/api/wa_verify",{method:"POST",headers:{Authorization:"Bearer "+t,"Content-Type":"application/json"},body:JSON.stringify({code:c})});const d=await r.json().catch(()=>({}));
+wvBusy=true;wvE="";try{const t=await tok();const r=await fetch("/api/wa_start",{method:"POST",headers:{Authorization:"Bearer "+t,"Content-Type":"application/json"},body:JSON.stringify({code:c})});const d=await r.json().catch(()=>({}));
 if(r.ok&&d.verified){wvStop();wv=null;if(prof)prof.phone_verified=true;wvUpd();try{AC()}catch(_){}return}
 if(d.error=="expired"){wvStop();wv=null}
 wvE=wvMsg(d,T2("حصل خطأ، حاول مرة ثانية","Something went wrong, please try again"))}catch(_){wvE=T2("حصل خطأ، حاول مرة ثانية","Something went wrong, please try again")}finally{wvBusy=false}
@@ -843,7 +843,7 @@ function prefill(){if(!prof)return;const set=(id,v)=>{const e=$(id);if(e&&!e.val
 async function loadProf(){setTimeout(chLoad,300);const t=await tok();if(!t){prof=null;updPay();return}
 try{const r=await au("/rest/v1/profiles?select=*&id=eq."+ses.uid,{},t);const a=await r.json();prof=(Array.isArray(a)&&a[0])||null}catch(_){prof=null}
 prefill();wgPaint();loadWallet();loadMT();refAuto().then(()=>{if($("#ac").classList.contains("on")&&sub=="")AC()})}
-async function regApi(body){const r=await fetch("/api/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(EM[d.error]?d.error:"err");return d}
+async function regApi(body){const r=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.assign({action:"register"},body))});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(EM[d.error]?d.error:"err");return d}
 async function doReg(fd){const nm=String(fd.get("fn")||"").trim(),ph=intlPh(String(fd.get("cc")||"218"),fd.get("ph")),em=String(fd.get("em")||"").trim().toLowerCase(),pw=String(fd.get("pw")||"");
 if(nm.length<2)throw new Error("name");if(!/^\d{8,15}$/.test(ph)||(ph.startsWith("218")&&!/^2189\d{8}$/.test(ph)))throw new Error("phone");if(em&&(!EMR.test(em)||/@phone\.nutsworld\.ly$/.test(em)))throw new Error("email");if(!pwOK(pw))throw new Error("weak");
 if(!em){const d=await regApi({name:nm,phone:ph,password:pw});setS(d);await loadProf();return "in"}
