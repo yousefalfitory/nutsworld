@@ -22,7 +22,7 @@ module.exports = async (req, res) => {
     let email = login.includes("@") ? login.toLowerCase() : null;
     if (!email) {
       const ph = norm(login);
-      const r = await fetch(SB + "/rest/v1/profiles?select=email&limit=1&phone=eq." + encodeURIComponent(ph), { headers: { apikey: SK } });
+      const r = await fetch(SB + "/rest/v1/profiles?select=email&order=phone_verified.desc,created_at.asc&limit=1&phone=eq." + encodeURIComponent(ph), { headers: { apikey: SK } });
       const a = r.ok ? await r.json() : [];
       email = a[0] && a[0].email;
     }
