@@ -84,7 +84,12 @@ module.exports = async (req, res) => {
     for (const e of b.entry || [])
       for (const c of e.changes || [])
         for (const m of (c.value && c.value.messages) || []) {
-          if (m && m.type === "text" && m.text) await handle(String(m.from || ""), String(m.text.body || ""));
+          // WhatsApp usernames (2026): the number can be missing from "from"; then look in "contacts"
+          const cs = (c.value && c.value.contacts) || [];
+          const ct = cs.find(x => x && (x.user_id === m.from_user_id || x.wa_id)) || cs[0] || {};
+          const from = String(m.from || ct.wa_id || ct.phone || "").replace(/\D/g, "");
+          if (!from) console.log("wa: no number", { msg: Object.keys(m || {}).join(","), contact: Object.keys(ct).join(","), n: cs.length });
+          if (m && m.type === "text" && m.text) await handle(from, String(m.text.body || ""));
           else console.log("wa: other message", { type: m && m.type, keys: Object.keys(m || {}).join(",") });
         }
   } catch (err) {
