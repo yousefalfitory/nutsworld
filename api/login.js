@@ -10,11 +10,15 @@ const norm = p => {
   return d;
 };
 
+const register = require("./_register");
+
 module.exports = async (req, res) => {
   if (req.method !== "POST") return res.status(405).json({ error: "method" });
   let b = req.body;
   try { if (typeof b === "string") b = JSON.parse(b); } catch (_) { b = {}; }
   b = b || {};
+  // sign-up without email goes through here too (Hobby plan: max 12 functions)
+  if (b.action === "register") { req.body = b; return register(req, res); }
   const login = String(b.login || "").trim().slice(0, 120);
   const password = String(b.password || "").slice(0, 200);
   if (!login || !password || !SB || !SK || !PK) return res.status(400).json({ error: "bad" });

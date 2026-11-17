@@ -1,5 +1,5 @@
 // Starts a phone verification: the shop sends a 6-digit code to the customer's WhatsApp
-// (approved template "nw_otp", Arabic, copy-code button). The customer types it in the site (api/wa_verify).
+// (approved template "nw_otp", Arabic, copy-code button). The customer types it in the site (the same /api/wa_start, with {code}).
 const crypto = require("crypto");
 
 const SB = process.env.SUPABASE_URL;
@@ -53,8 +53,14 @@ async function sendCode(to, code) {
   return { ok: r.ok, err: d && d.error };
 }
 
+const checkCode = require("./_wa_verify");
+
 module.exports = async (req, res) => {
   if (req.method !== "POST") return res.status(405).json({ ok: false });
+  // the same address also checks the code the customer typed (Hobby plan: max 12 functions)
+  let body = req.body;
+  try { if (typeof body === "string") body = JSON.parse(body); } catch (_) { body = {}; }
+  if (body && body.code) return checkCode(req, res);
   if (!SB || !SK || !PK || !TOKEN || !PHONE_ID) return res.status(500).json({ ok: false, error: "config" });
 
   const uid = await userId(req);
