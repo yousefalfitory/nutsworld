@@ -31,7 +31,8 @@ function signedOk(buf, header) {
 
 async function handle(from, body) {
   const m = /NW[\s-]?(\d{6})/i.exec(body || "");
-  if (!m || !/^\d{8,15}$/.test(from)) return false;
+  const tail = x => (String(x || "").length > 4 ? "…" + String(x).slice(-4) : String(x || "-"));
+  if (!m || !/^\d{8,15}$/.test(from)) { console.log("wa: skip", { from: tail(from), hasCode: !!m, text: String(body || "").slice(0, 30) }); return false; }
   const code = "NW-" + m[1];
   const now = new Date().toISOString();
 
@@ -40,7 +41,7 @@ async function handle(from, body) {
   );
   const rows = r.ok ? await r.json() : [];
   const hit = Array.isArray(rows) ? rows.find(x => x.phone === from) : null;
-  if (!hit) return false;
+  if (!hit) { console.log("wa: no match", { code, from: tail(from), pending: (Array.isArray(rows) ? rows : []).map(x => tail(x.phone)) }); return false; }
 
   // burn the code first (one use only), then mark the phone as verified
   const u = await sb(`phone_verifications?id=eq.${hit.id}&used_at=is.null`, {
@@ -56,6 +57,7 @@ async function handle(from, body) {
     headers: { Prefer: "return=minimal" },
     body: JSON.stringify({ phone_verified: true, phone_verified_at: now })
   });
+  console.log("wa: verified", { from: tail(from), ok: p.ok });
   return p.ok;
 }
 
@@ -81,8 +83,10 @@ module.exports = async (req, res) => {
   try {
     for (const e of b.entry || [])
       for (const c of e.changes || [])
-        for (const m of (c.value && c.value.messages) || [])
+        for (const m of (c.value && c.value.messages) || []) {
           if (m && m.type === "text" && m.text) await handle(String(m.from || ""), String(m.text.body || ""));
+          else console.log("wa: other message", { type: m && m.type, keys: Object.keys(m || {}).join(",") });
+        }
   } catch (err) {
     console.error("wa webhook error", err);
   }
