@@ -11,7 +11,7 @@ const TEMPLATE = process.env.WA_OTP_TEMPLATE || "nw_otp";
 const LANG = process.env.WA_OTP_LANG || "ar";
 const TTL_MIN = 5;
 const MAX_PER_HOUR = 5;
-const GAP_SEC = 60;
+const GAP_SEC = TTL_MIN * 60; // a new code only after the previous one has expired
 
 async function userId(req) {
   const h = (req.headers && req.headers.authorization) || "";
