@@ -83,6 +83,9 @@ module.exports = async (req, res) => {
   try {
     for (const e of b.entry || [])
       for (const c of e.changes || [])
+        // delivery reports for the codes we send: log the failures (why a code did not arrive)
+        for (const st of (c.value && c.value.statuses) || [])
+          if (st && st.status === "failed") console.log("wa: delivery failed", { to: "…" + String(st.recipient_id || "").slice(-4), errors: JSON.stringify(st.errors || []).slice(0, 400) });
         for (const m of (c.value && c.value.messages) || []) {
           // WhatsApp usernames (2026): the number can be missing from "from"; then look in "contacts"
           const cs = (c.value && c.value.contacts) || [];
