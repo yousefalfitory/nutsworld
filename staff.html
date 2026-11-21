@@ -413,7 +413,7 @@ body.kb #nv,body.kb .nav,body.kb nav{display:none!important}
 <link rel="manifest" href="/manifest-staff.json">
 <meta name="theme-color" content="#0a5c33">
 <link rel="icon" type="image/png" href="/icons/favicon-48.png">
-<link rel="apple-touch-icon" href="/icons/staff-apple-touch-icon.png">
+<link rel="apple-touch-icon" href="/icons/staff-apple-touch-icon.png?v=2">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="إدارة المتجر">
@@ -436,14 +436,14 @@ var TI={};const LOGO="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQ0AAAC0CAYA
 const SBU="https://fffremcwrsgovpgfyrwd.supabase.co",SBK="sb_publishable_-JgCE3ZQ_hrQ53GcI7Q6Jw_ilrBUXXb";
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const VB='<svg class="vb" viewBox="0 0 24 24" role="img" aria-label="Verified"><path fill="#0866FF" d="M12.00 0.55 L12.60 0.64 L13.17 0.89 L13.70 1.27 L14.19 1.72 L14.63 2.17 L15.06 2.57 L15.50 2.88 L15.97 3.08 L16.50 3.17 L17.09 3.19 L17.72 3.18 L18.38 3.21 L19.03 3.32 L19.61 3.55 L20.10 3.90 L20.45 4.39 L20.68 4.97 L20.79 5.62 L20.82 6.28 L20.81 6.91 L20.83 7.50 L20.92 8.03 L21.12 8.50 L21.43 8.94 L21.83 9.37 L22.28 9.81 L22.73 10.30 L23.11 10.83 L23.36 11.40 L23.45 12.00 L23.36 12.60 L23.11 13.17 L22.73 13.70 L22.28 14.19 L21.83 14.63 L21.43 15.06 L21.12 15.50 L20.92 15.97 L20.83 16.50 L20.81 17.09 L20.82 17.72 L20.79 18.38 L20.68 19.03 L20.45 19.61 L20.10 20.10 L19.61 20.45 L19.03 20.68 L18.38 20.79 L17.72 20.82 L17.09 20.81 L16.50 20.83 L15.97 20.92 L15.50 21.12 L15.06 21.43 L14.63 21.83 L14.19 22.28 L13.70 22.73 L13.17 23.11 L12.60 23.36 L12.00 23.45 L11.40 23.36 L10.83 23.11 L10.30 22.73 L9.81 22.28 L9.37 21.83 L8.94 21.43 L8.50 21.12 L8.03 20.92 L7.50 20.83 L6.91 20.81 L6.28 20.82 L5.62 20.79 L4.97 20.68 L4.39 20.45 L3.90 20.10 L3.55 19.61 L3.32 19.03 L3.21 18.38 L3.18 17.72 L3.19 17.09 L3.17 16.50 L3.08 15.97 L2.88 15.50 L2.57 15.06 L2.17 14.63 L1.72 14.19 L1.27 13.70 L0.89 13.17 L0.64 12.60 L0.55 12.00 L0.64 11.40 L0.89 10.83 L1.27 10.30 L1.72 9.81 L2.17 9.37 L2.57 8.94 L2.88 8.50 L3.08 8.03 L3.17 7.50 L3.19 6.91 L3.18 6.28 L3.21 5.62 L3.32 4.97 L3.55 4.39 L3.90 3.90 L4.39 3.55 L4.97 3.32 L5.62 3.21 L6.28 3.18 L6.91 3.19 L7.50 3.17 L8.03 3.08 L8.50 2.88 L8.94 2.57 L9.37 2.17 L9.81 1.72 L10.30 1.27 L10.83 0.89 L11.40 0.64Z"/><path d="M7.4 12.2l3.1 3.1 6.1-6.3" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-const GB=VB.replace('class="vb"','class="vb gold"').replace(/#0866FF/g,"#D9A21B").replace('aria-label="Verified"','aria-label="Gold"');
+const VB='<svg class="vb" viewBox="0 0 24 24" role="img" aria-label="Verified"><path fill="#D9A21B" d="M12.00 0.55 L12.60 0.64 L13.17 0.89 L13.70 1.27 L14.19 1.72 L14.63 2.17 L15.06 2.57 L15.50 2.88 L15.97 3.08 L16.50 3.17 L17.09 3.19 L17.72 3.18 L18.38 3.21 L19.03 3.32 L19.61 3.55 L20.10 3.90 L20.45 4.39 L20.68 4.97 L20.79 5.62 L20.82 6.28 L20.81 6.91 L20.83 7.50 L20.92 8.03 L21.12 8.50 L21.43 8.94 L21.83 9.37 L22.28 9.81 L22.73 10.30 L23.11 10.83 L23.36 11.40 L23.45 12.00 L23.36 12.60 L23.11 13.17 L22.73 13.70 L22.28 14.19 L21.83 14.63 L21.43 15.06 L21.12 15.50 L20.92 15.97 L20.83 16.50 L20.81 17.09 L20.82 17.72 L20.79 18.38 L20.68 19.03 L20.45 19.61 L20.10 20.10 L19.61 20.45 L19.03 20.68 L18.38 20.79 L17.72 20.82 L17.09 20.81 L16.50 20.83 L15.97 20.92 L15.50 21.12 L15.06 21.43 L14.63 21.83 L14.19 22.28 L13.70 22.73 L13.17 23.11 L12.60 23.36 L12.00 23.45 L11.40 23.36 L10.83 23.11 L10.30 22.73 L9.81 22.28 L9.37 21.83 L8.94 21.43 L8.50 21.12 L8.03 20.92 L7.50 20.83 L6.91 20.81 L6.28 20.82 L5.62 20.79 L4.97 20.68 L4.39 20.45 L3.90 20.10 L3.55 19.61 L3.32 19.03 L3.21 18.38 L3.18 17.72 L3.19 17.09 L3.17 16.50 L3.08 15.97 L2.88 15.50 L2.57 15.06 L2.17 14.63 L1.72 14.19 L1.27 13.70 L0.89 13.17 L0.64 12.60 L0.55 12.00 L0.64 11.40 L0.89 10.83 L1.27 10.30 L1.72 9.81 L2.17 9.37 L2.57 8.94 L2.88 8.50 L3.08 8.03 L3.17 7.50 L3.19 6.91 L3.18 6.28 L3.21 5.62 L3.32 4.97 L3.55 4.39 L3.90 3.90 L4.39 3.55 L4.97 3.32 L5.62 3.21 L6.28 3.18 L6.91 3.19 L7.50 3.17 L8.03 3.08 L8.50 2.88 L8.94 2.57 L9.37 2.17 L9.81 1.72 L10.30 1.27 L10.83 0.89 L11.40 0.64Z"/><path d="M7.4 12.2l3.1 3.1 6.1-6.3" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const GB=VB.replace('class="vb"','class="vb blue"').replace(/#D9A21B/g,"#0866FF");
 const OWNER="yalfitory@gmail.com";let VM={own:null,gold:new Set()};
 const isOwn=(id,em)=>(!!id&&id===VM.own)||String(em||"").toLowerCase()===OWNER;
 const nmH=(n,id,em)=>{const o=isOwn(id,em);return `<span class="nmv${o?" own":""}" dir="auto">${esc(n||"")}${o?VB:id&&VM.gold.has(id)?GB:""}</span>`};
 async function loadVM(){try{const t=await tok(),r=await au("/rest/v1/profiles?select=id&email=eq."+encodeURIComponent(OWNER),{},t),a=await r.json();if(Array.isArray(a)&&a[0])VM.own=a[0].id}catch(_){}
 try{const t=await tok(),r=await au("/rest/v1/profiles?select=id&badge=is.true",{},t),a=await r.json();if(Array.isArray(a))VM.gold=new Set(a.map(x=>x.id))}catch(_){}}
-const goldBtn=id=>isOwn(id)||!isAdmin()?"":`<button type="button" class="gbtn${VM.gold.has(id)?" on":""}" data-gold="${esc(id)}">${VM.gold.has(id)?"⭐ عنده علامة ذهبية، اضغط باش تشيلها":"⭐ إعطاء علامة ذهبية"}</button>`;
+const goldBtn=id=>isOwn(id)||!isAdmin()?"":`<button type="button" class="gbtn${VM.gold.has(id)?" on":""}" data-gold="${esc(id)}">${VM.gold.has(id)?"☑️ عنده علامة زرقاء، اضغط باش تشيلها":"☑️ إعطاء علامة زرقاء"}</button>`;
 const ST={assigned:["تم اختيار المندوب","#0891b2"],accepted:["المندوب قبل الطلب","#0891b2"],new:["جديد","#d97706"],preparing:["قيد التجهيز","#2563eb"],handed:["سُلّم للمندوب","#7c3aed"],out:["مع المندوب في الطريق","#0891b2"],delivered:["تم التسليم","#15803d"],cancelled:["ملغي","#b91c1c"]};
 const PAY={cod:"كاش عند الاستلام",pos:"💳 بطاقة عند الاستلام (جهاز الدفع)",bank:"تحويل مصرفي (تأكد من الإيصال)",wallet:"✅ مدفوع من المحفظة",card:"بطاقة أونلاين"};
 const FP='<svg viewBox="0 0 24 24"><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/></svg>';
@@ -479,10 +479,12 @@ function toast(m){const t=$("#ts");t.textContent=m;t.classList.add("on");clearTi
 function wavURL(sec,fill){const sr=22050,n=Math.floor(sr*sec),b=new ArrayBuffer(44+n*2),v=new DataView(b),w=(o,t)=>{for(let i=0;i<t.length;i++)v.setUint8(o+i,t.charCodeAt(i))};
 w(0,"RIFF");v.setUint32(4,36+n*2,true);w(8,"WAVE");w(12,"fmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,"data");v.setUint32(40,n*2,true);
 for(let i=0;i<n;i++)v.setInt16(44+i*2,Math.max(-1,Math.min(1,fill(i/sr)))*32767,true);return URL.createObjectURL(new Blob([b],{type:"audio/wav"}))}
-let rgA=null,rgOK=false,RG_RING=null,RG_SIL=null;
+let rgA=null,rgOK=false,RG_RING=null,RG_SIL=null,RG_MSG=null;
 function rgInit(){if(rgA)return;try{RG_SIL=wavURL(.05,()=>0);RG_RING=wavURL(2.4,t=>{const k=t>=1.5?1:0,u=t-k*1.5;if(u<0||u>=.8)return 0;const j=Math.floor(u/.08),f=j%2?480:440,ph=(u*f)%1;const env=Math.min(1,(u%.08)/.004,(.08-(u%.08))/.004);return (ph<.5?.42:-.42)*env});
-rgA=new Audio();rgA.preload="auto";rgA.setAttribute("playsinline","");try{if(navigator.audioSession)navigator.audioSession.type="playback"}catch(_){}}catch(_){}}
+RG_MSG=wavURL(.6,t=>{const n=t<.16?0:1,u=t-n*.16,f=n?1318.5:987.8,env=Math.exp(-u*(n?7:14))*Math.min(1,u/.004);return u<0?0:Math.sin(2*Math.PI*f*u)*.5*env});rgA=new Audio();rgA.preload="auto";rgA.setAttribute("playsinline","");try{if(navigator.audioSession)navigator.audioSession.type="playback"}catch(_){}}catch(_){}}
 function rgUnlock(){if(!bell||rgOK)return;rgInit();if(!rgA)return;try{rgA.src=RG_SIL;const pr=rgA.play();if(pr&&pr.then)pr.then(()=>{rgOK=true;rgA.pause();rgA.src=RG_RING;rgA.load()}).catch(()=>{})}catch(_){}}
+function msgBeep(){if(!bell)return;if(rgA&&rgOK&&RG_MSG){try{rgA.src=RG_MSG;rgA.currentTime=0;const pr=rgA.play();if(pr&&pr.catch)pr.catch(()=>{});setTimeout(()=>{try{if(rgA.src===RG_MSG){rgA.pause();rgA.src=RG_RING}}catch(_){}},900);return}catch(_){}}
+if(!actx)return;try{if(actx.state!=="running")actx.resume();[[987.8,0],[1318.5,.16]].forEach(([f,d])=>{const g=actx.createGain(),o=actx.createOscillator(),t0=actx.currentTime+d;g.gain.setValueAtTime(.35,t0);g.gain.exponentialRampToValueAtTime(.001,t0+.45);o.type="sine";o.frequency.value=f;o.connect(g);g.connect(actx.destination);o.start(t0);o.stop(t0+.46)})}catch(_){}}
 function rgPlay(){if(!rgA||!rgOK)return false;try{if(!rgA.src||rgA.src!==RG_RING)rgA.src=RG_RING;rgA.currentTime=0;const pr=rgA.play();if(pr&&pr.catch)pr.catch(()=>{rgOK=false});return true}catch(_){return false}}
 function bellMenu(){if(document.getElementById("rjm"))return;const w=document.createElement("div");w.id="rjm";w.setAttribute("role","dialog");w.setAttribute("aria-modal","true");
 w.innerHTML=`<div class="rjb"><h3>🔔 التنبيهات شغّالة</h3><p class="m" style="margin:0 0 10px">الإشعارات توصلك والتطبيق مسكّر. والرنين الطويل يشتغل لما «إدارة المتجر» تكون مفتوحة على الشاشة.</p>
@@ -784,7 +786,7 @@ return chl.map(c=>`<button type="button" class="cvr${+c.unread?" u":""}" data-cv
 function cvHtml(){if(!cvM.length)return `<p class="m" style="margin:auto">جاري التحميل…</p>`;return cvM.map(m=>`<div class="bu ${m.from_staff?"st":"cu"}">${esc(m.body)}<small>${chTm(m.created_at)}</small></div>`).join("")}
 
 async function loadChats(){try{const a=await rpc("staff_chat_list",{});if(!Array.isArray(a))throw 0;chErr="";const un=a.reduce((s,c)=>s+(+c.unread||0),0);
-if(chUn!==null&&un>chUn){beep();toast("💬 رسالة جديدة من زبون")}const ch=JSON.stringify(a)!==JSON.stringify(chl);chl=a;chUn=un;setNb("chat",un);return ch}
+if(chUn!==null&&un>chUn){msgBeep();toast("💬 رسالة جديدة من زبون")}const ch=JSON.stringify(a)!==JSON.stringify(chl);chl=a;chUn=un;setNb("chat",un);return ch}
 catch(_){if(chl==null)chErr="المحادثات غير متاحة. تأكد إنك شغّلت setup_9.sql في Supabase.";return false}}
 async function loadConv(){if(!cvU)return false;const t=await tok();try{const r=await au("/rest/v1/chat_messages?select=id,from_staff,body,created_at,seen&user_id=eq."+cvU+"&order=created_at.desc&limit=300",{},t);const a=await r.json();if(!r.ok||!Array.isArray(a))return false;a.reverse();
 if(a.some(m=>!m.from_staff&&!m.seen)){await rpc("staff_chat_seen",{p_user:cvU}).catch(()=>{});a.forEach(m=>{m.seen=true});const c=(chl||[]).find(x=>x.user_id===cvU);if(c){chUn=Math.max(0,(chUn||0)-(+c.unread||0));c.unread=0;setNb("chat",chUn)}}
@@ -1166,7 +1168,7 @@ if(b=q("[data-hand]"))return setHand(b.dataset.hand);
 if(b=q("[data-asg]"))return assign(b.dataset.asg);
 if(b=q("[data-chg]")){chgC.add(b.dataset.chg);return V()}
 if(b=q("[data-acc]"))return accept(b.dataset.acc);
-if(b=q("[data-gold]")){const id=b.dataset.gold,on=!VM.gold.has(id);try{await rpc("admin_set_badge",{p_user:id,p_on:on});on?VM.gold.add(id):VM.gold.delete(id);toast(on?"تمت إضافة العلامة الذهبية ⭐":"تم شيل العلامة")}catch(_){toast("تعذر الحفظ، تأكد إنك شغّلت setup_14.sql")}return V()}
+if(b=q("[data-gold]")){const id=b.dataset.gold,on=!VM.gold.has(id);try{await rpc("admin_set_badge",{p_user:id,p_on:on});on?VM.gold.add(id):VM.gold.delete(id);toast(on?"تمت إضافة العلامة الزرقاء ☑️":"تم شيل العلامة")}catch(_){toast("تعذر الحفظ، تأكد إنك شغّلت setup_14.sql")}return V()}
 if(b=q("[data-cr]"))return crSet(b.dataset.id,b.dataset.cr);
 if(b=q("[data-pr]"))return pr(b.dataset.pr);
 if(b=q("[data-tab]"))return goTab(b.dataset.tab);
