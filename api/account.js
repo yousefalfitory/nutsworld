@@ -14,6 +14,30 @@ async function rpc(fn, args) {
   return { ok: r.ok, data: d };
 }
 
+// The manager deletes a customer from «العملاء المسجّلين». The customer can register again later as new.
+// Wallet money / open orders don't block it: the staff screen warns first and the manager confirms.
+async function adminDelete(user, body, res) {
+  const id = String(body.user_id || "");
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return res.status(400).json({ ok: false, error: "bad" });
+  if (id === user.id) return res.status(400).json({ ok: false, error: "self" });
+  const pr = await fetch(SB + "/rest/v1/profiles?select=id,role&id=in.(" + user.id + "," + id + ")", { headers: { apikey: SK } });
+  const rows = pr.ok ? await pr.json() : [];
+  const me = (rows || []).find(x => x.id === user.id), him = (rows || []).find(x => x.id === id);
+  if (!me || me.role !== "admin") return res.status(403).json({ ok: false, error: "admin" });
+  if (!him) return res.status(404).json({ ok: false, error: "nouser" });
+  if (him.role !== "customer") return res.status(403).json({ ok: false, error: "staff" });
+  try {
+    await fetch(SB + "/storage/v1/object/avatars", {
+      method: "DELETE",
+      headers: { apikey: SK, Authorization: "Bearer " + SK, "Content-Type": "application/json" },
+      body: JSON.stringify({ prefixes: [id + "/avatar.jpg"] })
+    });
+  } catch (_) {}
+  const d = await fetch(SB + "/auth/v1/admin/users/" + id, { method: "DELETE", headers: { apikey: SK, Authorization: "Bearer " + SK } });
+  if (!d.ok) { console.error("admin delete failed", d.status, (await d.text()).slice(0, 300)); return res.status(500).json({ ok: false, error: "server" }); }
+  return res.status(200).json({ ok: true });
+}
+
 module.exports = async (req, res) => {
   if (req.method !== "POST") return res.status(405).json({ ok: false });
   const auth = (req.headers && req.headers.authorization) || "";
@@ -23,6 +47,11 @@ module.exports = async (req, res) => {
     if (!u.ok) return res.status(401).json({ ok: false, error: "auth" });
     const user = await u.json();
     if (!user || !user.id) return res.status(401).json({ ok: false, error: "auth" });
+
+    let body = req.body;
+    try { if (typeof body === "string") body = JSON.parse(body); } catch (_) { body = {}; }
+    body = body || {};
+    if (body.action === "admin_delete") return adminDelete(user, body, res);
 
     const chk = await rpc("account_can_delete", { p_user: user.id });
     if (!chk.ok) { console.error("can_delete failed", JSON.stringify(chk.data)); return res.status(500).json({ ok: false, error: "server" }); }
